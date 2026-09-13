@@ -12,6 +12,7 @@
     "dev": "eve dev",
     "eval": "eve eval",
     "start": "eve start",
+    "test": "tsx --test test/launch-bar.test.ts",
     "typecheck": "tsc"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "24.x",
+    "tsx": "^4.20.5",
     "typescript": "7.0.2"
   },
   "engines": {

@@ -1,5 +1,6 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
+import { coachingGuard } from "../lib/guard";
 import { peatySession } from "../lib/session-state";
 
 export default defineTool({
@@ -19,6 +20,15 @@ export default defineTool({
     start: () => "Log metrics",
   },
   async execute({ recordedAt, wakingTempF, pulseBpm, notes }) {
+    const inbound = coachingGuard();
+    if (!inbound.ok) {
+      return {
+        stored: null,
+        count: peatySession.get().metrics.length,
+        ...inbound.safety,
+      };
+    }
+
     if (wakingTempF === undefined && pulseBpm === undefined && notes === undefined) {
       throw new Error("Provide at least one of wakingTempF, pulseBpm, or notes.");
     }
@@ -41,6 +51,7 @@ export default defineTool({
     return {
       stored: last ?? null,
       count: metrics.length,
+      safetyGate: true as const,
     };
   },
 });

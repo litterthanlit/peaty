@@ -55,12 +55,23 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   },
 ];
 
+const DAIRY_FOOD =
+  /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose)\b/i;
+const FRUIT_FOOD =
+  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice)\b/i;
+
 function constraintHit(food: string, constraints: string[]): string[] {
   const haystack = food.toLowerCase();
   return constraints.filter((constraint) => {
     const needle = constraint.trim().toLowerCase();
     if (needle.length < 3) {
       return false;
+    }
+    if (/\b(dairy|milk|cheese|yogurt|lactose)\b/i.test(needle) && DAIRY_FOOD.test(food)) {
+      return true;
+    }
+    if (/\bfruit\b/i.test(needle) && FRUIT_FOOD.test(food)) {
+      return true;
     }
     return haystack.includes(needle);
   });

@@ -1,33 +1,49 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
-import { emptyBrief, peatySession } from "../lib/session-state";
+import { lockBrief } from "../lib/brief";
+import { coachingGuard } from "../lib/guard";
+import { checkSafety } from "../lib/safety";
+import { peatySession } from "../lib/session-state";
 
 export default defineTool({
   description:
-    "Save the one-screen onboarding brief: primary goal, optional markers, hard constraints, do-not-do. Safety-gate defaults ON.",
+    "Save the one-screen onboarding brief: primary goal, optional markers, hard constraints, do-not-do. Safety-gate is always ON; this tool cannot turn it off.",
   inputSchema: z.object({
     primaryGoal: z.string().min(1),
     markers: z.array(z.string()),
     hardConstraints: z.array(z.string()),
     doNotDo: z.array(z.string()),
-    safetyGate: z.optional(z.boolean()),
-    screen: z.string().min(1).describe("The one-screen brief shown to the user."),
   }),
   label: {
     start: () => "Save onboarding brief",
   },
-  async execute({ primaryGoal, markers, hardConstraints, doNotDo, safetyGate, screen }) {
-    const brief = {
-      ...emptyBrief(),
-      primaryGoal: primaryGoal.trim(),
-      markers: markers.map((item) => item.trim()).filter((item) => item.length > 0),
-      hardConstraints: hardConstraints
-        .map((item) => item.trim())
-        .filter((item) => item.length > 0),
-      doNotDo: doNotDo.map((item) => item.trim()).filter((item) => item.length > 0),
-      safetyGate: safetyGate ?? true,
-      screen: screen.trim(),
-    };
+  async execute({ primaryGoal, markers, hardConstraints, doNotDo }) {
+    const inbound = coachingGuard();
+    if (!inbound.ok) {
+      return {
+        saved: false as const,
+        safetyGate: true as const,
+        ...inbound.safety,
+      };
+    }
+
+    const protocolHit = checkSafety(
+      [primaryGoal, ...markers, ...hardConstraints, ...doNotDo].join("\n"),
+    );
+    if (protocolHit.verdict === "block") {
+      return {
+        saved: false as const,
+        safetyGate: true as const,
+        ...protocolHit,
+      };
+    }
+
+    const brief = lockBrief({
+      primaryGoal,
+      markers,
+      hardConstraints,
+      doNotDo,
+    });
 
     peatySession.update((current) => ({
       ...current,
@@ -35,11 +51,12 @@ export default defineTool({
     }));
 
     return {
-      saved: true,
-      safetyGate: brief.safetyGate,
+      saved: true as const,
+      safetyGate: true as const,
+      screen: brief.screen,
       constraintCount: brief.hardConstraints.length,
       reminder:
-        "Dairy or fruit refusals are hard constraints, not Peat defaults. Safety-gate stays on unless the user explicitly turns it off — and even then, no DIY T3/aspirin/hormones/BPC.",
+        "Safety-gate is ON and cannot be turned off. Dairy or fruit refusals are hard constraints, not Peat defaults. No DIY T3, aspirin protocols, hormones, or BPC.",
     };
   },
 });

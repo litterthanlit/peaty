@@ -1,5 +1,6 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
+import { coachingGuard } from "../lib/guard";
 import { peatySession } from "../lib/session-state";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -19,6 +20,21 @@ export default defineTool({
     start: () => "Summarize week",
   },
   async execute({ now, days }) {
+    const inbound = coachingGuard();
+    if (!inbound.ok) {
+      return {
+        days: days ?? 7,
+        entries: 0,
+        avgWakingTempF: null,
+        avgPulseBpm: null,
+        last: null,
+        primaryGoal: null,
+        safetyGate: true as const,
+        note: inbound.safety.redirect,
+        ...inbound.safety,
+      };
+    }
+
     const windowDays = days ?? 7;
     const start = now - windowDays * DAY_MS;
     const { brief, metrics } = peatySession.get();
@@ -44,7 +60,7 @@ export default defineTool({
       avgPulseBpm: avg(pulses),
       last: window[window.length - 1] ?? null,
       primaryGoal: brief?.primaryGoal ?? null,
-      safetyGate: brief?.safetyGate ?? true,
+      safetyGate: true as const,
       note:
         window.length === 0
           ? "No metrics in this window. Log waking temp/pulse before asking for a week digest."

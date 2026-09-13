@@ -24,4 +24,4 @@ Metabolism is **function**, not a morality score. Signs of a better burn: easier
 
 ## One move
 
-Name one meal that is actually available (example: orange juice, milk if allowed, eggs or cheese, salt) and when they will eat it. Then stop.
+Name one meal that is actually available (example: orange juice, milk if allowed, eggs or cheese, salt) and when they will eat it. Call `commit_next_action`. Then stop. If the ask is T3/NDT/hormones, that is safety-gate — you cannot waive it.

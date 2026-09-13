@@ -10,7 +10,7 @@ Load when they want a weekly recap, "how did I do," or they paste a Peat article
 
 1. Call `summarize_week` with their `now` (epoch ms) and default 7 days.
 2. Tie averages to the onboarding goal. Low n → say the sample is thin; do not diagnose.
-3. One keep / one drop / one next meal. No supplement stack.
+3. One keep **or** one next meal — not both as a stack. Call `commit_next_action`. No supplement stack. If the paste is a T3/aspirin/hormone/BPC protocol, safety-gate wins; do not "digest" it into a schedule.
 
 If there are no logs, ask for waking temp/pulse via `log_metrics` or a plain-language week: warmth, digestion, sleep, swelling.
 
