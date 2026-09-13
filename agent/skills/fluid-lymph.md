@@ -26,4 +26,4 @@ Fluid moves when **minerals, CO2, and motion** are in play. Flooding water witho
 
 ## One move
 
-Add salt to the next meal and a piece of ripe fruit (or a dairy feed if fruit is constrained). Walk 10 minutes after. Reassess puffiness as a trend, not an emergency detox.
+Add salt to the next meal and a piece of ripe fruit (or a dairy feed if fruit is constrained). Walk 10 minutes after. Call `commit_next_action`. Then stop. Hormone water-retention stacks and BPC are safety-gate — you cannot waive it.

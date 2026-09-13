@@ -20,7 +20,7 @@ If they listed dairy or fruit as a refusal in onboarding, `food_check` must bloc
 
 1. Call `food_check` with the food and how it was cooked/fatted.
 2. Read `verdict` and `constraintHits`.
-3. Offer one swap that respects constraints. No 12-item grocery list. No cart.
+3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3, aspirin, hormones, BPC), stop — safety-gate already locked the turn.
 
 ## Do not
 

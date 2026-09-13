@@ -6,14 +6,23 @@ Ray Peat / pro-metabolic coaching agent on [eve](https://eve.dev). Raise the bur
 
 | Skill | Job |
 | --- | --- |
-| `onboarding` | Four beats (goal, optional markers, hard constraints, do-not-do) → one-screen brief. Safety-gate ON by default. |
+| `onboarding` | Four beats (goal, optional markers, hard constraints, do-not-do) → one-screen brief. Safety-gate ON. No off switch. |
 | `metabolism-function` | Metabolic function, not a cut. |
 | `fluid-lymph` | Salt, minerals, lymph/fluid movement. |
 | `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. |
 | `source-digest` | Week recap from logs, or a pasted Peat source → practical move. |
 | `safety-gate` | Refuse DIY T3 / aspirin protocols / hormones / BPC; send that to a clinician. |
 
-No seventh skill lane. No payments.
+No seventh skill lane. No payments. No store.
+
+## Launch bar (how it is enforced)
+
+1. **First session locks a one-screen brief** — no brief → `agent/instructions/turn.ts` injects ONBOARDING LOCK; `save_brief` writes the canonical screen via `lockBrief()` (`Safety-gate: ON`).
+2. **Safety-gate is non-skippable** — `buildTurnLock()` runs `checkSafety` on every inbound user message *before* skills load. Coaching tools refuse when this turn was blocked. `save_brief` has no `safetyGate` argument.
+3. **One next action** — standing rule plus every skill; `commit_next_action` stores the single action for the next return.
+4. **Morning return** — same durable eve session (30-day timeout). User comes back on that session; turn lock injects MORNING RETURN LOOP with the saved brief and last action. Say "good morning" / "I'm back" / waking temp.
+5. **Exactly six skills** — `npm exec -- eve info` must list only those six.
+6. **typecheck / build / deploy** — `npm run typecheck`, `npm exec -- eve build`, git-connected Vercel project `peaty`.
 
 ## Run
 
@@ -24,12 +33,13 @@ npm install
 npm exec -- eve dev
 ```
 
-`eve dev` opens the TUI. HTTP is the built-in eve channel (`/eve/v1`).
+`eve dev` opens the TUI. HTTP is the built-in eve channel (`/eve/v1`). Reopen that same session in the morning for the return loop.
 
 ```bash
 npm exec -- eve info    # must list the six skills
 npm exec -- eve build
 npm run typecheck
+npm test
 ```
 
 Set `AI_GATEWAY_API_KEY`, or link a Vercel project so `VERCEL_OIDC_TOKEN` can reach the gateway.
@@ -40,16 +50,19 @@ Set `AI_GATEWAY_API_KEY`, or link a Vercel project so `VERCEL_OIDC_TOKEN` can re
 agent/
   agent.ts
   instructions.md
+  instructions/turn.ts   # always-on lock (not a seventh skill)
   channels/eve.ts
-  skills/           # the six above
-  tools/            # food_check, log_metrics, summarize_week, save_brief, safety_check
+  skills/                # the six above
+  tools/                 # food_check, log_metrics, summarize_week, save_brief, safety_check, commit_next_action
   lib/
 ```
 
 ## Deploy
 
+Git-connected Vercel project `peaty` (team `nicks-projects-14b58bdc`). Production URL: https://peaty-eight.vercel.app
+
 ```bash
 npm exec -- eve deploy
 ```
 
-Production-only. Use `eve dev` while building.
+Production-only. Use `eve dev` while building. Gateway auth on Vercel is OIDC (`vercelOidc()` in `agent/channels/eve.ts`); no `AI_GATEWAY_API_KEY` is required on the project if OIDC is enabled.

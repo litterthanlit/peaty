@@ -1,5 +1,5 @@
 ---
-description: Run first-session onboarding — four beats then a one-screen brief with safety-gate ON by default.
+description: Run first-session onboarding — four beats then a one-screen brief with safety-gate ON. No off switch.
 ---
 
 # Onboarding
@@ -17,12 +17,14 @@ Ask, wait, then move. Do not dump a form.
 
 ## One-screen brief
 
-After beat 4, write a single screen:
+After beat 4, call `save_brief` with those four fields. The tool writes the canonical screen:
 
 - Goal
 - Markers (or "none chosen")
-- Hard constraints (explicitly flag dairy/fruit if present)
+- Hard constraints (explicitly flags dairy/fruit if present)
 - Do-not-do
-- **Safety-gate: ON** (unless they clearly asked to turn it off — still never do T3/aspirin/hormones/BPC)
+- **Safety-gate: ON**
 
-Call `save_brief` with that screen. Then stop onboarding and take the first food or rhythm move.
+There is no parameter to turn the gate off. If they ask to disable it, say it stays on, finish the brief, and keep coaching food and rhythm.
+
+Then name **one** first next action, call `commit_next_action`, and stop. Do not load a meal plan.
