@@ -33,6 +33,8 @@ export function buildTurnLock(args: {
   brief: OnboardingBrief | null;
   lastNextAction: string | null;
   metricCount: number;
+  continuityRestored?: boolean;
+  morningReturnIssued?: boolean;
 }): TurnLock {
   const safety = checkSafety(args.inboundText);
 
@@ -65,12 +67,17 @@ export function buildTurnLock(args: {
     };
   }
 
-  if (isMorningReturn(args.inboundText)) {
+  const restoredMorning =
+    args.continuityRestored === true && args.morningReturnIssued !== true;
+  if (isMorningReturn(args.inboundText) || restoredMorning) {
     return {
       kind: "morning-return",
       safety,
       content: [
-        "MORNING RETURN LOOP. Same durable session. Do not re-run onboarding.",
+        "MORNING RETURN LOOP. Do not re-run onboarding.",
+        args.continuityRestored
+          ? "Loaded locked brief + last next action from Blob for this caller."
+          : "Continuing from the brief already locked on this session.",
         briefBlock(args.brief, args.lastNextAction),
         args.metricCount === 0
           ? "No metrics logged yet. If they have waking temp/pulse, call log_metrics with their timestamp, then one next action."

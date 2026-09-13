@@ -6,7 +6,8 @@ export default defineAgent({
   // Coaching agent: no sandbox shell/file tools unless we opt back in.
   defaultTools: false,
   model: "openai/gpt-5.6-luna-fast",
-  // Same HTTP session stays alive for the morning return loop.
+  // Same HTTP session stays alive for 30 days; Blob restores brief + next
+  // action when the caller opens a brand-new session.
   limits: {
     sessionTimeoutMs: THIRTY_DAYS_MS,
   },
