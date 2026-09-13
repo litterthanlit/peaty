@@ -23,6 +23,10 @@ export type PeatySession = {
   metrics: MetricEntry[];
   lastNextAction: string | null;
   inboundSafety: SafetyCheck | null;
+  /** True after this HTTP session loaded a brief from Blob. */
+  continuityRestored: boolean;
+  /** True after this session already injected MORNING RETURN LOOP. */
+  morningReturnIssued: boolean;
 };
 
 export const peatySession = defineState(
@@ -32,5 +36,7 @@ export const peatySession = defineState(
     metrics: [],
     lastNextAction: null,
     inboundSafety: null,
+    continuityRestored: false,
+    morningReturnIssued: false,
   }),
 );

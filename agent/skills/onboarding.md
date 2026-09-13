@@ -4,7 +4,7 @@ description: Run first-session onboarding — four beats then a one-screen brief
 
 # Onboarding
 
-Use this on a new session, or when the person wants to reset the brief.
+Use this when there is no saved brief (this HTTP session *and* Blob). If a brief already exists — including one restored from Blob on a brand-new session — do **not** re-run these four beats. That is morning return.
 
 ## Four beats (one at a time)
 

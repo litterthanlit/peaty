@@ -17,12 +17,25 @@ No seventh skill lane. No payments. No store.
 
 ## Launch bar (how it is enforced)
 
-1. **First session locks a one-screen brief** — no brief → `agent/instructions/turn.ts` injects ONBOARDING LOCK; `save_brief` writes the canonical screen via `lockBrief()` (`Safety-gate: ON`).
+1. **First session locks a one-screen brief** — no brief → `agent/instructions/turn.ts` injects ONBOARDING LOCK; `save_brief` writes the canonical screen via `lockBrief()` (`Safety-gate: ON`) and persists it to Blob.
 2. **Safety-gate is non-skippable** — `buildTurnLock()` runs `checkSafety` on every inbound user message *before* skills load. Coaching tools refuse when this turn was blocked. `save_brief` has no `safetyGate` argument.
-3. **One next action** — standing rule plus every skill; `commit_next_action` stores the single action for the next return.
-4. **Morning return** — same durable eve session (30-day timeout). User comes back on that session; turn lock injects MORNING RETURN LOOP with the saved brief and last action. Say "good morning" / "I'm back" / waking temp.
+3. **One next action** — standing rule plus every skill; `commit_next_action` stores the single action for the next return (session + Blob).
+4. **Morning return** — a brand-new HTTP session loads the locked brief + last next action from Blob and injects MORNING RETURN LOOP. The same 30-day HTTP session still works without a Blob roundtrip. Say "good morning" / "I'm back" / waking temp, or just open a new session when a brief already exists.
 5. **Exactly six skills** — `npm exec -- eve info` must list only those six.
 6. **typecheck / build / deploy** — `npm run typecheck`, `npm exec -- eve build`, git-connected Vercel project `peaty`.
+
+### Blob identity (cross-session)
+
+Continuity is keyed by Eve **`byPrincipal`** from `ctx.session.auth.current` — not the HTTP `sessionId`.
+
+| Caller | Key | Blob? |
+| --- | --- | --- |
+| `localDev()` | `"local-dev"` (shared by all local TUI sessions) | Process-local store in `eve dev` |
+| Vercel OIDC **user** (`external_sub`) | `JSON.stringify([principalType, authenticator, issuer, principalId])` | Private Blob object `peaty/continuity/<sha256>/MEMORY.md` |
+| `anonymous` / `runtime` | `null` (Eve disables these) | No — 30-day HTTP session only |
+| Production browser (`placeholderAuth`) | Request never reaches the agent | Add a real user `AuthFn` later |
+
+Blob env (first match; OIDC store id needs no extra secret): `EVE_MEMORY_BLOB_STORE_ID`, `EVE_MEMORY_BLOB_READ_WRITE_TOKEN`, `BLOB_STORE_ID`, `BLOB_READ_WRITE_TOKEN`. Provision with `eve integration setup file-memory`, then redeploy.
 
 ## Run
 
@@ -33,7 +46,7 @@ npm install
 npm exec -- eve dev
 ```
 
-`eve dev` opens the TUI. HTTP is the built-in eve channel (`/eve/v1`). Reopen that same session in the morning for the return loop.
+`eve dev` opens the TUI. HTTP is the built-in eve channel (`/eve/v1`). Open a **new** session the next morning: Blob restores the brief and last next action (local-dev shares one identity). The same HTTP session still works for 30 days.
 
 ```bash
 npm exec -- eve info    # must list the six skills

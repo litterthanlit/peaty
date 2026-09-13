@@ -1,6 +1,7 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
 import { lockBrief } from "../lib/brief";
+import { persistSessionContinuity } from "../lib/continuity";
 import { coachingGuard } from "../lib/guard";
 import { checkSafety } from "../lib/safety";
 import { peatySession } from "../lib/session-state";
@@ -17,7 +18,7 @@ export default defineTool({
   label: {
     start: () => "Save onboarding brief",
   },
-  async execute({ primaryGoal, markers, hardConstraints, doNotDo }) {
+  async execute({ primaryGoal, markers, hardConstraints, doNotDo }, ctx) {
     const inbound = coachingGuard();
     if (!inbound.ok) {
       return {
@@ -50,11 +51,15 @@ export default defineTool({
       brief,
     }));
 
+    const blob = await persistSessionContinuity(ctx);
+
     return {
       saved: true as const,
       safetyGate: true as const,
       screen: brief.screen,
       constraintCount: brief.hardConstraints.length,
+      blobPersisted: blob.persisted,
+      blobIdentity: blob.persisted ? "eve-byPrincipal" : blob.reason,
       reminder:
         "Safety-gate is ON and cannot be turned off. Dairy or fruit refusals are hard constraints, not Peat defaults. No DIY T3, aspirin protocols, hormones, or BPC.",
     };
