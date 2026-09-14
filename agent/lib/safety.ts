@@ -26,6 +26,15 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
     pattern:
       /\b(bpc[-\s]?157|tb[-\s]?500|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide)\b/i,
   },
+  {
+    label: "DIY bromantane",
+    pattern: /\b(bromantane|ladasten)\b/i,
+  },
+  {
+    label: "dopamine / prolactin stack",
+    pattern:
+      /\b((dopamine|prolactin)\b[^.!?\n]{0,80}\b(stack|protocol|agonists?)|(stack|protocol)\b[^.!?\n]{0,80}\b(dopamine|prolactin)|cabergoline|bromocriptine|dostinex)\b/i,
+  },
 ];
 
 const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
@@ -40,7 +49,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, sex hormones, or peptides (including BPC-157). Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, sex hormones, peptides (including BPC-157), bromantane, or dopamine/prolactin stacks. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";

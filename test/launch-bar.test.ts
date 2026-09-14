@@ -22,12 +22,34 @@ test("lockBrief always writes Safety-gate: ON", () => {
   assert.doesNotMatch(brief.screen, /Safety-gate: OFF/);
 });
 
-test("checkSafety blocks DIY T3, aspirin, hormones, and BPC", () => {
+test("checkSafety blocks DIY T3, aspirin, hormones, BPC, bromantane, and dopamine/prolactin stacks", () => {
   assert.equal(checkSafety("start T3 at 12.5 mcg").verdict, "block");
   assert.equal(checkSafety("aspirin protocol with coffee").verdict, "block");
   assert.equal(checkSafety("progesterone oil every night").verdict, "block");
   assert.equal(checkSafety("BPC-157 for my gut").verdict, "block");
+  assert.equal(checkSafety("bromantane AM empty stomach").verdict, "block");
+  assert.equal(checkSafety("ladasten for dopamine").verdict, "block");
+  assert.equal(checkSafety("dopamine stack this week").verdict, "block");
+  assert.equal(checkSafety("prolactin protocol with cabergoline").verdict, "block");
   assert.equal(checkSafety("orange juice and milk").verdict, "ok");
+  assert.equal(checkSafety("I feel low dopamine in the afternoon").verdict, "ok");
+});
+
+test("checkSafety redirect names the new refusals and never echoes doses", () => {
+  const farving = checkSafety(
+    "FarvingCo-style bromantane 100mg AM empty stomach",
+  );
+  assert.equal(farving.verdict, "block");
+  assert.equal(farving.matched.includes("DIY bromantane"), true);
+  assert.match(farving.redirect, /bromantane/);
+  assert.match(farving.redirect, /dopamine\/prolactin/);
+  assert.doesNotMatch(farving.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const abud = checkSafety("AbudBakri T3 12.5 mcg start low and titrate");
+  assert.equal(abud.verdict, "block");
+  assert.equal(abud.matched.includes("DIY T3 / thyroid hormone"), true);
+  assert.doesNotMatch(abud.redirect, /12\.5/);
+  assert.doesNotMatch(abud.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
 });
 
 test("asking to turn the gate off does not disable checkSafety", () => {
@@ -104,6 +126,68 @@ test("food-check honors dairy as a hard constraint", () => {
   const result = checkFood("glass of milk", ["dairy allergy"]);
   assert.equal(result.verdict, "blocked");
   assert.ok(result.constraintHits.length > 0);
+});
+
+test("food-check prefers warm fluids, glycine from food, and labels community PCOS stacks", () => {
+  const iced = checkFood("iced orange juice", []);
+  assert.equal(
+    iced.flags.some((flag) => flag.code === "iced-fluid"),
+    true,
+  );
+  assert.match(iced.flags.find((flag) => flag.code === "iced-fluid")?.detail ?? "", /warm or room-temp/i);
+
+  const gelatin = checkFood("oxtail stock with cartilage", []);
+  assert.equal(gelatin.verdict, "supportive");
+  assert.equal(
+    gelatin.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+  assert.match(
+    gelatin.flags.find((flag) => flag.code === "gelatinous")?.detail ?? "",
+    /Glycine via gelatin/,
+  );
+
+  const berberine = checkFood("berberine PCOS max stack", []);
+  assert.equal(
+    berberine.flags.some((flag) => flag.code === "community-pcos"),
+    true,
+  );
+  assert.notEqual(berberine.verdict, "supportive");
+  assert.match(berberine.summary, /community/i);
+  assert.doesNotMatch(berberine.summary, /\d+\s*(mg|mcg)\b/i);
+});
+
+test("food-check flags carnivore fruit/dairy refusal as diverging from Peat", () => {
+  const strict = checkFood("carnivore", []);
+  assert.equal(
+    strict.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.match(strict.summary, /diverges from Peat/);
+
+  const namedRefusal = checkFood("carnivore fruit dairy refusal", []);
+  assert.equal(
+    namedRefusal.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+
+  const peatLike = checkFood("carnivore with orange juice and milk", []);
+  assert.equal(
+    peatLike.flags.some((flag) => flag.code === "carnivore-divergence"),
+    false,
+  );
+});
+
+test("food-check does not treat ice cream as an iced drink", () => {
+  const cream = checkFood("vanilla ice cream", []);
+  assert.equal(
+    cream.flags.some((flag) => flag.code === "iced-fluid"),
+    false,
+  );
+  assert.equal(
+    cream.flags.some((flag) => flag.code === "dairy"),
+    true,
+  );
 });
 
 test("extractLastUserText reads the latest user role message", () => {

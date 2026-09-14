@@ -9,9 +9,9 @@ Ray Peat / pro-metabolic coaching agent on [eve](https://eve.dev). Raise the bur
 | `onboarding` | Four beats (goal, optional markers, hard constraints, do-not-do) → one-screen brief. Safety-gate ON. No off switch. |
 | `metabolism-function` | Metabolic function, not a cut. |
 | `fluid-lymph` | Salt, minerals, lymph/fluid movement. |
-| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. |
+| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Prefer warm/room-temp fluids; glycine via gelatin/stocks/cartilage. Berberine/PCOS max stacks are community, not Peat-primary. Carnivore fruit/dairy refusal diverges from Peat. |
 | `source-digest` | Week recap from logs, or a pasted Peat source → practical move. |
-| `safety-gate` | Refuse DIY T3 / aspirin protocols / hormones / BPC; send that to a clinician. |
+| `safety-gate` | Refuse DIY T3/T4/NDT, aspirin protocols, hormones, BPC, bromantane, and dopamine/prolactin stacks; send that to a clinician. Never echo community doses. |
 
 No seventh skill lane. No payments. No store.
 
