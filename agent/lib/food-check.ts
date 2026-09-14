@@ -50,15 +50,38 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   },
   {
     code: "gelatinous",
-    pattern: /\b(broth|oxtail|shank|skin|gelatin|collagen\s+from\s+food)\b/i,
-    detail: "Gelatinous cuts balance muscle meat better than a dry steak-only plate.",
+    pattern:
+      /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen\s+from\s+food|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
+    detail:
+      "Glycine via gelatin, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol.",
   },
 ];
+
+const ICED_FLUID =
+  /\b(iced|ice[-\s]?cold|ice\s+water|cold\s+brew|cold\s+(water|drinks?|fluids?))\b/i;
+const WARM_FLUID =
+  /\b((warm|room[-\s]?temp(?:erature)?|hot)\s+(milk|juice|water|coffee|tea|oj|fluids?|drinks?)|room[-\s]?temp(?:erature)?)\b/i;
+const COMMUNITY_PCOS =
+  /\b(berberine|pcos\s*max|pcos[-\s]?stack|inositol\s+stack)\b/i;
+const FRUIT_DAIRY_REFUSAL =
+  /\b(?:(?:no|without|refuse[sd]?|avoid(?:ing)?)\s+(?:fruit|dairy)|(?:fruit|dairy)[^\n]{0,24}refus)/i;
 
 const DAIRY_FOOD =
   /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose)\b/i;
 const FRUIT_FOOD =
   /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice)\b/i;
+
+function carnivoreDiverges(food: string): boolean {
+  if (!/\bcarnivore\b/i.test(food)) {
+    return false;
+  }
+  if (FRUIT_DAIRY_REFUSAL.test(food)) {
+    return true;
+  }
+  const fruitOk = FRUIT_FOOD.test(food) && !/\bno\s+fruit\b/i.test(food);
+  const dairyOk = DAIRY_FOOD.test(food) && !/\bno\s+dairy\b/i.test(food);
+  return !fruitOk && !dairyOk;
+}
 
 function constraintHit(food: string, constraints: string[]): string[] {
   const haystack = food.toLowerCase();
@@ -121,10 +144,45 @@ export function checkFood(
     }
   }
 
-  if (/\b(fast|omad|keto|carnivore|calorie\s*deficit|crash)\b/i.test(trimmed)) {
+  if (/\b(fast|omad|keto|calorie\s*deficit|crash)\b/i.test(trimmed)) {
     flags.push({
       code: "underfuel",
       detail: "Peaty does not coach crash diets. Raise the burn; do not starve it.",
+    });
+  }
+
+  if (ICED_FLUID.test(trimmed)) {
+    flags.push({
+      code: "iced-fluid",
+      detail:
+        "Prefer warm or room-temp fluids over iced drinks (Peat-aligned coaching note, not a medical protocol).",
+    });
+  }
+  if (WARM_FLUID.test(trimmed)) {
+    flags.push({
+      code: "warm-fluid",
+      detail: "Warm or room-temp fluids fit Peat-aligned coaching better than iced drinks.",
+    });
+  }
+  if (COMMUNITY_PCOS.test(trimmed)) {
+    flags.push({
+      code: "community-pcos",
+      detail:
+        "Berberine / PCOS \"max\" stacks are community talk, not a Peat-primary move. Stay on food and rhythm; clinician for medical PCOS care. No doses.",
+    });
+  }
+  if (carnivoreDiverges(trimmed)) {
+    flags.push({
+      code: "carnivore-divergence",
+      detail:
+        "Carnivore fruit/dairy refusal diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints.",
+    });
+  }
+  if (/\bglycine\s*(powder|capsules?|grams?)\b/i.test(trimmed)) {
+    flags.push({
+      code: "glycine-food-not-dose",
+      detail:
+        "Glycine is Peat-aligned via gelatin, stocks, and cartilage — not a capsule protocol. No gram counts.",
     });
   }
 
@@ -132,22 +190,30 @@ export function checkFood(
     ["seed-oil", "nut-staple", "fish-oil"].includes(flag.code),
   );
   const hasSupport = flags.some((flag) =>
-    ["ripe-fruit", "dairy", "cooked-starch", "gelatinous"].includes(flag.code),
+    ["ripe-fruit", "dairy", "cooked-starch", "gelatinous", "warm-fluid"].includes(
+      flag.code,
+    ),
   );
+  const communityNotPeat = flags.some((flag) => flag.code === "community-pcos");
+  const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if (hasPufa && !hasSupport) {
     verdict = "poor-fit";
-  } else if (hasSupport && !hasPufa) {
+  } else if (hasSupport && !hasPufa && !communityNotPeat && !divergesFromPeat) {
     verdict = "supportive";
   }
 
   const summary =
     verdict === "supportive"
-      ? "Fits the pro-metabolic plate: sugar from fruit/dairy, cooked food, low PUFA. Keep portions that actually get eaten."
+      ? "Fits the pro-metabolic plate: sugar from fruit/dairy, cooked food, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? "Poor metabolic fit as a staple. Swap the PUFA/lean-raw pattern for fruit, dairy if allowed, salt, and cooked starch."
-        : "Mixed. Keep the supportive pieces, drop seed oils, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
+        : communityNotPeat
+          ? "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
+          : divergesFromPeat
+            ? "Carnivore fruit/dairy refusal diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
+            : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
   return {
     food: trimmed,
