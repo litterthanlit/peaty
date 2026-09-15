@@ -7,11 +7,11 @@ Ray Peat / pro-metabolic coaching agent on [eve](https://eve.dev). Raise the bur
 | Skill | Job |
 | --- | --- |
 | `onboarding` | Four beats (goal, optional markers, hard constraints, do-not-do) → one-screen brief. Safety-gate ON. No off switch. |
-| `metabolism-function` | Metabolic function, not a cut. |
-| `fluid-lymph` | Salt, minerals, lymph/fluid movement. |
-| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Prefer warm/room-temp fluids; glycine via gelatin/stocks/cartilage. Berberine/PCOS max stacks are community, not Peat-primary. Carnivore fruit/dairy refusal diverges from Peat. |
+| `metabolism-function` | Metabolic function, not a cut. Dairy/fruit sugar oxidation. Not low-carb+ashwagandha as a gut fix. Niacinamide is an optional community food note, not a protocol. |
+| `fluid-lymph` | Salt, minerals, lymph/fluid movement. Beef gelatin/glycine mucus-barrier + mineralized fluids. Not water restriction or spa detox. |
+| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Prefer warm/room-temp fluids; glycine via gelatin/stocks/cartilage. Fish-oil megadoses, ashwagandha, berberine/PCOS max, and processed junk are community/poor-fit, not Peat-primary. Saladino/Alpaca carnivore fruit/dairy refusal diverges from Peat. |
 | `source-digest` | Week recap from logs, or a pasted Peat source → practical move. |
-| `safety-gate` | Refuse DIY T3/T4/NDT, aspirin protocols, hormones, BPC, bromantane, and dopamine/prolactin stacks; send that to a clinician. Never echo community doses. |
+| `safety-gate` | Refuse DIY T3/T4/NDT, aspirin protocols, cyproheptadine, hormones/pregnenolone, BPC-157, bromantane, and dopamine/prolactin stacks; send that to a clinician. Never echo community doses. |
 
 No seventh skill lane. No payments. No store.
 

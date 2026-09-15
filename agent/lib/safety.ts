@@ -17,6 +17,10 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
     pattern: /\b(aspirin|asa|salicylate)\b/i,
   },
   {
+    label: "cyproheptadine",
+    pattern: /\b(cyproheptadine|periactin)\b/i,
+  },
+  {
     label: "exogenous hormones",
     pattern:
       /\b(progesterone\s*(oil|cream|capsule)|pregnenolone|dhea|hrt|trtr?|testosterone|estradiol|anastrozole|clomid)\b/i,
@@ -40,7 +44,13 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "supplement megadose",
-    pattern: /\b(megadose|high[-\s]?dose\s+(niacin|vitamin\s*a|k2))\b/i,
+    pattern:
+      /\b(megadose|high[-\s]?dose\s+(niacinamide|nicotinamide|niacin|vitamin\s*a|k2))\b/i,
+  },
+  {
+    label: "niacinamide supplement protocol",
+    pattern:
+      /\b(niacinamide|nicotinamide)\b[^.!?\n]{0,60}\b(protocol|stack|dosing)\b|\b(protocol|stack|dosing)\b[^.!?\n]{0,60}\b(niacinamide|nicotinamide)\b/i,
   },
   {
     label: "injection / self-experiment",
@@ -49,7 +59,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, sex hormones, peptides (including BPC-157), bromantane, or dopamine/prolactin stacks. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, cyproheptadine, sex hormones (including pregnenolone), peptides (including BPC-157), bromantane, or dopamine/prolactin stacks. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";
