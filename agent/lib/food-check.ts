@@ -25,8 +25,10 @@ const PUFA_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string }> = 
   },
   {
     code: "fish-oil",
-    pattern: /\b(fish\s+oil|cod\s+liver\s+oil\s+capsules?|omega[-\s]?3\s+capsules?)\b/i,
-    detail: "Isolated fish-oil stacks are not a Peaty default. Food first; clinician for labs.",
+    pattern:
+      /\b(fish\s+oil|cod\s+liver\s+oil\s+capsules?|omega[-\s]?3s?\s+(?:capsules?|pills?|softgels?|mega[-\s]?doses?|stack)|mega[-\s]?dose[sd]?\s+omega[-\s]?3s?)\b/i,
+    detail:
+      "Omega-3 / fish-oil megadoses are community-not-Peat. Isolated PUFA stacks are a problem here, not a gut or heart win. Food first; clinician for labs. No doses.",
   },
 ];
 
@@ -53,7 +55,7 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
     pattern:
       /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen\s+from\s+food|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
     detail:
-      "Glycine via gelatin, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol.",
+      "Glycine via beef gelatin, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol.",
   },
 ];
 
@@ -63,6 +65,13 @@ const WARM_FLUID =
   /\b((warm|room[-\s]?temp(?:erature)?|hot)\s+(milk|juice|water|coffee|tea|oj|fluids?|drinks?)|room[-\s]?temp(?:erature)?)\b/i;
 const COMMUNITY_PCOS =
   /\b(berberine|pcos\s*max|pcos[-\s]?stack|inositol\s+stack)\b/i;
+const ASHWAGANDHA = /\b(ashwagandha|withania(?:\s+somnifera)?)\b/i;
+const LOW_CARB = /\b(low[-\s]?carb|keto)\b/i;
+const PROCESSED_JUNK =
+  /\b(ultra[-\s]?processed|processed\s+junk|junk\s+food|doritos|cheetos|potato\s+chips|corn\s+chips|fast\s+food|seed[-\s]?oil\s+snacks?|packaged\s+snacks?)\b/i;
+const NIACINAMIDE = /\b(niacinamide|nicotinamide)\b/i;
+const SALADINO_ALPACA =
+  /\b(saladino|paul\s+saladino)\b|\balpaca(?:'s)?\s*(?:carnivore|diet|protocol|animal[-\s]?based)\b/i;
 const FRUIT_DAIRY_REFUSAL =
   /\b(?:(?:no|without|refuse[sd]?|avoid(?:ing)?)\s+(?:fruit|dairy)|(?:fruit|dairy)[^\n]{0,24}refus)/i;
 
@@ -71,8 +80,16 @@ const DAIRY_FOOD =
 const FRUIT_FOOD =
   /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice)\b/i;
 
+function namedCarnivoreOrbit(food: string): boolean {
+  if (SALADINO_ALPACA.test(food)) {
+    return true;
+  }
+  return /\balpaca\b/i.test(food) && /\b(carnivore|animal[-\s]?based)\b/i.test(food);
+}
+
 function carnivoreDiverges(food: string): boolean {
-  if (!/\bcarnivore\b/i.test(food)) {
+  const carnivoreish = /\bcarnivore\b/i.test(food) || namedCarnivoreOrbit(food);
+  if (!carnivoreish) {
     return false;
   }
   if (FRUIT_DAIRY_REFUSAL.test(food)) {
@@ -144,7 +161,7 @@ export function checkFood(
     }
   }
 
-  if (/\b(fast|omad|keto|calorie\s*deficit|crash)\b/i.test(trimmed)) {
+  if (/\b(fast|omad|keto|low[-\s]?carb|calorie\s*deficit|crash)\b/i.test(trimmed)) {
     flags.push({
       code: "underfuel",
       detail: "Peaty does not coach crash diets. Raise the burn; do not starve it.",
@@ -171,11 +188,39 @@ export function checkFood(
         "Berberine / PCOS \"max\" stacks are community talk, not a Peat-primary move. Stay on food and rhythm; clinician for medical PCOS care. No doses.",
     });
   }
+  if (ASHWAGANDHA.test(trimmed)) {
+    flags.push({
+      code: "community-ashwagandha",
+      detail:
+        "Ashwagandha is community talk, not Peat-primary, and not a gut fix. Stay on food and rhythm; clinician if they are already supplementing. No doses.",
+    });
+  }
+  if (LOW_CARB.test(trimmed) && (ASHWAGANDHA.test(trimmed) || /\bgut\b/i.test(trimmed))) {
+    flags.push({
+      code: "low-carb-gut-fix",
+      detail:
+        "Low-carb plus ashwagandha (or low-carb framed as a gut fix) is not Peaty. Raise the burn with fruit/dairy sugars unless constrained. Do not starve the gut.",
+    });
+  }
+  if (PROCESSED_JUNK.test(trimmed)) {
+    flags.push({
+      code: "processed-junk",
+      detail:
+        "Processed junk (ultra-processed PUFA snacks, chip-aisle food) is a poor metabolic staple. Swap toward fruit, dairy if allowed, salt, and cooked food.",
+    });
+  }
+  if (NIACINAMIDE.test(trimmed)) {
+    flags.push({
+      code: "niacinamide-note",
+      detail:
+        "Niacinamide is sometimes discussed as a gut-adjacent food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing.",
+    });
+  }
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
       detail:
-        "Carnivore fruit/dairy refusal diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints.",
+        "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints.",
     });
   }
   if (/\bglycine\s*(powder|capsules?|grams?)\b/i.test(trimmed)) {
@@ -189,31 +234,53 @@ export function checkFood(
   const hasPufa = flags.some((flag) =>
     ["seed-oil", "nut-staple", "fish-oil"].includes(flag.code),
   );
+  const hasJunk = flags.some((flag) => flag.code === "processed-junk");
   const hasSupport = flags.some((flag) =>
     ["ripe-fruit", "dairy", "cooked-starch", "gelatinous", "warm-fluid"].includes(
       flag.code,
     ),
   );
-  const communityNotPeat = flags.some((flag) => flag.code === "community-pcos");
+  const communityNotPeat = flags.some((flag) =>
+    ["community-pcos", "community-ashwagandha", "low-carb-gut-fix"].includes(
+      flag.code,
+    ),
+  );
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
+  const niacinamideNote = flags.some((flag) => flag.code === "niacinamide-note");
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
-  if (hasPufa && !hasSupport) {
+  if ((hasPufa || hasJunk) && !hasSupport) {
     verdict = "poor-fit";
-  } else if (hasSupport && !hasPufa && !communityNotPeat && !divergesFromPeat) {
+  } else if (
+    hasSupport &&
+    !hasPufa &&
+    !hasJunk &&
+    !communityNotPeat &&
+    !divergesFromPeat
+  ) {
     verdict = "supportive";
   }
+
+  const ashwagandhaOrLowCarb = flags.some((flag) =>
+    ["community-ashwagandha", "low-carb-gut-fix"].includes(flag.code),
+  );
 
   const summary =
     verdict === "supportive"
       ? "Fits the pro-metabolic plate: sugar from fruit/dairy, cooked food, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
-        ? "Poor metabolic fit as a staple. Swap the PUFA/lean-raw pattern for fruit, dairy if allowed, salt, and cooked starch."
+        ? hasJunk && !hasPufa
+          ? "Poor metabolic fit as a staple. Processed junk is not the fuel. Swap toward fruit, dairy if allowed, salt, and cooked starch."
+          : "Poor metabolic fit as a staple. Swap the PUFA/lean-raw pattern for fruit, dairy if allowed, salt, and cooked starch."
         : communityNotPeat
-          ? "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
+          ? ashwagandhaOrLowCarb
+            ? "Community, not Peat-primary. Ashwagandha and low-carb-as-gut-fix are not the move. Keep fruit/dairy sugars unless constrained; clinician if they are already supplementing. No doses."
+            : "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
-            ? "Carnivore fruit/dairy refusal diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
-            : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
+            ? "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
+            : niacinamideNote
+              ? "Niacinamide is sometimes discussed here as a food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing. Keep the plate on fruit, dairy if allowed, and cooked food."
+              : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
   return {
     food: trimmed,
