@@ -51,9 +51,9 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   {
     code: "gelatinous",
     pattern:
-      /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen\s+from\s+food|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
+      /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen(?:\s+(?:from\s+food|peptides?))?|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
     detail:
-      "Glycine via gelatin, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol.",
+      "Glycine via gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol. Collagen/gelatin overlap is OK.",
   },
 ];
 
@@ -71,8 +71,44 @@ const DAIRY_FOOD =
 const FRUIT_FOOD =
   /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice)\b/i;
 
+const ICE_CREAM = /\bice\s+cream\b/i;
+const PEAT_ICE_CREAM_INGREDIENT =
+  /\b(milk|eggs?|sugar|coconut(?:\s+(?:oil|milk|cream|butter))?)\b/i;
+const PEAT_STYLE_NAMED = /\bpeat(?:y|[-\s]style)?\b/i;
+
+const ALPACA_STYLE =
+  /\balpaca(?:'s)?\s*(?:herbs?[- ]only|steak[- ]centric|carnivore|diet|protocol|animal[- ]based)\b/i;
+
+function namedAlpacaDiverge(food: string): boolean {
+  if (ALPACA_STYLE.test(food)) {
+    return true;
+  }
+  return (
+    /\balpaca\b/i.test(food) &&
+    /\b(herbs?[- ]only|steak[- ]centric|carnivore|animal[- ]based)\b/i.test(food)
+  );
+}
+
+function alpacaHerbsOrSteak(food: string): boolean {
+  return (
+    /\balpaca\b/i.test(food) &&
+    /\b(herbs?[- ]only|steak[- ]centric)\b/i.test(food)
+  );
+}
+
+function peatStyleIceCream(food: string, hasSeedOil: boolean): boolean {
+  if (!ICE_CREAM.test(food) || hasSeedOil) {
+    return false;
+  }
+  return PEAT_STYLE_NAMED.test(food) || PEAT_ICE_CREAM_INGREDIENT.test(food);
+}
+
 function carnivoreDiverges(food: string): boolean {
-  if (!/\bcarnivore\b/i.test(food)) {
+  if (alpacaHerbsOrSteak(food)) {
+    return true;
+  }
+  const carnivoreish = /\bcarnivore\b/i.test(food) || namedAlpacaDiverge(food);
+  if (!carnivoreish) {
     return false;
   }
   if (FRUIT_DAIRY_REFUSAL.test(food)) {
@@ -171,11 +207,21 @@ export function checkFood(
         "Berberine / PCOS \"max\" stacks are community talk, not a Peat-primary move. Stay on food and rhythm; clinician for medical PCOS care. No doses.",
     });
   }
+
+  const hasSeedOil = flags.some((flag) => flag.code === "seed-oil");
+  if (peatStyleIceCream(trimmed, hasSeedOil)) {
+    flags.push({
+      code: "peat-ice-cream",
+      detail:
+        "Peat-style ice cream is a whitelist staple when the ingredients are milk, eggs, sugar, and/or coconut — not seed-oil junk. Collagen/gelatin in the mix is OK.",
+    });
+  }
+
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
       detail:
-        "Carnivore fruit/dairy refusal diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints.",
+        "Carnivore fruit/dairy refusal diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints. Alpaca herbs-only / steak-centric plates are that same diverge.",
     });
   }
   if (/\bglycine\s*(powder|capsules?|grams?)\b/i.test(trimmed)) {
@@ -190,12 +236,18 @@ export function checkFood(
     ["seed-oil", "nut-staple", "fish-oil"].includes(flag.code),
   );
   const hasSupport = flags.some((flag) =>
-    ["ripe-fruit", "dairy", "cooked-starch", "gelatinous", "warm-fluid"].includes(
-      flag.code,
-    ),
+    [
+      "ripe-fruit",
+      "dairy",
+      "cooked-starch",
+      "gelatinous",
+      "warm-fluid",
+      "peat-ice-cream",
+    ].includes(flag.code),
   );
   const communityNotPeat = flags.some((flag) => flag.code === "community-pcos");
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
+  const alpacaNamed = alpacaHerbsOrSteak(trimmed) || namedAlpacaDiverge(trimmed);
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if (hasPufa && !hasSupport) {
@@ -206,13 +258,17 @@ export function checkFood(
 
   const summary =
     verdict === "supportive"
-      ? "Fits the pro-metabolic plate: sugar from fruit/dairy, cooked food, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
+      ? flags.some((flag) => flag.code === "peat-ice-cream")
+        ? "Peat-style ice cream fits: milk, eggs, sugar, coconut — not seed-oil junk. Collagen/gelatin overlap is OK. Dairy sugar is a default fuel unless constrained."
+        : "Fits the pro-metabolic plate: sugar from fruit/dairy, cooked food, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? "Poor metabolic fit as a staple. Swap the PUFA/lean-raw pattern for fruit, dairy if allowed, salt, and cooked starch."
         : communityNotPeat
           ? "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
-            ? "Carnivore fruit/dairy refusal diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
+            ? alpacaNamed
+              ? "Alpaca herbs-only / steak-centric (or carnivore without fruit/dairy) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
+              : "Carnivore fruit/dairy refusal diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
             : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
   return {

@@ -17,14 +17,18 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
     pattern: /\b(aspirin|asa|salicylate)\b/i,
   },
   {
+    label: "cyproheptadine",
+    pattern: /\b(cyproheptadine|periactin)\b/i,
+  },
+  {
     label: "exogenous hormones",
     pattern:
-      /\b(progesterone\s*(oil|cream|capsule)|pregnenolone|dhea|hrt|trtr?|testosterone|estradiol|anastrozole|clomid)\b/i,
+      /\b(progesterone|pregnenolone|dhea|hrt|trtr?|testosterone|estradiol|anastrozole|clomid|hormone\s*(dosing|dose|protocol|stack|framing|cream|oil)|diy\s+hormones?)\b/i,
   },
   {
     label: "peptides / BPC",
     pattern:
-      /\b(bpc[-\s]?157|tb[-\s]?500|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide)\b/i,
+      /\b(bpc[-\s]?157|tb[-\s]?(?:500|4)\b|thymosin\s*beta[-\s]?4|ghk[-\s]?cu|copper\s+peptide|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching)|stack(?:ing)?\s+peptides?)\b/i,
   },
   {
     label: "DIY bromantane",
@@ -49,7 +53,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, sex hormones, peptides (including BPC-157), bromantane, or dopamine/prolactin stacks. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, cyproheptadine, sex hormones (including progesterone), peptides (including BPC-157, TB-4/TB-500, GHK-Cu, and oral Vilon), bromantane, or dopamine/prolactin stacks. No peptide-stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";

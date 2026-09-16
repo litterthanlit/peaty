@@ -22,17 +22,27 @@ test("lockBrief always writes Safety-gate: ON", () => {
   assert.doesNotMatch(brief.screen, /Safety-gate: OFF/);
 });
 
-test("checkSafety blocks DIY T3, aspirin, hormones, BPC, bromantane, and dopamine/prolactin stacks", () => {
+test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, bromantane, and dopamine/prolactin stacks", () => {
   assert.equal(checkSafety("start T3 at 12.5 mcg").verdict, "block");
   assert.equal(checkSafety("aspirin protocol with coffee").verdict, "block");
+  assert.equal(checkSafety("cyproheptadine for serotonin gut inflammation").verdict, "block");
+  assert.equal(checkSafety("periactin at night for histamine").verdict, "block");
   assert.equal(checkSafety("progesterone oil every night").verdict, "block");
+  assert.equal(checkSafety("DIY progesterone dosing talk").verdict, "block");
+  assert.equal(checkSafety("hormone framing and dosing this week").verdict, "block");
   assert.equal(checkSafety("BPC-157 for my gut").verdict, "block");
+  assert.equal(checkSafety("TB-4 peptide for recovery").verdict, "block");
+  assert.equal(checkSafety("TB-500 for my tendon").verdict, "block");
+  assert.equal(checkSafety("GHK-Cu for skin").verdict, "block");
+  assert.equal(checkSafety("oral Vilon this month").verdict, "block");
+  assert.equal(checkSafety("peptide stack coaching please").verdict, "block");
   assert.equal(checkSafety("bromantane AM empty stomach").verdict, "block");
   assert.equal(checkSafety("ladasten for dopamine").verdict, "block");
   assert.equal(checkSafety("dopamine stack this week").verdict, "block");
   assert.equal(checkSafety("prolactin protocol with cabergoline").verdict, "block");
   assert.equal(checkSafety("orange juice and milk").verdict, "ok");
   assert.equal(checkSafety("I feel low dopamine in the afternoon").verdict, "ok");
+  assert.equal(checkSafety("collagen peptides in orange juice").verdict, "ok");
 });
 
 test("checkSafety redirect names the new refusals and never echoes doses", () => {
@@ -50,6 +60,27 @@ test("checkSafety redirect names the new refusals and never echoes doses", () =>
   assert.equal(abud.matched.includes("DIY T3 / thyroid hormone"), true);
   assert.doesNotMatch(abud.redirect, /12\.5/);
   assert.doesNotMatch(abud.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const peptides = checkSafety(
+    "AbudBakri peptide discourse: TB-4 plus GHK-Cu 2mg and oral Vilon",
+  );
+  assert.equal(peptides.verdict, "block");
+  assert.equal(peptides.matched.includes("peptides / BPC"), true);
+  assert.match(peptides.redirect, /TB-4\/TB-500/);
+  assert.match(peptides.redirect, /GHK-Cu/);
+  assert.match(peptides.redirect, /Vilon/);
+  assert.match(peptides.redirect, /peptide-stack/);
+  assert.match(peptides.redirect, /clinician/);
+  assert.doesNotMatch(peptides.redirect, /2mg/);
+  assert.doesNotMatch(peptides.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const prog = checkSafety("BioavailableNd RT progesterone 100mg hormone dosing");
+  assert.equal(prog.verdict, "block");
+  assert.equal(prog.matched.includes("exogenous hormones"), true);
+  assert.match(prog.redirect, /progesterone/);
+  assert.match(prog.redirect, /cyproheptadine/);
+  assert.doesNotMatch(prog.redirect, /100/);
+  assert.doesNotMatch(prog.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
 });
 
 test("asking to turn the gate off does not disable checkSafety", () => {
@@ -120,6 +151,22 @@ test("other skills cannot skip a blocked inbound ask", () => {
   });
   assert.equal(lock.kind, "safety-block");
   assert.equal(lock.safety.matched.includes("peptides / BPC"), true);
+
+  const peptideLock = buildTurnLock({
+    inboundText: "AbudBakri peptide discourse: stack TB-4 and GHK-Cu",
+    brief: lockBrief({
+      primaryGoal: "recovery",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(peptideLock.kind, "safety-block");
+  assert.equal(peptideLock.safety.matched.includes("peptides / BPC"), true);
+  assert.match(peptideLock.content, /Do not load metabolism-function/);
+  assert.doesNotMatch(peptideLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
 });
 
 test("food-check honors dairy as a hard constraint", () => {
@@ -145,6 +192,17 @@ test("food-check prefers warm fluids, glycine from food, and labels community PC
   assert.match(
     gelatin.flags.find((flag) => flag.code === "gelatinous")?.detail ?? "",
     /Glycine via gelatin/,
+  );
+
+  const collagen = checkFood("collagen peptides with gelatin in milk", []);
+  assert.equal(collagen.verdict, "supportive");
+  assert.equal(
+    collagen.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+  assert.match(
+    collagen.flags.find((flag) => flag.code === "gelatinous")?.detail ?? "",
+    /Collagen\/gelatin overlap is OK/,
   );
 
   const berberine = checkFood("berberine PCOS max stack", []);
@@ -176,6 +234,25 @@ test("food-check flags carnivore fruit/dairy refusal as diverging from Peat", ()
     peatLike.flags.some((flag) => flag.code === "carnivore-divergence"),
     false,
   );
+
+  const alpacaHerbs = checkFood("Alpaca herbs-only plate", []);
+  assert.equal(
+    alpacaHerbs.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.match(alpacaHerbs.summary, /Alpaca herbs-only \/ steak-centric/);
+
+  const alpacaSteakCentric = checkFood("Alpaca steak-centric no fruit no dairy", []);
+  assert.equal(
+    alpacaSteakCentric.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+
+  const alpacaMeat = checkFood("alpaca steak", []);
+  assert.equal(
+    alpacaMeat.flags.some((flag) => flag.code === "carnivore-divergence"),
+    false,
+  );
 });
 
 test("food-check does not treat ice cream as an iced drink", () => {
@@ -188,6 +265,45 @@ test("food-check does not treat ice cream as an iced drink", () => {
     cream.flags.some((flag) => flag.code === "dairy"),
     true,
   );
+});
+
+test("food-check whitelists Peat-style ice cream and rejects seed-oil junk", () => {
+  const peat = checkFood(
+    "Peat-style ice cream with milk, eggs, sugar, coconut",
+    [],
+  );
+  assert.equal(peat.verdict, "supportive");
+  assert.equal(
+    peat.flags.some((flag) => flag.code === "peat-ice-cream"),
+    true,
+  );
+  assert.match(peat.summary, /Peat-style ice cream/);
+  assert.doesNotMatch(peat.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const withGelatin = checkFood(
+    "ice cream from milk eggs sugar coconut and gelatin collagen",
+    [],
+  );
+  assert.equal(withGelatin.verdict, "supportive");
+  assert.equal(
+    withGelatin.flags.some((flag) => flag.code === "peat-ice-cream"),
+    true,
+  );
+  assert.equal(
+    withGelatin.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+
+  const junk = checkFood("ice cream with soybean oil and canola", []);
+  assert.equal(
+    junk.flags.some((flag) => flag.code === "peat-ice-cream"),
+    false,
+  );
+  assert.equal(
+    junk.flags.some((flag) => flag.code === "seed-oil"),
+    true,
+  );
+  assert.notEqual(junk.verdict, "supportive");
 });
 
 test("extractLastUserText reads the latest user role message", () => {

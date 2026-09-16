@@ -8,10 +8,10 @@ Ray Peat / pro-metabolic coaching agent on [eve](https://eve.dev). Raise the bur
 | --- | --- |
 | `onboarding` | Four beats (goal, optional markers, hard constraints, do-not-do) → one-screen brief. Safety-gate ON. No off switch. |
 | `metabolism-function` | Metabolic function, not a cut. |
-| `fluid-lymph` | Salt, minerals, lymph/fluid movement. |
-| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Prefer warm/room-temp fluids; glycine via gelatin/stocks/cartilage. Berberine/PCOS max stacks are community, not Peat-primary. Carnivore fruit/dairy refusal diverges from Peat. |
-| `source-digest` | Week recap from logs, or a pasted Peat source → practical move. |
-| `safety-gate` | Refuse DIY T3/T4/NDT, aspirin protocols, hormones, BPC, bromantane, and dopamine/prolactin stacks; send that to a clinician. Never echo community doses. |
+| `fluid-lymph` | Salt, minerals, lymph/fluid movement. Mineralized salted water + eat-your-hydration. Not water restriction or spa detox. SolBrah/BioavailableNd are source-digest labels only. |
+| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut, not seed-oil junk). Collagen/gelatin overlap OK. Berberine/PCOS max stacks are community, not Peat-primary. Carnivore fruit/dairy refusal and Alpaca herbs-only / steak-centric diverge from Peat. |
+| `source-digest` | Week recap from logs, or a pasted Peat source → practical move. Community handles are labels, not medical claims. |
+| `safety-gate` | Refuse DIY T3/T4/NDT, aspirin, cyproheptadine, progesterone/hormone dosing, BPC-157, TB-4/TB-500, GHK-Cu, oral Vilon, peptide stacks, bromantane, and dopamine/prolactin stacks; send that to a clinician. Never echo community doses. |
 
 No seventh skill lane. No payments. No store.
 
