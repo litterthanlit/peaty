@@ -61,7 +61,7 @@ export default defineTool({
       blobPersisted: blob.persisted,
       blobIdentity: blob.persisted ? "eve-byPrincipal" : blob.reason,
       reminder:
-        "Safety-gate is ON and cannot be turned off. Dairy or fruit refusals are hard constraints, not Peat defaults. No DIY T3, aspirin protocols, hormones, or BPC.",
+        "Safety-gate is ON and cannot be turned off. Dairy or fruit refusals are hard constraints, not Peat defaults. No DIY T3, aspirin, hormones, peptides, or AAS/Anavar.",
     };
   },
 });
