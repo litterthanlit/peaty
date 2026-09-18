@@ -30,7 +30,7 @@ Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK her
 
 1. Call `food_check` with the food and how it was cooked/fatted.
 2. Read `verdict`, `flags`, and `constraintHits`.
-3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3, aspirin, hormones, BPC, bromantane, dopamine/prolactin stacks), stop — safety-gate already locked the turn.
+3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3 self-dosing, topical or oral aspirin, hormones, oral or injected BPC, GHK-Cu, TB-4/TB-500/Vilon, AAS, bromantane, cypro, dopamine/prolactin stacks, or antimicrobial gut-kill stacks), stop — safety-gate already locked the turn.
 
 ## Do not
 
