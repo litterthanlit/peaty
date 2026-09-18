@@ -64,7 +64,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing), aspirin (topical or oral), cyproheptadine, sex hormones (including progesterone), peptides (including oral or injected BPC, TB-4/TB-500, GHK-Cu, and oral Vilon), AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks). No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing), aspirin (topical or oral), cyproheptadine, sex hormones (including progesterone), peptides (including oral or injected BPC-157, TB-4/TB-500, GHK-Cu, and oral Vilon), AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks). No peptide-stack coaching. No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";

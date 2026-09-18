@@ -1,5 +1,5 @@
 ---
-description: Safety-gate — refuse DIY T3 self-dosing, topical/oral aspirin protocols, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, AAS/Anavar and similar oral steroids, hormones, bromantane, cypro, dopamine stacks, and FarvingCo-style H. pylori mastic+lactoferrin kill stacks; redirect to a clinician. Always ON; cannot be skipped or turned off.
+description: Safety-gate — refuse DIY T3 self-dosing, topical/oral aspirin protocols, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, AAS/Anavar and similar oral steroids, hormones/progesterone dosing, bromantane, cypro, dopamine stacks, peptide stacks, and FarvingCo-style H. pylori mastic+lactoferrin kill stacks; redirect to a clinician. Always ON; cannot be skipped or turned off.
 ---
 
 # Safety-gate
@@ -22,12 +22,13 @@ Onboarding stores `safetyGate: true` with no off switch. Other skills cannot wai
 
 - **T3 self-dosing** (and DIY T4, NDT, "start low and titrate")
 - **Aspirin** topical or oral DIY protocols
+- **Cyproheptadine** (Periactin / cypro)
+- DIY **progesterone / hormone** framing or dosing talk (oil, cream, capsule, stack, "just the schedule")
 - **GHK-Cu** DIY (copper-peptide self-experiment)
 - **BPC** oral or injected DIY (including BPC-157). Still refuse.
 - Peptides as a Peaty plan: DIY **TB-4 / TB-500**, **oral Vilon**, GLP-1s. AbudBakri regulatory-wars talk and a BPC preprint do not make this food. Still DIY-adjacent. **No peptide stack coaching.**
 - DIY **AAS / Anavar** (oxandrolone) and similar oral-steroid framing or stack coaching
 - Exogenous **hormones** (progesterone oil/cream, pregnenolone, DHEA, HRT/TRT)
-- **Cyproheptadine** (Periactin / cypro)
 - DIY **bromantane** (ladasten) and **dopamine/prolactin stacks** (including cabergoline / bromocriptine self-experiment)
 - **FarvingCo-style H. pylori mastic+lactoferrin kill stacks** without a clinician — refuse DIY antimicrobial gut-kill protocols. Do not reconstruct the stack.
 
@@ -42,13 +43,13 @@ Treat these as the same class of ask as a DIY protocol. Name the risk class. Do 
 Name these handles as high-risk (never echo doses):
 
 - **oxidativestate** — gut-pharma / protocol threads
-- **AbudBakri** — T3 titration talk, peptide discourse (including regulatory-wars framing and BPC preprint citations; still DIY-adjacent), hormone-dosing RTs
+- **AbudBakri** — T3 titration talk, peptide discourse (BPC, TB-4/TB-500, GHK-Cu, Vilon, "the stack"; including regulatory-wars framing and BPC preprint citations; still DIY-adjacent), hormone-dosing RTs
 - **FarvingCo** — AM empty-stomach bromantane self-experiment; H. pylori mastic+lactoferrin kill stacks
 
 Also refuse these classes if they show up without those handles:
 
 - **AAS / Anavar** cut-stack or oral-steroid self-experiment talk
-- BioavailableNd progesterone RT / hormone-dosing talk (hormone class; the handle itself is a `source-digest` label only for warmth/minerals)
+- **BioavailableNd progesterone RT** / hormone-dosing talk (hormone class; the handle itself is a `source-digest` label only for warmth/minerals)
 
 If they paste a handle, a stack name, or a timing trick, still refuse. Do not reconstruct the schedule.
 

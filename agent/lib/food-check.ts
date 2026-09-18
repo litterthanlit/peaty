@@ -57,9 +57,9 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   {
     code: "gelatinous",
     pattern:
-      /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen\s+from\s+food|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
+      /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen(?:\s+(?:from\s+food|peptides?))?|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
     detail:
-      "Glycine via gelatin, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol.",
+      "Glycine via gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol. Collagen/gelatin overlap is OK.",
   },
 ];
 
@@ -95,10 +95,29 @@ function namedAlpacaSaladinoCarnivore(food: string): boolean {
   );
 }
 
+function alpacaHerbsOrSteak(food: string): boolean {
+  return (
+    /\balpaca\b/i.test(food) &&
+    /\b(herbs?[- ]only|steak[- ]centric)\b/i.test(food)
+  );
+}
+
+const ICE_CREAM = /\bice\s+cream\b/i;
+const PEAT_ICE_CREAM_INGREDIENT =
+  /\b(milk|eggs?|sugar|coconut(?:\s+(?:oil|milk|cream|butter))?)\b/i;
+const PEAT_STYLE_NAMED = /\bpeat(?:y|[-\s]style)?\b/i;
+
+function peatStyleIceCream(food: string, hasSeedOil: boolean): boolean {
+  if (!ICE_CREAM.test(food) || hasSeedOil) {
+    return false;
+  }
+  return PEAT_STYLE_NAMED.test(food) || PEAT_ICE_CREAM_INGREDIENT.test(food);
+}
+
 function carnivoreDiverges(food: string): boolean {
   // Named Alpaca/Saladino carnivore always flags the fruit/dairy split.
-  // Carrots or other carbs overlapping do not cancel it.
-  if (namedAlpacaSaladinoCarnivore(food)) {
+  // Herbs-only / steak-centric and carrots/carbs overlapping do not cancel it.
+  if (alpacaHerbsOrSteak(food) || namedAlpacaSaladinoCarnivore(food)) {
     return true;
   }
   if (!/\bcarnivore\b/i.test(food)) {
@@ -201,11 +220,21 @@ export function checkFood(
         "Berberine / PCOS \"max\" stacks are community talk, not a Peat-primary move. Stay on food and rhythm; clinician for medical PCOS care. No doses.",
     });
   }
+
+  const hasSeedOil = flags.some((flag) => flag.code === "seed-oil");
+  if (peatStyleIceCream(trimmed, hasSeedOil)) {
+    flags.push({
+      code: "peat-ice-cream",
+      detail:
+        "Peat-style ice cream is a whitelist staple when the ingredients are milk, eggs, sugar, and/or coconut — not seed-oil junk. Collagen/gelatin in the mix is OK.",
+    });
+  }
+
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
-      detail: namedAlpacaSaladinoCarnivore(trimmed)
-        ? "Alpaca/Saladino carnivore fruit/dairy split diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots or other carbs overlapping do not cancel that split."
+      detail: namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed)
+        ? "Alpaca/Saladino carnivore fruit/dairy split (including Alpaca herbs-only / steak-centric) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots or other carbs overlapping do not cancel that split."
         : "Carnivore fruit/dairy refusal diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not stand in for fruit and dairy.",
     });
   }
@@ -221,13 +250,20 @@ export function checkFood(
     ["seed-oil", "nut-staple", "fish-oil"].includes(flag.code),
   );
   const hasSupport = flags.some((flag) =>
-    ["ripe-fruit", "dairy", "cooked-starch", "raw-carrot", "gelatinous", "warm-fluid"].includes(
-      flag.code,
-    ),
+    [
+      "ripe-fruit",
+      "dairy",
+      "cooked-starch",
+      "raw-carrot",
+      "gelatinous",
+      "warm-fluid",
+      "peat-ice-cream",
+    ].includes(flag.code),
   );
   const communityNotPeat = flags.some((flag) => flag.code === "community-pcos");
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
-  const alpacaSaladino = namedAlpacaSaladinoCarnivore(trimmed);
+  const alpacaNamed =
+    alpacaHerbsOrSteak(trimmed) || namedAlpacaSaladinoCarnivore(trimmed);
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if (hasPufa && !hasSupport) {
@@ -238,17 +274,19 @@ export function checkFood(
 
   const summary =
     verdict === "supportive"
-      ? flags.some((flag) => flag.code === "raw-carrot") &&
-        !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
-        ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
-        : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
+      ? flags.some((flag) => flag.code === "peat-ice-cream")
+        ? "Peat-style ice cream fits: milk, eggs, sugar, coconut — not seed-oil junk. Collagen/gelatin overlap is OK. Dairy sugar is a default fuel unless constrained."
+        : flags.some((flag) => flag.code === "raw-carrot") &&
+            !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
+          ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
+          : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? "Poor metabolic fit as a staple. Swap the PUFA/lean-raw pattern for fruit, dairy if allowed, salt, and cooked starch."
         : communityNotPeat
           ? "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
-            ? alpacaSaladino
-              ? "Alpaca/Saladino carnivore fruit/dairy split diverges from Peat even when carrots or carbs overlap. Fruit and dairy are OK here unless you listed them as hard constraints."
+            ? alpacaNamed
+              ? "Alpaca herbs-only / steak-centric (or Alpaca/Saladino carnivore without fruit/dairy) diverges from Peat even when carrots or carbs overlap. Fruit and dairy are OK here unless you listed them as hard constraints."
               : "Carnivore fruit/dairy refusal diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not replace that."
             : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
