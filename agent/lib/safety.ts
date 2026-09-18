@@ -10,15 +10,16 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "DIY T3 / thyroid hormone",
     pattern:
-      /\b(t3|cytomel|liothyronine|levothyroxine|synthroid|t4|armour\s*thyroid|ndtj?|wp\s*thyroid)\b/i,
+      /\b(t3|cytomel|liothyronine|levothyroxine|synthroid|t4|armour\s*thyroid|ndtj?|wp\s*thyroid|self[-\s]?dos(?:e|ing)\s+t3|t3\s+self[-\s]?dos(?:e|ing))\b/i,
   },
   {
     label: "aspirin protocol",
-    pattern: /\b(aspirin|asa|salicylate)\b/i,
+    pattern:
+      /\b((topical|oral)\s+aspirin|aspirin(\s+(cream|gel|topical|oral|protocol|diy))?|asa|salicylate)\b/i,
   },
   {
     label: "cyproheptadine",
-    pattern: /\b(cyproheptadine|periactin)\b/i,
+    pattern: /\b(cyproheptadine|periactin|cypro)\b/i,
   },
   {
     label: "exogenous hormones",
@@ -28,7 +29,12 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "peptides / BPC",
     pattern:
-      /\b(bpc[-\s]?157|tb[-\s]?(?:500|4)\b|thymosin\s*beta[-\s]?4|ghk[-\s]?cu|copper\s+peptide|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching)|stack(?:ing)?\s+peptides?)\b/i,
+      /\b((?:oral|inject(?:ed|ing)?|diy)\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?(?:\s+(?:oral|inject(?:ed|ing)?|diy))?|tb[-\s]?(?:500|4)\b|thymosin\s*beta[-\s]?4|ghk[-\s]?cu|copper\s+peptide|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching)|stack(?:ing)?\s+peptides?)\b/i,
+  },
+  {
+    label: "DIY AAS / oral steroids",
+    pattern:
+      /\b(anavar|oxandrolone|winstrol|stanozolol|dianabol|dbol|anadrol|oxymetholone|turinabol|superdrol|anabolic(?:-androgenic)?\s+steroids?|\baas\b|oral\s+steroids?|steroid\s+(?:stack|cycle|protocol|framing)|(?:stack|cycle|protocol)\b[^.!?\n]{0,48}\b(?:anavar|oxandrolone|aas|oral\s+steroids?))\b/i,
   },
   {
     label: "DIY bromantane",
@@ -38,6 +44,11 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
     label: "dopamine / prolactin stack",
     pattern:
       /\b((dopamine|prolactin)\b[^.!?\n]{0,80}\b(stack|protocol|agonists?)|(stack|protocol)\b[^.!?\n]{0,80}\b(dopamine|prolactin)|cabergoline|bromocriptine|dostinex)\b/i,
+  },
+  {
+    label: "DIY antimicrobial gut-kill",
+    pattern:
+      /\b((h\.?\s*pylori|helicobacter)[^.!?\n]{0,100}\b(kill|eradicat|stack|protocol|mastic|lactoferrin|antimicrobial)|(mastic|mastica)\b[^.!?\n]{0,80}\b(lactoferrin)|(lactoferrin)\b[^.!?\n]{0,80}\b(mastic|mastica)|(diy\s+)?(antimicrobial\s+gut[-\s]?kill|gut[-\s]?kill)\s+(stack|protocol)|(antimicrobial)\s+(stack|protocol|kill)[^.!?\n]{0,40}\b(gut|pylori|helicobacter))\b/i,
   },
 ];
 
@@ -53,7 +64,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone, aspirin, cyproheptadine, sex hormones (including progesterone), peptides (including BPC-157, TB-4/TB-500, GHK-Cu, and oral Vilon), bromantane, or dopamine/prolactin stacks. No peptide-stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing), aspirin (topical or oral), cyproheptadine, sex hormones (including progesterone), peptides (including oral or injected BPC-157, TB-4/TB-500, GHK-Cu, and oral Vilon), AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks). No peptide-stack coaching. No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";

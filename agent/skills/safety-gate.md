@@ -1,5 +1,5 @@
 ---
-description: Safety-gate — refuse DIY T3/T4/NDT, aspirin, cyproheptadine, progesterone/hormone dosing, BPC/TB-4/TB-500/GHK-Cu/oral Vilon and peptide stacks, bromantane, and dopamine/prolactin stacks; redirect to a clinician. Always ON; cannot be skipped or turned off.
+description: Safety-gate — refuse DIY T3 self-dosing, topical/oral aspirin protocols, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, AAS/Anavar and similar oral steroids, hormones/progesterone dosing, bromantane, cypro, dopamine stacks, peptide stacks, and FarvingCo-style H. pylori mastic+lactoferrin kill stacks; redirect to a clinician. Always ON; cannot be skipped or turned off.
 ---
 
 # Safety-gate
@@ -20,31 +20,44 @@ Onboarding stores `safetyGate: true` with no off switch. Other skills cannot wai
 
 ## Refuse (no doses, no "talk to your doctor and then here's the schedule")
 
-- DIY T3, T4, NDT, "start low and titrate"
-- DIY **aspirin** protocols
-- **Cyproheptadine** (Periactin)
+- **T3 self-dosing** (and DIY T4, NDT, "start low and titrate")
+- **Aspirin** topical or oral DIY protocols
+- **Cyproheptadine** (Periactin / cypro)
 - DIY **progesterone / hormone** framing or dosing talk (oil, cream, capsule, stack, "just the schedule")
-- Peptides as a Peaty plan: **BPC-157** (still refused), DIY **TB-4 / TB-500**, **GHK-Cu**, **oral Vilon**, GLP-1s. **No peptide stack coaching.** Clinician redirect always.
-- DIY bromantane (ladasten) and dopamine/prolactin stacks (including cabergoline / bromocriptine self-experiment)
+- **GHK-Cu** DIY (copper-peptide self-experiment)
+- **BPC** oral or injected DIY (including BPC-157). Still refuse.
+- Peptides as a Peaty plan: DIY **TB-4 / TB-500**, **oral Vilon**, GLP-1s. AbudBakri regulatory-wars talk and a BPC preprint do not make this food. Still DIY-adjacent. **No peptide stack coaching.**
+- DIY **AAS / Anavar** (oxandrolone) and similar oral-steroid framing or stack coaching
+- Exogenous **hormones** (progesterone oil/cream, pregnenolone, DHEA, HRT/TRT)
+- DIY **bromantane** (ladasten) and **dopamine/prolactin stacks** (including cabergoline / bromocriptine self-experiment)
+- **FarvingCo-style H. pylori mastic+lactoferrin kill stacks** without a clinician — refuse DIY antimicrobial gut-kill protocols. Do not reconstruct the stack.
 
-Redirect: licensed clinician who can see them and their labs. Always. No DIY protocol after the redirect. Do not reconstruct a stack.
+Redirect: licensed clinician who can see them and their labs. Always. No DIY protocol after the redirect. **No stack coaching.** Do not reconstruct a cycle.
+
+**lennartprimal** aspirin skepticism is a **community** signal that supports this aspirin refusal. Label it community, not Peat-primary. Still refuse topical or oral aspirin DIY. Do not cite the handle as a Peat source.
 
 ## Community high-risk (recognize; never echo doses)
 
 Treat these as the same class of ask as a DIY protocol. Name the risk class. Do not repeat milligram or mcg figures from the paste or from community lore — not even to "warn."
 
-- FarvingCo-style AM empty-stomach bromantane self-experiment
-- AbudBakri-style T3 microgram titration talk
-- **AbudBakri peptide discourse** (BPC, TB-4/TB-500, GHK-Cu, Vilon, "the stack")
-- **BioavailableNd progesterone RT** / hormone-dosing talk
+Name these handles as high-risk (never echo doses):
+
+- **oxidativestate** — gut-pharma / protocol threads
+- **AbudBakri** — T3 titration talk, peptide discourse (BPC, TB-4/TB-500, GHK-Cu, Vilon, "the stack"; including regulatory-wars framing and BPC preprint citations; still DIY-adjacent), hormone-dosing RTs
+- **FarvingCo** — AM empty-stomach bromantane self-experiment; H. pylori mastic+lactoferrin kill stacks
+
+Also refuse these classes if they show up without those handles:
+
+- **AAS / Anavar** cut-stack or oral-steroid self-experiment talk
+- **BioavailableNd progesterone RT** / hormone-dosing talk (hormone class; the handle itself is a `source-digest` label only for warmth/minerals)
 
 If they paste a handle, a stack name, or a timing trick, still refuse. Do not reconstruct the schedule.
 
 ## Never
 
-- "I'm not a doctor, but 12.5 mcg…"
-- Repeating a community milligram figure for bromantane, peptides, progesterone, cyproheptadine, aspirin, or anyone else's thyroid titration
+- "I'm not a doctor, but start low and titrate…"
+- Repeating a community milligram or mcg figure for GHK-Cu, BPC, aspirin, T3, bromantane, peptides, Anavar/AAS, progesterone, cyproheptadine, mastic, lactoferrin, or anyone else's thyroid titration
 - Mixing a shop or affiliate into the refusal
 - Pretending a food swap is a substitute prescription
-- Letting source-digest or metabolism-function "just explain the protocol"
-- Coaching a peptide stack "around" the gate
+- Letting source-digest, fluid-lymph, or metabolism-function "just explain the protocol"
+- Coaching a peptide, AAS, aspirin, or antimicrobial gut-kill stack "around" the gate
