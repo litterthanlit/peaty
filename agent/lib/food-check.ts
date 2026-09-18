@@ -6,8 +6,8 @@ export type FoodFlag = {
 export type FoodCheckResult = {
   food: string;
   verdict: "supportive" | "mixed" | "poor-fit" | "blocked";
-  summary: string;
   flags: FoodFlag[];
+  summary: string;
   constraintHits: string[];
 };
 
@@ -36,8 +36,8 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   {
     code: "ripe-fruit",
     pattern:
-      /\b(orange|oj|orange\s+juice|ripe\s+fruit|mango|papaya|watermelon|grapes?|apple\s+juice|honey)\b/i,
-    detail: "Fruit sugar is a default fuel here, unless you listed fruit as a hard constraint.",
+      /\b(orange|oj|orange\s+juice|ripe\s+fruit|mango|papaya|watermelon|grapes?|apple\s+juice|honey|pomegranate|pom(?:egranate)?\s*juice)\b/i,
+    detail: "Fruit sugar is a default fuel here, unless you listed fruit as a hard constraint. Pomegranate / pom juice is Peat-aligned.",
   },
   {
     code: "dairy",
@@ -49,6 +49,12 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
     code: "cooked-starch",
     pattern: /\b(potato|white\s+rice|sourdough|pasta|ripe\s+banana)\b/i,
     detail: "Cooked starch with a sugar/protein partner is easier to burn than a lean-and-raw plate.",
+  },
+  {
+    code: "raw-carrot",
+    pattern: /\b((?:raw\s+)?carrots?|carrot\s+salad)\b/i,
+    detail:
+      "Raw carrot is Peat-aligned (fiber/endotoxin angle, food first). It does not cancel a carnivore fruit/dairy split.",
   },
   {
     code: "gelatinous",
@@ -70,26 +76,39 @@ const LOW_CARB = /\b(low[-\s]?carb|keto)\b/i;
 const PROCESSED_JUNK =
   /\b(ultra[-\s]?processed|processed\s+junk|junk\s+food|doritos|cheetos|potato\s+chips|corn\s+chips|fast\s+food|seed[-\s]?oil\s+snacks?|packaged\s+snacks?)\b/i;
 const NIACINAMIDE = /\b(niacinamide|nicotinamide)\b/i;
-const SALADINO_ALPACA =
-  /\b(saladino|paul\s+saladino)\b|\balpaca(?:'s)?\s*(?:carnivore|diet|protocol|animal[-\s]?based)\b/i;
 const FRUIT_DAIRY_REFUSAL =
   /\b(?:(?:no|without|refuse[sd]?|avoid(?:ing)?)\s+(?:fruit|dairy)|(?:fruit|dairy)[^\n]{0,24}refus)/i;
 
 const DAIRY_FOOD =
   /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose)\b/i;
 const FRUIT_FOOD =
-  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice)\b/i;
+  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice|pomegranate|pom(?:egranate)?\s*juice)\b/i;
 
-function namedCarnivoreOrbit(food: string): boolean {
-  if (SALADINO_ALPACA.test(food)) {
+const SALADINO =
+  /\b(saladino|paul\s+saladino|carnivoremd)\b/i;
+const ALPACA_STYLE =
+  /\balpaca(?:'s)?\s*(?:herbs?[- ]only|steak[- ]centric|carnivore|diet|protocol|animal[- ]based)\b/i;
+
+function namedAlpacaSaladinoCarnivore(food: string): boolean {
+  if (SALADINO.test(food)) {
     return true;
   }
-  return /\balpaca\b/i.test(food) && /\b(carnivore|animal[-\s]?based)\b/i.test(food);
+  if (ALPACA_STYLE.test(food)) {
+    return true;
+  }
+  return (
+    /\balpaca\b/i.test(food) &&
+    /\b(herbs?[- ]only|steak[- ]centric|carnivore|animal[- ]based)\b/i.test(food)
+  );
 }
 
 function carnivoreDiverges(food: string): boolean {
-  const carnivoreish = /\bcarnivore\b/i.test(food) || namedCarnivoreOrbit(food);
-  if (!carnivoreish) {
+  // Named Alpaca/Saladino carnivore always flags the fruit/dairy split.
+  // Carrots or other carbs overlapping do not cancel it.
+  if (namedAlpacaSaladinoCarnivore(food)) {
+    return true;
+  }
+  if (!/\bcarnivore\b/i.test(food)) {
     return false;
   }
   if (FRUIT_DAIRY_REFUSAL.test(food)) {
@@ -161,10 +180,11 @@ export function checkFood(
     }
   }
 
-  if (/\b(fast|omad|keto|low[-\s]?carb|calorie\s*deficit|crash)\b/i.test(trimmed)) {
+  if (/\b(fast|omad|keto|low[-\s]?carb|calorie\s*deficit|crash|skip(?:ping)?\s+breakfast)\b/i.test(trimmed)) {
     flags.push({
       code: "underfuel",
-      detail: "Peaty does not coach crash diets. Raise the burn; do not starve it.",
+      detail:
+        "Peaty does not coach crash diets or skipped breakfast. Raise the burn with morning digestible carbs (milk, OJ, fruit, honey if allowed); do not starve it.",
     });
   }
 
@@ -219,8 +239,9 @@ export function checkFood(
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
-      detail:
-        "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints.",
+      detail: namedAlpacaSaladinoCarnivore(trimmed)
+        ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots or other carbs overlapping do not cancel that split."
+        : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not stand in for fruit and dairy.",
     });
   }
   if (/\bglycine\s*(powder|capsules?|grams?)\b/i.test(trimmed)) {
@@ -236,7 +257,7 @@ export function checkFood(
   );
   const hasJunk = flags.some((flag) => flag.code === "processed-junk");
   const hasSupport = flags.some((flag) =>
-    ["ripe-fruit", "dairy", "cooked-starch", "gelatinous", "warm-fluid"].includes(
+    ["ripe-fruit", "dairy", "cooked-starch", "raw-carrot", "gelatinous", "warm-fluid"].includes(
       flag.code,
     ),
   );
@@ -247,6 +268,7 @@ export function checkFood(
   );
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
   const niacinamideNote = flags.some((flag) => flag.code === "niacinamide-note");
+  const alpacaSaladino = namedAlpacaSaladinoCarnivore(trimmed);
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if ((hasPufa || hasJunk) && !hasSupport) {
@@ -267,7 +289,10 @@ export function checkFood(
 
   const summary =
     verdict === "supportive"
-      ? "Fits the pro-metabolic plate: sugar from fruit/dairy, cooked food, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
+      ? flags.some((flag) => flag.code === "raw-carrot") &&
+        !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
+        ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
+        : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? hasJunk && !hasPufa
           ? "Poor metabolic fit as a staple. Processed junk is not the fuel. Swap toward fruit, dairy if allowed, salt, and cooked starch."
@@ -277,7 +302,9 @@ export function checkFood(
             ? "Community, not Peat-primary. Ashwagandha and low-carb-as-gut-fix are not the move. Keep fruit/dairy sugars unless constrained; clinician if they are already supplementing. No doses."
             : "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
-            ? "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints."
+            ? alpacaSaladino
+              ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split diverges from Peat even when carrots or carbs overlap. Fruit and dairy are OK here unless you listed them as hard constraints."
+              : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not replace that."
             : niacinamideNote
               ? "Niacinamide is sometimes discussed here as a food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing. Keep the plate on fruit, dairy if allowed, and cooked food."
               : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";

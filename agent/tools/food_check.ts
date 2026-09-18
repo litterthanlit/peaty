@@ -7,7 +7,7 @@ import { peatySession } from "../lib/session-state";
 
 export default defineTool({
   description:
-    "Score a food or meal against Peaty defaults (raise burn, dairy+fruit sugars, low PUFA, warm/room-temp fluids, glycine from beef gelatin/stocks/cartilage) and the user's hard constraints. Dairy and fruit are allowed unless the user listed them as constraints. Label berberine/PCOS max stacks, ashwagandha, and omega-3/fish-oil megadoses as community, not Peat-primary. Processed junk is a poor staple. Carnivore fruit/dairy refusal (Saladino/Alpaca-style) diverges from Peat.",
+    "Score a food or meal against Peaty defaults (raise burn, dairy+fruit sugars including pomegranate/pom juice, raw carrot, low PUFA, warm/room-temp fluids, glycine from beef gelatin/stocks/cartilage) and the user's hard constraints. Dairy and fruit are allowed unless the user listed them as constraints. Label berberine/PCOS max stacks, ashwagandha, and omega-3/fish-oil megadoses as community, not Peat-primary. Processed junk is a poor staple. Alpaca/Saladino carnivore fruit/dairy split diverges from Peat even when carrots/carbs overlap.",
   inputSchema: z.object({
     food: z.string().min(1).describe("Food or meal to check, including fats used."),
     context: z

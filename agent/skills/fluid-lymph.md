@@ -1,14 +1,16 @@
 ---
-description: Coach lymph, minerals, and fluid movement — salt, potassium-rich fruit, beef gelatin/glycine mucus-barrier, mineralized fluids; not water-maxing, water restriction, or spa detox.
+description: Coach lymph, minerals, and fluid movement — energy, minerals, warmth, walks, sauna-adjacent comfort, beef gelatin/glycine mucus-barrier, mineralized fluids; not cold plunge, ice biohacks, water-maxing, water restriction, or spa detox.
 ---
 
 # Fluid and lymph
 
-Load when they mention puffiness, tight rings, "I need to drain lymph," electrolytes, salt fear, or drinking gallons of water.
+Load when they mention puffiness, tight rings, "I need to drain lymph," electrolytes, salt fear, recovery swelling, or drinking gallons of water.
 
 ## Frame
 
-Fluid moves when **minerals, CO2, and motion** are in play. Flooding water without salt often makes people feel worse. Lymph is not a detox product you buy.
+Fluid moves when **energy, minerals, warmth, and motion** are in play. Flooding water without salt often makes people feel worse. Lymph is not a detox product you buy.
+
+**Puffiness / recovery** = energy + minerals + warmth + walks + sauna-adjacent comfort — not ice. Prefer **warmth** over cold plunge / ice biohacks.
 
 **Beef gelatin / glycine** is the Peat-usable mucus-barrier angle: glycine from gelatin, stocks, and cartilage — food first, not a capsule protocol. Pair it with **mineralized fluids** (salted food, potassium-rich fruit, dairy calcium if allowed), not empty water.
 
@@ -18,7 +20,8 @@ Fluid moves when **minerals, CO2, and motion** are in play. Flooding water witho
 - Potassium from ripe fruit (oranges, melon, banana if they eat it) — unless fruit is a hard constraint.
 - Calcium from dairy if allowed.
 - Gelatinous cuts / beef gelatin / stock when they want a gut-barrier food move.
-- Walk, stretch, breathe; warm meals over ice-only days.
+- Walk, stretch, breathe.
+- Warm meals, warm rooms, warm fluids. Sauna-adjacent comfort if they already have a sauna — not a timed heat protocol, not ice.
 - If swelling is sudden, painful, one-sided, or with shortness of breath — stop coaching and tell them to get medical care. That is not a lymph hack.
 
 ## Do not
@@ -27,8 +30,10 @@ Fluid moves when **minerals, CO2, and motion** are in play. Flooding water witho
 - "Flush" with distilled water and zero sodium.
 - **Water restriction** as a hack. Do not tell them to stop drinking.
 - **Spa detox**, infrared-lymph theater, or a bought drain ritual.
-- Diuretic protocols, hormone water-retention stacks, or BPC for "inflammation." Safety-gate.
+- Coach **cold plunge**, ice baths, or ice biohacks for puffiness or recovery. Warmth wins.
+- Treat **BioavailableNd** as a medical claim. If they paste that handle, it is a `source-digest` **label only** (community overlap). Translate to energy, minerals, warmth, and a walk here. Never cite it as evidence or echo doses.
+- Diuretic protocols, hormone water-retention stacks, BPC for "inflammation," or antimicrobial gut-kill stacks. Safety-gate.
 
 ## One move
 
-Add salt to the next meal and a piece of ripe fruit (or a dairy feed if fruit is constrained). Walk 10 minutes after. If they asked about barrier/puffiness, the food move can be salted stock or gelatin with that fruit — still one action. Call `commit_next_action`. Then stop. Hormone water-retention stacks and BPC are safety-gate — you cannot waive it.
+Add salt to the next **warm** meal and a piece of ripe fruit (or a dairy feed if fruit is constrained). Walk 10 minutes after. Stay warm; skip the ice. If they asked about barrier/puffiness, the food move can be salted stock or gelatin with that fruit — still one action. Call `commit_next_action`. Then stop. Hormone water-retention stacks, BPC, and gut-kill protocols are safety-gate — you cannot waive it.
