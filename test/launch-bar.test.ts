@@ -24,16 +24,23 @@ test("lockBrief always writes Safety-gate: ON", () => {
 
 test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, AAS/Anavar, bromantane, and dopamine/prolactin stacks", () => {
   assert.equal(checkSafety("start T3 at 12.5 mcg").verdict, "block");
+  assert.equal(checkSafety("T3 self-dosing this week").verdict, "block");
   assert.equal(checkSafety("aspirin protocol with coffee").verdict, "block");
+  assert.equal(checkSafety("topical aspirin DIY protocol").verdict, "block");
+  assert.equal(checkSafety("oral aspirin protocol").verdict, "block");
   assert.equal(checkSafety("cyproheptadine for serotonin gut inflammation").verdict, "block");
   assert.equal(checkSafety("periactin at night for histamine").verdict, "block");
+  assert.equal(checkSafety("cypro self-experiment").verdict, "block");
   assert.equal(checkSafety("progesterone oil every night").verdict, "block");
   assert.equal(checkSafety("DIY progesterone dosing talk").verdict, "block");
   assert.equal(checkSafety("hormone framing and dosing this week").verdict, "block");
   assert.equal(checkSafety("BPC-157 for my gut").verdict, "block");
+  assert.equal(checkSafety("oral BPC DIY").verdict, "block");
+  assert.equal(checkSafety("injected BPC for my tendon").verdict, "block");
   assert.equal(checkSafety("TB-4 peptide for recovery").verdict, "block");
   assert.equal(checkSafety("TB-500 for my tendon").verdict, "block");
   assert.equal(checkSafety("GHK-Cu for skin").verdict, "block");
+  assert.equal(checkSafety("GHK-Cu DIY for skin").verdict, "block");
   assert.equal(checkSafety("oral Vilon this month").verdict, "block");
   assert.equal(checkSafety("peptide stack coaching please").verdict, "block");
   assert.equal(checkSafety("Anavar cut stack this cycle").verdict, "block");
@@ -43,10 +50,21 @@ test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, AAS/Anavar,
   assert.equal(checkSafety("ladasten for dopamine").verdict, "block");
   assert.equal(checkSafety("dopamine stack this week").verdict, "block");
   assert.equal(checkSafety("prolactin protocol with cabergoline").verdict, "block");
+  assert.equal(
+    checkSafety("FarvingCo-style H. pylori mastic+lactoferrin kill stack").verdict,
+    "block",
+  );
+  assert.equal(
+    checkSafety("DIY antimicrobial gut-kill protocol for H pylori").verdict,
+    "block",
+  );
   assert.equal(checkSafety("orange juice and milk").verdict, "ok");
   assert.equal(checkSafety("don't skip breakfast, eat OJ and honey").verdict, "ok");
   assert.equal(checkSafety("I feel low dopamine in the afternoon").verdict, "ok");
   assert.equal(checkSafety("collagen peptides in orange juice").verdict, "ok");
+  assert.equal(checkSafety("I have H. pylori, what foods are gentle").verdict, "ok");
+  assert.equal(checkSafety("mastic gum with a meal").verdict, "ok");
+  assert.equal(checkSafety("lactoferrin in colostrum").verdict, "ok");
   assert.equal(checkSafety("AbudBakri regulatory-wars BPC preprint still DIY").verdict, "block");
 });
 
@@ -58,26 +76,60 @@ test("checkSafety redirect names the new refusals and never echoes doses", () =>
   assert.equal(farving.matched.includes("DIY bromantane"), true);
   assert.match(farving.redirect, /bromantane/);
   assert.match(farving.redirect, /dopamine\/prolactin/);
+  assert.match(farving.redirect, /No stack coaching/);
+  assert.match(farving.redirect, /clinician/);
   assert.doesNotMatch(farving.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
 
   const abud = checkSafety("AbudBakri T3 12.5 mcg start low and titrate");
   assert.equal(abud.verdict, "block");
   assert.equal(abud.matched.includes("DIY T3 / thyroid hormone"), true);
+  assert.match(abud.redirect, /T3 self-dosing/);
   assert.doesNotMatch(abud.redirect, /12\.5/);
   assert.doesNotMatch(abud.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
 
   const peptides = checkSafety(
-    "AbudBakri regulatory-wars BPC preprint plus TB-4 GHK-Cu 2mg and oral Vilon",
+    "oxidativestate GHK-Cu 2mg plus oral BPC and injected BPC",
   );
   assert.equal(peptides.verdict, "block");
   assert.equal(peptides.matched.includes("peptides / BPC"), true);
-  assert.match(peptides.redirect, /TB-4\/TB-500/);
+  assert.match(peptides.redirect, /oral or injected BPC/);
   assert.match(peptides.redirect, /GHK-Cu/);
-  assert.match(peptides.redirect, /Vilon/);
+  assert.match(peptides.redirect, /TB-4\/TB-500/);
   assert.match(peptides.redirect, /No stack coaching/);
-  assert.match(peptides.redirect, /clinician/);
   assert.doesNotMatch(peptides.redirect, /2mg/);
   assert.doesNotMatch(peptides.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const abudPeptides = checkSafety(
+    "AbudBakri regulatory-wars BPC preprint plus TB-4 GHK-Cu 2mg and oral Vilon",
+  );
+  assert.equal(abudPeptides.verdict, "block");
+  assert.equal(abudPeptides.matched.includes("peptides / BPC"), true);
+  assert.match(abudPeptides.redirect, /TB-4\/TB-500/);
+  assert.match(abudPeptides.redirect, /GHK-Cu/);
+  assert.match(abudPeptides.redirect, /Vilon/);
+  assert.match(abudPeptides.redirect, /No stack coaching/);
+  assert.match(abudPeptides.redirect, /clinician/);
+  assert.doesNotMatch(abudPeptides.redirect, /2mg/);
+  assert.doesNotMatch(abudPeptides.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const aspirin = checkSafety("topical aspirin 325mg oral DIY protocol");
+  assert.equal(aspirin.verdict, "block");
+  assert.equal(aspirin.matched.includes("aspirin protocol"), true);
+  assert.match(aspirin.redirect, /aspirin \(topical or oral\)/);
+  assert.doesNotMatch(aspirin.redirect, /325/);
+  assert.doesNotMatch(aspirin.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const gutKill = checkSafety(
+    "FarvingCo H. pylori mastic and lactoferrin 200mg kill stack without a clinician",
+  );
+  assert.equal(gutKill.verdict, "block");
+  assert.equal(gutKill.matched.includes("DIY antimicrobial gut-kill"), true);
+  assert.match(gutKill.redirect, /antimicrobial gut-kill/);
+  assert.match(gutKill.redirect, /mastic\+lactoferrin/);
+  assert.match(gutKill.redirect, /No stack coaching/);
+  assert.doesNotMatch(gutKill.redirect, /200mg/);
+  assert.doesNotMatch(gutKill.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
 
   const aas = checkSafety("Anavar 50mg oral steroid stack coaching");
   assert.equal(aas.verdict, "block");
@@ -165,6 +217,22 @@ test("other skills cannot skip a blocked inbound ask", () => {
   assert.equal(lock.kind, "safety-block");
   assert.equal(lock.safety.matched.includes("peptides / BPC"), true);
 
+  const ghkLock = buildTurnLock({
+    inboundText: "DIY GHK-Cu and oral BPC stack",
+    brief: lockBrief({
+      primaryGoal: "recovery",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(ghkLock.kind, "safety-block");
+  assert.equal(ghkLock.safety.matched.includes("peptides / BPC"), true);
+  assert.match(ghkLock.content, /Do not load metabolism-function/);
+  assert.doesNotMatch(ghkLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
   const peptideLock = buildTurnLock({
     inboundText: "AbudBakri regulatory-wars: stack TB-4 and GHK-Cu from the BPC preprint",
     brief: lockBrief({
@@ -195,6 +263,21 @@ test("other skills cannot skip a blocked inbound ask", () => {
   assert.equal(aasLock.kind, "safety-block");
   assert.equal(aasLock.safety.matched.includes("DIY AAS / oral steroids"), true);
   assert.doesNotMatch(aasLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const gutLock = buildTurnLock({
+    inboundText: "FarvingCo H. pylori mastic lactoferrin kill stack without a clinician",
+    brief: lockBrief({
+      primaryGoal: "digestion",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(gutLock.kind, "safety-block");
+  assert.equal(gutLock.safety.matched.includes("DIY antimicrobial gut-kill"), true);
+  assert.doesNotMatch(gutLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
 });
 
 test("food-check honors dairy as a hard constraint", () => {
@@ -352,4 +435,58 @@ test("extractLastUserText reads the latest user role message", () => {
     { role: "user", content: [{ type: "text", text: "good morning" }] },
   ]);
   assert.equal(text, "good morning");
+});
+
+test("safety-gate, fluid-lymph, and source-digest bake in the 2026-09-18 scout without doses", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const safety = await readFile(
+    new URL("../agent/skills/safety-gate.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(safety, /T3 self-dosing/);
+  assert.match(safety, /Aspirin.*topical or oral/s);
+  assert.match(safety, /GHK-Cu/);
+  assert.match(safety, /BPC.*oral or injected/s);
+  assert.match(safety, /TB-4 \/ TB-500/);
+  assert.match(safety, /Vilon/);
+  assert.match(safety, /AAS/);
+  assert.match(safety, /bromantane/);
+  assert.match(safety, /[Cc]ypro/);
+  assert.match(safety, /dopamine\/prolactin/);
+  assert.match(safety, /mastic\+lactoferrin/);
+  assert.match(safety, /antimicrobial gut-kill/);
+  assert.match(safety, /lennartprimal/);
+  assert.match(safety, /community, not Peat-primary/);
+  assert.match(safety, /oxidativestate/);
+  assert.match(safety, /AbudBakri/);
+  assert.match(safety, /FarvingCo/);
+  assert.match(safety, /No stack coaching/);
+  assert.match(safety, /clinician/);
+  assert.doesNotMatch(safety, /\d+\s*(mg|mcg)\b/i);
+
+  const fluid = await readFile(
+    new URL("../agent/skills/fluid-lymph.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(fluid, /warmth/i);
+  assert.match(fluid, /cold plunge/i);
+  assert.match(fluid, /ice biohacks/i);
+  assert.match(fluid, /energy \+ minerals \+ warmth \+ walks/);
+  assert.match(fluid, /sauna-adjacent comfort/);
+  assert.match(fluid, /BioavailableNd/);
+  assert.match(fluid, /source-digest/);
+  assert.match(fluid, /label only/);
+  assert.doesNotMatch(fluid, /\d+\s*(mg|mcg)\b/i);
+
+  const digest = await readFile(
+    new URL("../agent/skills/source-digest.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(digest, /BioavailableNd/);
+  assert.match(digest, /label only/);
+  assert.match(digest, /lennartprimal/);
+  assert.match(digest, /oxidativestate/);
+  assert.match(digest, /AbudBakri/);
+  assert.match(digest, /FarvingCo/);
+  assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
 });
