@@ -1,5 +1,5 @@
 ---
-description: Coach metabolic function — raise burn with food, warmth, rest, and temp/pulse; do not skip breakfast; not crash diets.
+description: Coach metabolic function — raise burn with food (dairy/fruit sugar oxidation), warmth, rest, and temp/pulse; do not skip breakfast; not crash diets or low-carb-plus-ashwagandha as a gut fix.
 ---
 
 # Metabolism function
@@ -24,7 +24,9 @@ Examples that are actually available: milk if allowed, orange juice, ripe fruit,
 - Protect sleep and morning light. Cold plunges and fasted cardio are not the product.
 - If they log metrics, use `log_metrics` with their timestamp. Read weeks with `summarize_week` — trends, not treatment.
 
-## Optional community frame (not a protocol)
+## Optional community note (not a protocol)
+
+**Niacinamide** (B3) is sometimes discussed as a gut-adjacent, Peat-usable food/skill note. Low drama. Do not invent a dosing regimen. If they are already supplementing or want to, that is clinician territory — stay on food and rhythm here.
 
 SolBrah-style **Energy Givers / Takers** is optional color only — not a medical claim, not a stack:
 
@@ -37,6 +39,7 @@ Translate it to food, light, salt, and rest. If a paste includes **semen-retenti
 
 - Prescribe T3, NDT, or "start 1/4 grain." That is `safety-gate` → clinician.
 - Run a cut, OMAD, keto, skip-breakfast, or carnivore-without-sugar as the plan.
+- Treat **low-carb + ashwagandha** as a gut fix. It is not Peaty. Raise the burn; do not starve it or herb-stack the intestine.
 - Treat a low temp as permission to stack hormones, peptides, or AAS.
 - Coach semen retention, sexual restriction, or "retain for energy" as metabolism.
 

@@ -7,11 +7,11 @@ Ray Peat / pro-metabolic coaching agent on [eve](https://eve.dev). Raise the bur
 | Skill | Job |
 | --- | --- |
 | `onboarding` | Four beats (goal, optional markers, hard constraints, do-not-do) → one-screen brief. Safety-gate ON. No off switch. |
-| `metabolism-function` | Metabolic function, not a cut. Don't skip breakfast; morning digestible carbs. |
-| `fluid-lymph` | Salt, minerals, warmth, walks, sauna-adjacent comfort. Not cold plunge or ice biohacks. BioavailableNd is a source-digest label only. |
-| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Prefer warm/room-temp fluids; glycine via gelatin/stocks/cartilage. Whitelist pomegranate/pom juice and raw carrot. Berberine/PCOS max stacks are community, not Peat-primary. Carnivore fruit/dairy refusal and Alpaca/Saladino carnivore diverge from Peat even when carrots/carbs overlap. |
+| `metabolism-function` | Metabolic function, not a cut. Don't skip breakfast; morning digestible carbs. Dairy/fruit sugar oxidation. Not low-carb+ashwagandha as a gut fix. Niacinamide is an optional community food note, not a protocol. |
+| `fluid-lymph` | Salt, minerals, warmth, walks, sauna-adjacent comfort. Beef gelatin/glycine mucus-barrier + mineralized fluids. Not water restriction, spa detox, cold plunge, or ice biohacks. BioavailableNd is a source-digest label only. |
+| `food-check` | Score meals. Dairy/fruit refusals are **hard constraints**, not Peat defaults. Prefer warm/room-temp fluids; glycine via gelatin/stocks/cartilage. Whitelist pomegranate/pom juice and raw carrot. Fish-oil megadoses, ashwagandha, berberine/PCOS max, and processed junk are community/poor-fit, not Peat-primary. Carnivore fruit/dairy refusal and Alpaca/Saladino carnivore diverge from Peat even when carrots/carbs overlap. |
 | `source-digest` | Week recap from logs, or a pasted Peat source → practical move. |
-| `safety-gate` | Refuse DIY T3 self-dosing, topical or oral aspirin, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, AAS/Anavar and similar oral steroids, hormones, bromantane, cypro, dopamine/prolactin stacks, and FarvingCo-style H. pylori mastic+lactoferrin kill stacks; send that to a clinician. Never echo community doses (oxidativestate, AbudBakri, FarvingCo). |
+| `safety-gate` | Refuse DIY T3 self-dosing, topical or oral aspirin, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, AAS/Anavar and similar oral steroids, hormones/pregnenolone, bromantane, cypro, dopamine/prolactin stacks, and FarvingCo-style H. pylori mastic+lactoferrin kill stacks; send that to a clinician. Never echo community doses (oxidativestate, AbudBakri, FarvingCo). |
 
 No seventh skill lane. No payments. No store.
 
