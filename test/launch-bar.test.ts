@@ -128,6 +128,7 @@ test("checkSafety redirect names later scout refusals and never echoes doses", (
   assert.match(peptides.redirect, /oral or injected BPC/);
   assert.match(peptides.redirect, /GHK-Cu/);
   assert.match(peptides.redirect, /TB-4\/TB-500/);
+  assert.match(peptides.redirect, /peptide-stack/);
   assert.match(peptides.redirect, /No stack coaching/);
   assert.doesNotMatch(peptides.redirect, /2mg/);
   assert.doesNotMatch(peptides.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
@@ -353,6 +354,17 @@ test("food-check prefers warm fluids, glycine from food, and labels community PC
     /Glycine via beef gelatin/,
   );
 
+  const collagen = checkFood("collagen peptides with gelatin in milk", []);
+  assert.equal(collagen.verdict, "supportive");
+  assert.equal(
+    collagen.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+  assert.match(
+    collagen.flags.find((flag) => flag.code === "gelatinous")?.detail ?? "",
+    /Collagen\/gelatin overlap is OK/,
+  );
+
   const berberine = checkFood("berberine PCOS max stack", []);
   assert.equal(
     berberine.flags.some((flag) => flag.code === "community-pcos"),
@@ -381,6 +393,19 @@ test("food-check flags carnivore fruit/dairy refusal as diverging from Peat", ()
   assert.equal(
     peatLike.flags.some((flag) => flag.code === "carnivore-divergence"),
     false,
+  );
+
+  const alpacaHerbs = checkFood("Alpaca herbs-only plate", []);
+  assert.equal(
+    alpacaHerbs.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.match(alpacaHerbs.summary, /Alpaca herbs-only \/ steak-centric/);
+
+  const alpacaSteakCentric = checkFood("Alpaca steak-centric no fruit no dairy", []);
+  assert.equal(
+    alpacaSteakCentric.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
   );
 
   const saladino = checkFood("Saladino carnivore", []);
@@ -491,6 +516,45 @@ test("food-check does not treat ice cream as an iced drink", () => {
   );
 });
 
+test("food-check whitelists Peat-style ice cream and rejects seed-oil junk", () => {
+  const peat = checkFood(
+    "Peat-style ice cream with milk, eggs, sugar, coconut",
+    [],
+  );
+  assert.equal(peat.verdict, "supportive");
+  assert.equal(
+    peat.flags.some((flag) => flag.code === "peat-ice-cream"),
+    true,
+  );
+  assert.match(peat.summary, /Peat-style ice cream/);
+  assert.doesNotMatch(peat.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const withGelatin = checkFood(
+    "ice cream from milk eggs sugar coconut and gelatin collagen",
+    [],
+  );
+  assert.equal(withGelatin.verdict, "supportive");
+  assert.equal(
+    withGelatin.flags.some((flag) => flag.code === "peat-ice-cream"),
+    true,
+  );
+  assert.equal(
+    withGelatin.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+
+  const junk = checkFood("ice cream with soybean oil and canola", []);
+  assert.equal(
+    junk.flags.some((flag) => flag.code === "peat-ice-cream"),
+    false,
+  );
+  assert.equal(
+    junk.flags.some((flag) => flag.code === "seed-oil"),
+    true,
+  );
+  assert.notEqual(junk.verdict, "supportive");
+});
+
 test("food-check whitelists pomegranate / pom juice and raw carrot as Peat-aligned", () => {
   const pom = checkFood("pomegranate juice", []);
   assert.equal(pom.verdict, "supportive");
@@ -593,8 +657,11 @@ test("safety-gate, fluid-lymph, and source-digest bake in the 2026-09-18 scout w
   assert.match(fluid, /BioavailableNd/);
   assert.match(fluid, /source-digest/);
   assert.match(fluid, /label only/);
-  assert.match(fluid, /Beef gelatin \/ glycine/);
+  assert.match(fluid, /Eat-your-hydration/);
+  assert.match(fluid, /salted water/);
+  assert.match(fluid, /SolBrah/);
   assert.match(fluid, /Water restriction/);
+  assert.match(fluid, /Beef gelatin \/ glycine/);
   assert.match(fluid, /Spa detox/);
   assert.doesNotMatch(fluid, /\d+\s*(mg|mcg)\b/i);
 
@@ -607,6 +674,7 @@ test("safety-gate, fluid-lymph, and source-digest bake in the 2026-09-18 scout w
   assert.match(digest, /lennartprimal/);
   assert.match(digest, /oxidativestate/);
   assert.match(digest, /AbudBakri/);
+  assert.match(digest, /eat-your-hydration/);
   assert.match(digest, /FarvingCo/);
   assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
 });

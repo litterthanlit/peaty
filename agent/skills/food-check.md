@@ -1,5 +1,5 @@
 ---
-description: Check a food or meal against pro-metabolic defaults and the user's hard constraints. Dairy and fruit are allowed unless constrained. Warm fluids, glycine from gelatin/stocks/cartilage. Whitelist pomegranate / pom juice and raw carrot. Fish-oil megadoses, ashwagandha, processed junk, and Saladino/Alpaca carnivore are not Peat-primary — flag Alpaca/Saladino carnivore fruit/dairy split even when carrots/carbs overlap.
+description: Check a food or meal against pro-metabolic defaults and the user's hard constraints. Dairy and fruit are allowed unless constrained. Warm fluids, glycine from gelatin/collagen/stocks/cartilage. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut) plus pomegranate / pom juice and raw carrot. Collagen/gelatin overlap OK. Fish-oil megadoses, ashwagandha, processed junk, and Saladino/Alpaca carnivore are not Peat-primary — flag Alpaca/Saladino carnivore fruit/dairy split (including herbs-only / steak-centric) even when carrots/carbs overlap.
 ---
 
 # Food check
@@ -12,9 +12,11 @@ Supportive staples: ripe fruit and juices (including **pomegranate / pom juice**
 
 Prefer **warm or room-temp fluids** over iced drinks (Peat-aligned coaching note, not a medical rule).
 
-**Gelatin / glycine** via beef gelatin, stocks, and cartilage is Peat-aligned. Food first — not a capsule gram-count.
+**Glycine** via beef gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first — not a capsule gram-count. **Collagen/gelatin overlap is OK.**
 
-Poor staples: seed oils, nuts-as-meals, lean-only plates, raw crucifer mountains, "healthy" granola, fasting as identity, **processed junk** (ultra-processed PUFA snacks, packaged chip-aisle food).
+**Peat-style ice cream** is a whitelist when the ingredients are milk, eggs, sugar, and/or coconut — not seed-oil junk. Collagen or gelatin in the mix is still OK.
+
+Poor staples: seed oils, nuts-as-meals, lean-only plates, raw crucifer mountains, "healthy" granola, fasting as identity, industrial ice cream built on seed oils, **processed junk** (ultra-processed PUFA snacks, packaged chip-aisle food).
 
 ## Community vs Peat-primary
 
@@ -28,7 +30,7 @@ These are **community** talk, not a Peat-primary move. Label them that way. Do n
 
 If they listed dairy or fruit as a refusal in onboarding, `food_check` must block those. That is **their** rule. Do not argue Peat at an allergy.
 
-Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK here unless they listed them as hard constraints. **Always flag Alpaca / Saladino carnivore** on that split — even when the plate adds carrots or other carbs. Carrots overlapping does not make it Peat. Do not coach strict carnivore as the plan.
+Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK here unless they listed them as hard constraints. **Always flag Alpaca / Saladino carnivore** on that split — even when the plate adds carrots or other carbs. **Alpaca herbs-only / steak-centric** is that same diverge. Carrots overlapping does not make it Peat. Do not coach strict carnivore as the plan.
 
 ## Procedure
 
@@ -43,4 +45,6 @@ Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK her
 - Recommend fish-oil capsules, omega-3 megadoses, or seed-oil "moderation" as the win.
 - Echo milligram/mcg figures from community stacks.
 - Treat berberine / PCOS max stacks, ashwagandha, or fish-oil megadoses as Peat-primary.
+- Treat Alpaca herbs-only or steak-centric as compatible with Peat while fruit and dairy are refused.
 - Treat Alpaca/Saladino carnivore as compatible with Peat because carrots or starch showed up, or while fruit and dairy are refused.
+- Whitelist seed-oil ice cream because it is still called ice cream.
