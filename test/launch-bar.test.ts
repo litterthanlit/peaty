@@ -32,6 +32,7 @@ test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, AAS/Anavar,
   assert.equal(checkSafety("periactin at night for histamine").verdict, "block");
   assert.equal(checkSafety("cypro self-experiment").verdict, "block");
   assert.equal(checkSafety("progesterone oil every night").verdict, "block");
+  assert.equal(checkSafety("pregnenolone dosing this week").verdict, "block");
   assert.equal(checkSafety("DIY progesterone dosing talk").verdict, "block");
   assert.equal(checkSafety("hormone framing and dosing this week").verdict, "block");
   assert.equal(checkSafety("BPC-157 for my gut").verdict, "block");
@@ -62,6 +63,8 @@ test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, AAS/Anavar,
   assert.equal(checkSafety("don't skip breakfast, eat OJ and honey").verdict, "ok");
   assert.equal(checkSafety("I feel low dopamine in the afternoon").verdict, "ok");
   assert.equal(checkSafety("collagen peptides in orange juice").verdict, "ok");
+  assert.equal(checkSafety("ashwagandha for my gut").verdict, "ok");
+  assert.equal(checkSafety("niacinamide is sometimes discussed").verdict, "ok");
   assert.equal(checkSafety("I have H. pylori, what foods are gentle").verdict, "ok");
   assert.equal(checkSafety("mastic gum with a meal").verdict, "ok");
   assert.equal(checkSafety("lactoferrin in colostrum").verdict, "ok");
@@ -87,6 +90,36 @@ test("checkSafety redirect names the new refusals and never echoes doses", () =>
   assert.doesNotMatch(abud.redirect, /12\.5/);
   assert.doesNotMatch(abud.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
 
+  const gutPharma = checkSafety(
+    "oxidativestate gut thread: cyproheptadine plus aspirin protocol 300mg",
+  );
+  assert.equal(gutPharma.verdict, "block");
+  assert.equal(
+    gutPharma.matched.includes("cyproheptadine") ||
+      gutPharma.matched.includes("aspirin protocol"),
+    true,
+  );
+  assert.match(gutPharma.redirect, /cyproheptadine/);
+  assert.match(gutPharma.redirect, /BPC-157/);
+  assert.match(gutPharma.redirect, /clinician/);
+  assert.doesNotMatch(gutPharma.redirect, /300/);
+  assert.doesNotMatch(gutPharma.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const preg = checkSafety("AbudBakri RT pregnenolone 100mg hormone dosing");
+  assert.equal(preg.verdict, "block");
+  assert.equal(preg.matched.includes("exogenous hormones"), true);
+  assert.match(preg.redirect, /pregnenolone/);
+  assert.doesNotMatch(preg.redirect, /100/);
+  assert.doesNotMatch(preg.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+});
+
+test("niacinamide protocol is caution, not a sketched dose", () => {
+  const caution = checkSafety("high-dose niacinamide protocol");
+  assert.equal(caution.verdict, "caution");
+  assert.doesNotMatch(caution.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+});
+
+test("checkSafety redirect names later scout refusals and never echoes doses", () => {
   const peptides = checkSafety(
     "oxidativestate GHK-Cu 2mg plus oral BPC and injected BPC",
   );
@@ -218,6 +251,21 @@ test("other skills cannot skip a blocked inbound ask", () => {
   assert.equal(lock.kind, "safety-block");
   assert.equal(lock.safety.matched.includes("peptides / BPC"), true);
 
+  const cypro = buildTurnLock({
+    inboundText: "oxidativestate said cyproheptadine for gut serotonin",
+    brief: lockBrief({
+      primaryGoal: "digestion",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(cypro.kind, "safety-block");
+  assert.equal(cypro.safety.matched.includes("cyproheptadine"), true);
+  assert.match(cypro.content, /Do not load metabolism-function/);
+
   const ghkLock = buildTurnLock({
     inboundText: "DIY GHK-Cu and oral BPC stack",
     brief: lockBrief({
@@ -303,7 +351,7 @@ test("food-check prefers warm fluids, glycine from food, and labels community PC
   );
   assert.match(
     gelatin.flags.find((flag) => flag.code === "gelatinous")?.detail ?? "",
-    /Glycine via gelatin/,
+    /Glycine via beef gelatin/,
   );
 
   const collagen = checkFood("collagen peptides with gelatin in milk", []);
@@ -360,6 +408,19 @@ test("food-check flags carnivore fruit/dairy refusal as diverging from Peat", ()
     true,
   );
 
+  const saladino = checkFood("Saladino carnivore", []);
+  assert.equal(
+    saladino.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.match(saladino.summary, /Saladino\/Alpaca/);
+
+  const alpaca = checkFood("Alpaca carnivore no fruit no dairy", []);
+  assert.equal(
+    alpaca.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+
   const alpacaCarrots = checkFood("Alpaca carnivore with raw carrots and rice", []);
   assert.equal(
     alpacaCarrots.flags.some((flag) => flag.code === "carnivore-divergence"),
@@ -388,6 +449,59 @@ test("food-check flags carnivore fruit/dairy refusal as diverging from Peat", ()
     alpacaMeat.flags.some((flag) => flag.code === "carnivore-divergence"),
     false,
   );
+});
+
+test("food-check labels fish-oil megadoses, ashwagandha, processed junk, and niacinamide without doses", () => {
+  const gelatin = checkFood("beef gelatin in orange juice", []);
+  assert.equal(gelatin.verdict, "supportive");
+  assert.equal(
+    gelatin.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+
+  const omega = checkFood("omega-3 fish oil megadose", []);
+  assert.equal(
+    omega.flags.some((flag) => flag.code === "fish-oil"),
+    true,
+  );
+  assert.notEqual(omega.verdict, "supportive");
+  assert.doesNotMatch(omega.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const ash = checkFood("ashwagandha for gut", []);
+  assert.equal(
+    ash.flags.some((flag) => flag.code === "community-ashwagandha"),
+    true,
+  );
+  assert.notEqual(ash.verdict, "supportive");
+  assert.match(ash.summary, /community/i);
+  assert.doesNotMatch(ash.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const gutFix = checkFood("low-carb and ashwagandha to fix my gut", []);
+  assert.equal(
+    gutFix.flags.some((flag) => flag.code === "low-carb-gut-fix"),
+    true,
+  );
+  assert.equal(
+    gutFix.flags.some((flag) => flag.code === "community-ashwagandha"),
+    true,
+  );
+  assert.doesNotMatch(gutFix.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const junk = checkFood("doritos and ultra-processed junk", []);
+  assert.equal(
+    junk.flags.some((flag) => flag.code === "processed-junk"),
+    true,
+  );
+  assert.equal(junk.verdict, "poor-fit");
+
+  const nia = checkFood("niacinamide", []);
+  assert.equal(
+    nia.flags.some((flag) => flag.code === "niacinamide-note"),
+    true,
+  );
+  assert.notEqual(nia.verdict, "supportive");
+  assert.match(nia.summary, /sometimes discussed/i);
+  assert.doesNotMatch(nia.summary, /\d+\s*(mg|mcg)\b/i);
 });
 
 test("food-check does not treat ice cream as an iced drink", () => {
@@ -487,6 +601,8 @@ test("metabolism-function hardens breakfast and prunes semen-retention copy", as
   assert.match(skill, /Do not coach that/);
   assert.match(skill, /Coach semen retention/);
   assert.match(skill, /Raise the burn/);
+  assert.match(skill, /Niacinamide/);
+  assert.match(skill, /low-carb \+ ashwagandha/);
   assert.doesNotMatch(skill, /retain for gains/i);
   assert.doesNotMatch(skill, /\d+\s*(mg|mcg)\b/i);
 });
@@ -525,6 +641,7 @@ test("safety-gate, fluid-lymph, and source-digest bake in the 2026-09-18 scout w
   assert.match(safety, /AbudBakri/);
   assert.match(safety, /FarvingCo/);
   assert.match(safety, /No stack coaching/);
+  assert.match(safety, /pregnenolone/);
   assert.match(safety, /clinician/);
   assert.doesNotMatch(safety, /\d+\s*(mg|mcg)\b/i);
 
@@ -544,6 +661,8 @@ test("safety-gate, fluid-lymph, and source-digest bake in the 2026-09-18 scout w
   assert.match(fluid, /salted water/);
   assert.match(fluid, /SolBrah/);
   assert.match(fluid, /Water restriction/);
+  assert.match(fluid, /Beef gelatin \/ glycine/);
+  assert.match(fluid, /Spa detox/);
   assert.doesNotMatch(fluid, /\d+\s*(mg|mcg)\b/i);
 
   const digest = await readFile(

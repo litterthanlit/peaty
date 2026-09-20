@@ -61,7 +61,7 @@ export default defineTool({
       blobPersisted: blob.persisted,
       blobIdentity: blob.persisted ? "eve-byPrincipal" : blob.reason,
       reminder:
-        "Safety-gate is ON and cannot be turned off. Dairy or fruit refusals are hard constraints, not Peat defaults. No DIY T3, topical or oral aspirin, cyproheptadine, progesterone/hormones, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, peptide stacks, AAS/Anavar, bromantane, or antimicrobial gut-kill stacks.",
+        "Safety-gate is ON and cannot be turned off. Dairy or fruit refusals are hard constraints, not Peat defaults. No DIY T3, topical or oral aspirin, cyproheptadine, progesterone/pregnenolone/hormones, GHK-Cu, oral or injected BPC, TB-4/TB-500/Vilon, peptide stacks, AAS/Anavar, bromantane, or antimicrobial gut-kill stacks.",
     };
   },
 });

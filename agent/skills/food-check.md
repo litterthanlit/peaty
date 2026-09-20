@@ -1,5 +1,5 @@
 ---
-description: Check a food or meal against pro-metabolic defaults and the user's hard constraints. Dairy and fruit are allowed unless constrained. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut) plus pomegranate / pom juice and raw carrot. Collagen/gelatin overlap OK. Always flag Alpaca/Saladino carnivore fruit/dairy split (including herbs-only / steak-centric) even when carrots/carbs overlap.
+description: Check a food or meal against pro-metabolic defaults and the user's hard constraints. Dairy and fruit are allowed unless constrained. Warm fluids, glycine from gelatin/collagen/stocks/cartilage. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut) plus pomegranate / pom juice and raw carrot. Collagen/gelatin overlap OK. Fish-oil megadoses, ashwagandha, processed junk, and Saladino/Alpaca carnivore are not Peat-primary — flag Alpaca/Saladino carnivore fruit/dairy split (including herbs-only / steak-centric) even when carrots/carbs overlap.
 ---
 
 # Food check
@@ -12,15 +12,19 @@ Supportive staples: ripe fruit and juices (including **pomegranate / pom juice**
 
 Prefer **warm or room-temp fluids** over iced drinks (Peat-aligned coaching note, not a medical rule).
 
-**Glycine** via gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first — not a capsule gram-count. **Collagen/gelatin overlap is OK.**
+**Glycine** via beef gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first — not a capsule gram-count. **Collagen/gelatin overlap is OK.**
 
 **Peat-style ice cream** is a whitelist when the ingredients are milk, eggs, sugar, and/or coconut — not seed-oil junk. Collagen or gelatin in the mix is still OK.
 
-Poor staples: seed oils, nuts-as-meals, lean-only plates, raw crucifer mountains, "healthy" granola, fasting as identity, industrial ice cream built on seed oils.
+Poor staples: seed oils, nuts-as-meals, lean-only plates, raw crucifer mountains, "healthy" granola, fasting as identity, industrial ice cream built on seed oils, **processed junk** (ultra-processed PUFA snacks, packaged chip-aisle food).
 
 ## Community vs Peat-primary
 
-Berberine and PCOS "max" stacks are **community** talk, not a Peat-primary move. Label them that way. Do not turn them into a Peaty protocol or invent doses. Medical PCOS care belongs with a clinician.
+These are **community** talk, not a Peat-primary move. Label them that way. Do not turn them into a Peaty protocol or invent doses.
+
+- Berberine and PCOS "max" stacks — medical PCOS care belongs with a clinician.
+- **Omega-3 / fish-oil megadoses** — isolated PUFA stacks are a problem here, not a gut or heart win.
+- **Ashwagandha** — community herb, not Peat. Not a gut fix.
 
 ## Hard constraints win
 
@@ -32,15 +36,15 @@ Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK her
 
 1. Call `food_check` with the food and how it was cooked/fatted.
 2. Read `verdict`, `flags`, and `constraintHits`.
-3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3 self-dosing, topical or oral aspirin, cyproheptadine, progesterone/hormones, oral or injected BPC, GHK-Cu, TB-4/TB-500/Vilon, AAS/Anavar, peptide or steroid stacks, bromantane, dopamine/prolactin stacks, or antimicrobial gut-kill stacks), stop — safety-gate already locked the turn.
+3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3 self-dosing, topical or oral aspirin, cyproheptadine, hormones/pregnenolone, oral or injected BPC, GHK-Cu, TB-4/TB-500/Vilon, AAS/Anavar, peptide or steroid stacks, bromantane, dopamine/prolactin stacks, or antimicrobial gut-kill stacks), stop — safety-gate already locked the turn.
 
 ## Do not
 
 - Invent a Peat "protocol meal plan" for medical conditions.
 - Push dairy/fruit after a recorded constraint.
-- Recommend fish-oil capsules or seed-oil "moderation" as the win.
+- Recommend fish-oil capsules, omega-3 megadoses, or seed-oil "moderation" as the win.
 - Echo milligram/mcg figures from community stacks.
-- Treat berberine / PCOS max stacks as Peat-primary.
+- Treat berberine / PCOS max stacks, ashwagandha, or fish-oil megadoses as Peat-primary.
 - Treat Alpaca herbs-only or steak-centric as compatible with Peat while fruit and dairy are refused.
-- Treat Alpaca/Saladino carnivore as compatible with Peat because carrots or starch showed up.
+- Treat Alpaca/Saladino carnivore as compatible with Peat because carrots or starch showed up, or while fruit and dairy are refused.
 - Whitelist seed-oil ice cream because it is still called ice cream.

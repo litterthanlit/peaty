@@ -7,7 +7,7 @@ import { peatySession } from "../lib/session-state";
 
 export default defineTool({
   description:
-    "Score a food or meal against Peaty defaults (raise burn, dairy+fruit sugars including pomegranate/pom juice, raw carrot, low PUFA, warm/room-temp fluids, glycine from gelatin/collagen/stocks/cartilage) and the user's hard constraints. Dairy and fruit are allowed unless the user listed them as constraints. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut, not seed-oil junk). Label berberine/PCOS max stacks as community, not Peat-primary. Alpaca/Saladino carnivore fruit/dairy split and Alpaca herbs-only / steak-centric diverge from Peat even when carrots/carbs overlap.",
+    "Score a food or meal against Peaty defaults (raise burn, dairy+fruit sugars including pomegranate/pom juice, raw carrot, low PUFA, warm/room-temp fluids, glycine from gelatin/collagen/beef gelatin/stocks/cartilage) and the user's hard constraints. Dairy and fruit are allowed unless the user listed them as constraints. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut, not seed-oil junk). Label berberine/PCOS max stacks, ashwagandha, and omega-3/fish-oil megadoses as community, not Peat-primary. Processed junk is a poor staple. Alpaca/Saladino carnivore fruit/dairy split and Alpaca herbs-only / steak-centric diverge from Peat even when carrots/carbs overlap.",
   inputSchema: z.object({
     food: z.string().min(1).describe("Food or meal to check, including fats used."),
     context: z
