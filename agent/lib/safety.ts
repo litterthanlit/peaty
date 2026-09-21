@@ -29,7 +29,7 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "peptides / BPC",
     pattern:
-      /\b((?:oral|inject(?:ed|ing)?|diy)\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?(?:\s+(?:oral|inject(?:ed|ing)?|diy))?|tb[-\s]?(?:500|4)\b|thymosin\s*beta[-\s]?4|ghk[-\s]?cu|copper\s+peptide|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching)|stack(?:ing)?\s+peptides?)\b/i,
+      /\b((?:oral|inject(?:ed|ing)?|diy)\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?(?:\s+(?:oral|inject(?:ed|ing)?|diy|hair|angiogenesis))?|bpc(?:[-\s]?157)?[^.!?\n]{0,80}\b(hair|angiogenesis)|(hair|angiogenesis)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|tb[-\s]?(?:500|4)\b|thymosin\s*beta[-\s]?4|ghk[-\s]?cu|copper\s+peptide|melanotan(?:[-\s]?[12])?|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching)|(?:ghk[-\s]?cu|copper\s+peptide)[^.!?\n]{0,80}\bmelanotan|melanotan[^.!?\n]{0,80}\b(?:ghk[-\s]?cu|copper\s+peptide)|stack(?:ing)?\s+peptides?)\b/i,
   },
   {
     label: "DIY AAS / oral steroids",
@@ -48,7 +48,7 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "DIY antimicrobial gut-kill",
     pattern:
-      /\b((h\.?\s*pylori|helicobacter)[^.!?\n]{0,100}\b(kill|eradicat|stack|protocol|mastic|lactoferrin|antimicrobial)|(mastic|mastica)\b[^.!?\n]{0,80}\b(lactoferrin)|(lactoferrin)\b[^.!?\n]{0,80}\b(mastic|mastica)|(diy\s+)?(antimicrobial\s+gut[-\s]?kill|gut[-\s]?kill)\s+(stack|protocol)|(antimicrobial)\s+(stack|protocol|kill)[^.!?\n]{0,40}\b(gut|pylori|helicobacter))\b/i,
+      /\b((h\.?\s*pylori|helicobacter)[^.!?\n]{0,100}\b(kill|eradicat|stack|protocol|mastic|lactoferrin|antimicrobial|bpc)|(mastic|mastica)\b[^.!?\n]{0,80}\b(lactoferrin)|(lactoferrin)\b[^.!?\n]{0,80}\b(mastic|mastica)|bpc(?:[-\s]?157)?[^.!?\n]{0,80}\b(lactoferrin|mastic)|(lactoferrin|mastic|mastica)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|(diy\s+)?(antimicrobial\s+gut[-\s]?kill|gut[-\s]?kill)\s+(stack|protocol)|(antimicrobial)\s+(stack|protocol|kill)[^.!?\n]{0,40}\b(gut|pylori|helicobacter))\b/i,
   },
 ];
 
@@ -70,7 +70,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing), aspirin (topical or oral), cyproheptadine, sex hormones (including pregnenolone and progesterone), peptides (including oral or injected BPC-157, TB-4/TB-500, GHK-Cu, and oral Vilon), AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks). No peptide-stack coaching. No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing and topical T3 hair protocols), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone and progesterone), peptides (including oral or injected BPC-157, BPC-157 hair/angiogenesis framing, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, and oral Vilon), AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). No peptide-stack coaching. No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";
