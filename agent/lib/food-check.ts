@@ -36,14 +36,22 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   {
     code: "ripe-fruit",
     pattern:
-      /\b(orange|oj|orange\s+juice|ripe\s+fruit|mango|papaya|watermelon|grapes?|apple\s+juice|honey|pomegranate|pom(?:egranate)?\s*juice)\b/i,
-    detail: "Fruit sugar is a default fuel here, unless you listed fruit as a hard constraint. Pomegranate / pom juice is Peat-aligned.",
+      /\b(orange|oj|orange\s+juice|ripe\s+fruit|mango|papaya|watermelon|grapes?|apple\s+juice|honey|maple(?:\s+syrup)?|pomegranate|pom(?:egranate)?\s*juice)\b/i,
+    detail:
+      "Fruit sugar is a default fuel here, unless you listed fruit as a hard constraint. Pomegranate / pom juice is Peat-aligned. Daily OJ / honey / maple count when the rest of the meal is solid.",
+  },
+  {
+    code: "peat-sugars",
+    pattern:
+      /\b((?:daily\s+)?(?:oj|orange\s+juice)(?:\s*\+?\s*collagen)?|honey|maple(?:\s+syrup)?|a2[-\s]?milk(?:\s+cocoa)?|cocoa\s+(?:with\s+)?a2(?:[-\s]?milk)?)\b/i,
+    detail:
+      "Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa are Peat-aligned fruit–dairy sugars when the rest of the meal is solid, unless constrained.",
   },
   {
     code: "dairy",
     pattern:
-      /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir)\b/i,
-    detail: "Dairy is a default calcium/sugar vehicle, unless you listed dairy as a hard constraint.",
+      /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|a2[-\s]?milk)\b/i,
+    detail: "Dairy is a default calcium/sugar vehicle, unless you listed dairy as a hard constraint. A2-milk cocoa is a fruit–dairy sugar staple when the rest of the meal is solid.",
   },
   {
     code: "cooked-starch",
@@ -80,9 +88,16 @@ const FRUIT_DAIRY_REFUSAL =
   /\b(?:(?:no|without|refuse[sd]?|avoid(?:ing)?)\s+(?:fruit|dairy)|(?:fruit|dairy)[^\n]{0,24}refus)/i;
 
 const DAIRY_FOOD =
-  /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose)\b/i;
+  /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose|a2[-\s]?milk)\b/i;
 const FRUIT_FOOD =
-  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice|pomegranate|pom(?:egranate)?\s*juice)\b/i;
+  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice|pomegranate|pom(?:egranate)?\s*juice|honey|maple(?:\s+syrup)?)\b/i;
+const PEAT_SUGARS =
+  /\b((?:daily\s+)?(?:oj|orange\s+juice)(?:\s*\+?\s*collagen)?|honey|maple(?:\s+syrup)?|a2[-\s]?milk(?:\s+cocoa)?)\b/i;
+const SINCLAIR_FRUCTOSE_FEAR =
+  /\b((?:david\s+)?sinclair\b[^.!?\n]{0,80}\bfructose|fructose[^.!?\n]{0,80}\bsinclair|sinclair\s+fructose[-\s]?fear|fructose[-\s]?fear(?:\s*monger(?:ing)?)?|fear(?:[-\s]of|[-\s]monger(?:ing)?)?\s+fructose|fructose\s+(?:is\s+)?(?:toxic|poison(?:ous)?|dangerous)|anti[-\s]?fructose)\b/i;
+const OJ_HONEY = /\b(oj|orange\s+juice|honey)\b/i;
+const BEEF_RICE_KIBBLE =
+  /\b(kibble|(?:beef[-\s]*(?:and[-\s]+|\/)?rice|rice[-\s]*(?:and[-\s]+|\/)?beef)[-\s]*kibble|kibble[-\s]*(?:with\s+)?(?:beef|rice))\b/i;
 
 const SALADINO =
   /\b(saladino|paul\s+saladino|carnivoremd)\b/i;
@@ -109,6 +124,22 @@ function alpacaHerbsOrSteak(food: string): boolean {
   );
 }
 
+function sinclairFructoseFear(food: string): boolean {
+  return SINCLAIR_FRUCTOSE_FEAR.test(food);
+}
+
+function alpacaOjHoneyKibble(food: string): boolean {
+  if (!OJ_HONEY.test(food)) {
+    return false;
+  }
+  const kibble = BEEF_RICE_KIBBLE.test(food) || /\bkibble\b/i.test(food);
+  const beefRice = /\bbeef\b/i.test(food) && /\brice\b/i.test(food);
+  if (kibble && beefRice) {
+    return true;
+  }
+  return /\balpaca\b/i.test(food) && kibble;
+}
+
 const ICE_CREAM = /\bice\s+cream\b/i;
 const PEAT_ICE_CREAM_INGREDIENT =
   /\b(milk|eggs?|sugar|coconut(?:\s+(?:oil|milk|cream|butter))?)\b/i;
@@ -124,7 +155,12 @@ function peatStyleIceCream(food: string, hasSeedOil: boolean): boolean {
 function carnivoreDiverges(food: string): boolean {
   // Named Alpaca/Saladino carnivore always flags the fruit/dairy split.
   // Herbs-only / steak-centric and carrots/carbs overlapping do not cancel it.
-  if (alpacaHerbsOrSteak(food) || namedAlpacaSaladinoCarnivore(food)) {
+  // OJ/honey mixed with beef-rice "kibble" is the same Alpaca split.
+  if (
+    alpacaHerbsOrSteak(food) ||
+    namedAlpacaSaladinoCarnivore(food) ||
+    alpacaOjHoneyKibble(food)
+  ) {
     return true;
   }
   if (!/\bcarnivore\b/i.test(food)) {
@@ -265,10 +301,20 @@ export function checkFood(
     });
   }
 
+  if (sinclairFructoseFear(trimmed)) {
+    flags.push({
+      code: "sinclair-fructose-fear",
+      detail:
+        "Sinclair fructose-fear is community conflict, not Peat. Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa stay Peat-aligned when the rest of the meal is solid. Do not drop fruit–dairy sugars over that lore.",
+    });
+  }
+
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
-      detail: namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed)
+      detail: alpacaOjHoneyKibble(trimmed)
+        ? "Alpaca carnivore fruit/dairy split still diverges from Peat when OJ/honey mixes with beef-rice kibble. Fruit and dairy are OK here unless you listed them as hard constraints. Kibble plus juice does not make it Peat."
+        : namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed)
         ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split (including Alpaca herbs-only / steak-centric) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots or other carbs overlapping do not cancel that split."
         : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not stand in for fruit and dairy.",
     });
@@ -294,8 +340,11 @@ export function checkFood(
       "gelatinous",
       "warm-fluid",
       "peat-ice-cream",
+      "peat-sugars",
     ].includes(flag.code),
   );
+  const peatSugars = flags.some((flag) => flag.code === "peat-sugars") || PEAT_SUGARS.test(trimmed);
+  const fructoseFear = flags.some((flag) => flag.code === "sinclair-fructose-fear");
   const communityNotPeat = flags.some((flag) =>
     ["community-pcos", "community-ashwagandha", "low-carb-gut-fix"].includes(
       flag.code,
@@ -304,7 +353,9 @@ export function checkFood(
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
   const niacinamideNote = flags.some((flag) => flag.code === "niacinamide-note");
   const alpacaNamed =
-    alpacaHerbsOrSteak(trimmed) || namedAlpacaSaladinoCarnivore(trimmed);
+    alpacaHerbsOrSteak(trimmed) ||
+    namedAlpacaSaladinoCarnivore(trimmed) ||
+    alpacaOjHoneyKibble(trimmed);
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if ((hasPufa || hasJunk) && !hasSupport) {
@@ -330,7 +381,9 @@ export function checkFood(
         : flags.some((flag) => flag.code === "raw-carrot") &&
             !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
           ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
-          : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
+          : peatSugars || fructoseFear
+            ? "Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa are Peat-aligned fruit–dairy sugars when the rest of the meal is solid. Sinclair fructose-fear is community conflict, not Peat."
+            : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? hasJunk && !hasPufa
           ? "Poor metabolic fit as a staple. Processed junk is not the fuel. Swap toward fruit, dairy if allowed, salt, and cooked starch."
@@ -340,10 +393,14 @@ export function checkFood(
             ? "Community, not Peat-primary. Ashwagandha and low-carb-as-gut-fix are not the move. Keep fruit/dairy sugars unless constrained; clinician if they are already supplementing. No doses."
             : "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
-            ? alpacaNamed
+            ? alpacaOjHoneyKibble(trimmed)
+              ? "Alpaca carnivore split still diverges from Peat when OJ/honey mixes with beef-rice kibble. Fruit and dairy are OK here unless you listed them as hard constraints. Kibble plus juice is not the Peat plate."
+              : alpacaNamed
               ? "Alpaca herbs-only / steak-centric (or Alpaca/Saladino (Saladino/Alpaca-style) carnivore without fruit/dairy) diverges from Peat even when carrots or carbs overlap. Fruit and dairy are OK here unless you listed them as hard constraints."
               : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not replace that."
-            : niacinamideNote
+            : fructoseFear
+              ? "Sinclair fructose-fear is community conflict, not Peat. Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa stay Peat-aligned when the rest of the meal is solid."
+              : niacinamideNote
               ? "Niacinamide is sometimes discussed here as a food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing. Keep the plate on fruit, dairy if allowed, and cooked food."
               : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
