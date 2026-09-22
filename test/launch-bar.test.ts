@@ -42,6 +42,8 @@ test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, AAS/Anavar,
   assert.equal(checkSafety("TB-500 for my tendon").verdict, "block");
   assert.equal(checkSafety("GHK-Cu for skin").verdict, "block");
   assert.equal(checkSafety("GHK-Cu DIY for skin").verdict, "block");
+  assert.equal(checkSafety("melanotan-1 topical stack").verdict, "block");
+  assert.equal(checkSafety("topical aspirin T3 hair protocol").verdict, "block");
   assert.equal(checkSafety("oral Vilon this month").verdict, "block");
   assert.equal(checkSafety("peptide stack coaching please").verdict, "block");
   assert.equal(checkSafety("Anavar cut stack this cycle").verdict, "block");
@@ -180,6 +182,59 @@ test("checkSafety redirect names later scout refusals and never echoes doses", (
   assert.match(prog.redirect, /cyproheptadine/);
   assert.doesNotMatch(prog.redirect, /100/);
   assert.doesNotMatch(prog.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+});
+
+test("checkSafety blocks 2026-09-22 scout stacks without echoing doses", () => {
+  const vesugen = checkSafety("DIY Vesugen OVAGEN Chonluten Pinealon stack");
+  assert.equal(vesugen.verdict, "block");
+  assert.equal(vesugen.matched.includes("DIY bioregulator peptides"), true);
+  assert.match(vesugen.redirect, /Vesugen/);
+  assert.match(vesugen.redirect, /Khavinson/);
+  assert.match(vesugen.redirect, /clinician/);
+  assert.match(vesugen.redirect, /No stack coaching/);
+  assert.doesNotMatch(vesugen.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const cardiogen = checkSafety("Cardiogen–Bronchogen bioregulator peptide stack");
+  assert.equal(cardiogen.verdict, "block");
+  assert.equal(cardiogen.matched.includes("DIY bioregulator peptides"), true);
+  assert.match(cardiogen.redirect, /Cardiogen–Bronchogen/);
+  assert.doesNotMatch(cardiogen.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const khavinson = checkSafety("AbudBakri Khavinson wave");
+  assert.equal(khavinson.verdict, "block");
+  assert.equal(khavinson.matched.includes("DIY bioregulator peptides"), true);
+  assert.match(khavinson.redirect, /Khavinson/);
+  assert.doesNotMatch(khavinson.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const phenibut = checkSafety("phenibut tonight for sleep");
+  assert.equal(phenibut.verdict, "block");
+  assert.equal(phenibut.matched.includes("DIY phenibut"), true);
+  assert.match(phenibut.redirect, /phenibut/);
+  assert.match(phenibut.redirect, /clinician/);
+  assert.doesNotMatch(phenibut.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const oralTrt = checkSafety("oral TRT DIY this month");
+  assert.equal(oralTrt.verdict, "block");
+  assert.equal(oralTrt.matched.includes("exogenous hormones"), true);
+  assert.match(oralTrt.redirect, /oral TRT \/ DHT DIY/);
+  assert.doesNotMatch(oralTrt.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const dht = checkSafety("DHT DIY cream protocol");
+  assert.equal(dht.verdict, "block");
+  assert.equal(dht.matched.includes("exogenous hormones"), true);
+  assert.match(dht.redirect, /DHT/);
+  assert.doesNotMatch(dht.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const melanotan = checkSafety("GHK-Cu plus melanotan-1 topical stack");
+  assert.equal(melanotan.verdict, "block");
+  assert.equal(melanotan.matched.includes("peptides / BPC"), true);
+  assert.match(melanotan.redirect, /melanotan/);
+  assert.match(melanotan.redirect, /No stack coaching/);
+  assert.doesNotMatch(melanotan.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  assert.equal(checkSafety("collagen peptides in orange juice").verdict, "ok");
+  assert.equal(checkSafety("daily OJ with honey").verdict, "ok");
+  assert.equal(checkSafety("A2-milk cocoa").verdict, "ok");
 });
 
 test("asking to turn the gate off does not disable checkSafety", () => {
@@ -327,6 +382,37 @@ test("other skills cannot skip a blocked inbound ask", () => {
   assert.equal(gutLock.kind, "safety-block");
   assert.equal(gutLock.safety.matched.includes("DIY antimicrobial gut-kill"), true);
   assert.doesNotMatch(gutLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const khavinsonLock = buildTurnLock({
+    inboundText: "AbudBakri Khavinson wave: stack Vesugen and Pinealon",
+    brief: lockBrief({
+      primaryGoal: "recovery",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(khavinsonLock.kind, "safety-block");
+  assert.equal(khavinsonLock.safety.matched.includes("DIY bioregulator peptides"), true);
+  assert.match(khavinsonLock.content, /Do not load metabolism-function/);
+  assert.doesNotMatch(khavinsonLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const phenibutLock = buildTurnLock({
+    inboundText: "coach me a phenibut stack",
+    brief: lockBrief({
+      primaryGoal: "sleep",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(phenibutLock.kind, "safety-block");
+  assert.equal(phenibutLock.safety.matched.includes("DIY phenibut"), true);
+  assert.doesNotMatch(phenibutLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
 });
 
 test("food-check honors dairy as a hard constraint", () => {
@@ -581,6 +667,88 @@ test("food-check whitelists pomegranate / pom juice and raw carrot as Peat-align
   assert.match(carrot.summary, /Raw carrot is Peat-aligned/);
 });
 
+test("food-check whitelists daily OJ / OJ+collagen / honey / maple / A2-milk cocoa and flags Sinclair plus Alpaca kibble", () => {
+  const dailyOj = checkFood("daily OJ with eggs and salt", []);
+  assert.equal(dailyOj.verdict, "supportive");
+  assert.equal(
+    dailyOj.flags.some((flag) => flag.code === "peat-sugars"),
+    true,
+  );
+  assert.match(dailyOj.summary, /Daily OJ \/ OJ\+collagen \/ honey \/ maple \/ A2-milk cocoa/);
+  assert.doesNotMatch(dailyOj.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const ojCollagen = checkFood("OJ+collagen", []);
+  assert.equal(ojCollagen.verdict, "supportive");
+  assert.equal(
+    ojCollagen.flags.some((flag) => flag.code === "peat-sugars"),
+    true,
+  );
+  assert.equal(
+    ojCollagen.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+
+  const honeyMaple = checkFood("honey and maple syrup on potatoes", []);
+  assert.equal(honeyMaple.verdict, "supportive");
+  assert.equal(
+    honeyMaple.flags.some((flag) => flag.code === "peat-sugars"),
+    true,
+  );
+  assert.match(honeyMaple.summary, /maple/);
+
+  const cocoa = checkFood("A2-milk cocoa", []);
+  assert.equal(cocoa.verdict, "supportive");
+  assert.equal(
+    cocoa.flags.some((flag) => flag.code === "peat-sugars"),
+    true,
+  );
+  assert.equal(
+    cocoa.flags.some((flag) => flag.code === "dairy"),
+    true,
+  );
+
+  const sinclairWithOj = checkFood(
+    "daily OJ but Sinclair fructose-fear says skip fruit sugar",
+    [],
+  );
+  assert.equal(sinclairWithOj.verdict, "supportive");
+  assert.equal(
+    sinclairWithOj.flags.some((flag) => flag.code === "sinclair-fructose-fear"),
+    true,
+  );
+  assert.match(sinclairWithOj.summary, /community conflict, not Peat/);
+  assert.doesNotMatch(sinclairWithOj.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const sinclairOnly = checkFood("Sinclair fructose-fear", []);
+  assert.equal(
+    sinclairOnly.flags.some((flag) => flag.code === "sinclair-fructose-fear"),
+    true,
+  );
+  assert.notEqual(sinclairOnly.verdict, "supportive");
+  assert.match(sinclairOnly.summary, /community conflict, not Peat/);
+
+  const kibble = checkFood("OJ and honey with beef-rice kibble", []);
+  assert.equal(
+    kibble.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.equal(
+    kibble.flags.some((flag) => flag.code === "peat-sugars"),
+    true,
+  );
+  assert.notEqual(kibble.verdict, "supportive");
+  assert.match(kibble.summary, /Alpaca carnivore split/);
+  assert.match(kibble.summary, /kibble/);
+  assert.doesNotMatch(kibble.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const alpacaKibble = checkFood("Alpaca kibble with OJ and honey", []);
+  assert.equal(
+    alpacaKibble.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.notEqual(alpacaKibble.verdict, "supportive");
+});
+
 test("metabolism-function hardens breakfast and prunes semen-retention copy", async () => {
   const { readFile } = await import("node:fs/promises");
   const skill = await readFile(
@@ -676,5 +844,53 @@ test("safety-gate, fluid-lymph, and source-digest bake in the 2026-09-18 scout w
   assert.match(digest, /AbudBakri/);
   assert.match(digest, /eat-your-hydration/);
   assert.match(digest, /FarvingCo/);
+  assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
+});
+
+test("safety-gate, food-check, and source-digest bake in the 2026-09-22 scout without doses", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const safety = await readFile(
+    new URL("../agent/skills/safety-gate.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(safety, /Vesugen/);
+  assert.match(safety, /OVAGEN/);
+  assert.match(safety, /Chonluten/);
+  assert.match(safety, /Pinealon/);
+  assert.match(safety, /Cardiogen–Bronchogen/);
+  assert.match(safety, /Khavinson wave/);
+  assert.match(safety, /Phenibut/);
+  assert.match(safety, /Oral TRT \/ DHT DIY/);
+  assert.match(safety, /[Mm]elanotan/);
+  assert.match(safety, /Topical aspirin \/ T3 hair/);
+  assert.match(safety, /label only/);
+  assert.match(safety, /AbudBakri/);
+  assert.match(safety, /No stack coaching/);
+  assert.match(safety, /clinician/);
+  assert.match(safety, /BPC/);
+  assert.match(safety, /AAS/);
+  assert.match(safety, /bromantane/);
+  assert.match(safety, /[Cc]ypro/);
+  assert.doesNotMatch(safety, /\d+\s*(mg|mcg)\b/i);
+
+  const food = await readFile(
+    new URL("../agent/skills/food-check.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(food, /Daily OJ \/ OJ\+collagen \/ honey \/ maple \/ A2-milk cocoa/);
+  assert.match(food, /Sinclair fructose-fear/);
+  assert.match(food, /community conflict, not Peat/);
+  assert.match(food, /beef-rice \"kibble\"/);
+  assert.match(food, /Always flag Alpaca/);
+  assert.doesNotMatch(food, /\d+\s*(mg|mcg)\b/i);
+
+  const digest = await readFile(
+    new URL("../agent/skills/source-digest.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(digest, /AbudBakri Khavinson wave/);
+  assert.match(digest, /label only/);
+  assert.match(digest, /phenibut/);
+  assert.match(digest, /oral TRT \/ DHT DIY/);
   assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
 });
