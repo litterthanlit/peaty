@@ -1,5 +1,5 @@
 ---
-description: Coach metabolic function — raise burn with food (dairy/fruit sugar oxidation), warmth, rest, and temp/pulse; do not skip breakfast; not crash diets or low-carb-plus-ashwagandha as a gut fix.
+description: Coach metabolic function — raise burn with food (dairy/fruit sugar oxidation), warmth, rest, and temp/pulse; do not skip breakfast; Abud ALAN/leptin–POMC is light color only; natural Mg is food/mineral with mineralized fluids, not a dose; not crash diets or low-carb-plus-ashwagandha as a gut fix.
 ---
 
 # Metabolism function
@@ -35,14 +35,20 @@ SolBrah-style **Energy Givers / Takers** is optional color only — not a medica
 
 Translate it to food, light, salt, and rest. If a paste includes **semen-retention** copy, prune it. Do not coach that. Do not bake it into the plan.
 
+**AbudBakri ALAN / leptin–POMC** circadian talk is `source-digest` **light color only** — community overlap, not a medical claim. Do not cite the handle as evidence. Keep **don't-skip-breakfast** and morning digestible carbs. Artificial light at night is optional rhythm color; it does not replace the morning plate.
+
+**Natural / liquid Mg** pairs with mineralized fluids / **Mg-in-OJ**: food and mineral, not a dosing protocol. No milligram figures. If they want a number, that is clinician territory. Stay on salted food, fruit/dairy fluids if allowed, and mineralized fluids.
+
 ## Do not
 
 - Prescribe T3, NDT, or "start 1/4 grain." That is `safety-gate` → clinician.
 - Run a cut, OMAD, keto, skip-breakfast, or carnivore-without-sugar as the plan.
 - Treat **low-carb + ashwagandha** as a gut fix. It is not Peaty. Raise the burn; do not starve it or herb-stack the intestine.
-- Treat a low temp as permission to stack hormones, peptides, or AAS.
+- Treat a low temp as permission to stack hormones, peptides, GLP-1s, thymus peptides, or AAS.
+- Turn ALAN / leptin–POMC talk into a light-therapy protocol, or skip breakfast because of it.
+- Turn natural/liquid Mg into a milligram protocol.
 - Coach semen retention, sexual restriction, or "retain for energy" as metabolism.
 
 ## One move
 
-Name one meal that is actually available (example: orange juice, milk if allowed, honey or fruit, salt) and when they will eat it — preferably this morning, not "later if hungry." Call `commit_next_action`. Then stop. If the ask is T3/NDT/hormones/aspirin/cyproheptadine/peptides/AAS, that is safety-gate — you cannot waive it.
+Name one meal that is actually available (example: orange juice, milk if allowed, honey or fruit, salt) and when they will eat it — preferably this morning, not "later if hungry." Call `commit_next_action`. Then stop. If the ask is T3/NDT/hormones/oral-TRT/aspirin/cyproheptadine/peptides/GLP-1s/thymus/AAS, that is safety-gate — you cannot waive it.

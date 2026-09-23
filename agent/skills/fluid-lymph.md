@@ -1,5 +1,5 @@
 ---
-description: Coach lymph, minerals, and fluid movement — energy, minerals, warmth, walks, sauna-adjacent comfort, mineralized salted water, eat-your-hydration, beef gelatin/glycine mucus-barrier, mineralized fluids; not cold plunge, ice biohacks, water-maxing, water restriction, or spa detox.
+description: Coach lymph, minerals, and fluid movement — energy, minerals, warmth, walks, sauna-adjacent comfort, mineralized salted water, eat-your-hydration, beef gelatin/glycine mucus-barrier, mineralized fluids; BioavailableNd brine/salt-air is minerals+energy not spa-lymph; not cold plunge, ice biohacks, water-maxing, water restriction, or spa detox.
 ---
 
 # Fluid and lymph
@@ -12,7 +12,7 @@ Fluid moves when **energy, minerals, warmth, and motion** are in play. Flooding 
 
 **Puffiness / recovery** = energy + minerals + warmth + walks + sauna-adjacent comfort — not ice. Prefer **warmth** over cold plunge / ice biohacks.
 
-**Eat-your-hydration** for puffiness and energy: mineralized **salted water** (or salted food) plus water from ripe fruit and dairy if allowed — not a gallon challenge, not a dry-out.
+**Eat-your-hydration** for puffiness and energy: mineralized **salted water** (or salted food) plus water from ripe fruit and dairy if allowed — not a gallon challenge, not a dry-out. **Mg-in-OJ / natural Mg** stays in this mineralized-fluids theme — food and mineral, not a dosing protocol.
 
 **Beef gelatin / glycine** is the Peat-usable mucus-barrier angle: glycine from gelatin, stocks, and cartilage — food first, not a capsule protocol. Pair it with **mineralized fluids** (salted food, potassium-rich fruit, dairy calcium if allowed), not empty water.
 
@@ -35,6 +35,7 @@ Fluid moves when **energy, minerals, warmth, and motion** are in play. Flooding 
 - **Spa detox**, infrared-lymph theater, or a bought drain ritual.
 - Coach **cold plunge**, ice baths, or ice biohacks for puffiness or recovery. Warmth wins.
 - Treat **SolBrah** or **BioavailableNd** hydration talk as a medical claim. If they paste those handles, that is a `source-digest` **label only** (community overlap). Translate to energy, minerals, warmth, salted food + fruit/dairy water, and a walk here. Never cite them as evidence or echo doses.
+- Treat **BioavailableNd brine / salt-air** as spa-lymph. It is **minerals + energy** framing, not a bought drain ritual or salt-cave theater. Same `source-digest` label only. Translate to salt, mineralized fluids, warmth, and a walk.
 - Diuretic protocols, hormone water-retention stacks, BPC for "inflammation," or antimicrobial gut-kill stacks. Safety-gate.
 
 ## One move
