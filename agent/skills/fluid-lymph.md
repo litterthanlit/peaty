@@ -1,5 +1,5 @@
 ---
-description: Coach lymph, minerals, and fluid movement — energy, minerals, warmth, walks, sauna-adjacent comfort, mineralized salted water, eat-your-hydration, beef gelatin/glycine mucus-barrier, mineralized fluids; not cold plunge, ice biohacks, water-maxing, water restriction, or spa detox.
+description: Coach lymph, minerals, and fluid movement — energy, minerals, warmth, walks, sauna-adjacent comfort, mineralized salted water, eat-your-hydration, BioavailableNd-style seasonal hydration map (summer fruit/fresh milk/mineral water; fall broths/stews/steamed/stewed fruit/cultured-brined dairy), beef gelatin/glycine mucus-barrier, mineralized fluids; BioavailableNd brine/salt-air is minerals+energy not spa-lymph; cold stresses thyroid; not cold plunge, ice biohacks, water-maxing, water restriction, or spa detox.
 ---
 
 # Fluid and lymph
@@ -10,9 +10,16 @@ Load when they mention puffiness, tight rings, "I need to drain lymph," electrol
 
 Fluid moves when **energy, minerals, warmth, and motion** are in play. Flooding water without salt often makes people feel worse. Lymph is not a detox product you buy.
 
-**Puffiness / recovery** = energy + minerals + warmth + walks + sauna-adjacent comfort — not ice. Prefer **warmth** over cold plunge / ice biohacks.
+**Puffiness / recovery** = energy + minerals + warmth + walks + sauna-adjacent comfort — not ice. Prefer **warmth** over cold plunge / ice biohacks. **Cold stresses thyroid** and raises stress hormones; aim for **energy and warmth**, not spa-lymph.
 
-**Eat-your-hydration** for puffiness and energy: mineralized **salted water** (or salted food) plus water from ripe fruit and dairy if allowed — not a gallon challenge, not a dry-out.
+**Eat-your-hydration** for puffiness and energy: mineralized **salted water** (or salted food) plus water from ripe fruit and dairy if allowed — not a gallon challenge, not a dry-out. **Mg-in-OJ / natural Mg** stays in this mineralized-fluids theme — food and mineral, not a dosing protocol.
+
+**BioavailableNd-style seasonal hydration map** (`source-digest` label only — community overlap, not a medical claim; do not cite the handle as evidence):
+
+- **Summer**: fruit, fresh milk, mineral water
+- **Fall**: broths, stews, steamed food, stewed fruit, cultured/brined dairy
+
+Pair that map with the anti-cold-plunge rule above. Translate to energy, minerals, and warmth — not a spa-lymph ritual. Do not cite **Alpaca** here; Alpaca is only cited alongside the carnivore flag in `food-check` / `source-digest`.
 
 **Beef gelatin / glycine** is the Peat-usable mucus-barrier angle: glycine from gelatin, stocks, and cartilage — food first, not a capsule protocol. Pair it with **mineralized fluids** (salted food, potassium-rich fruit, dairy calcium if allowed), not empty water.
 
@@ -33,8 +40,9 @@ Fluid moves when **energy, minerals, warmth, and motion** are in play. Flooding 
 - "Flush" with distilled water and zero sodium.
 - **Water restriction** as a hack. Do not tell them to stop drinking.
 - **Spa detox**, infrared-lymph theater, or a bought drain ritual.
-- Coach **cold plunge**, ice baths, or ice biohacks for puffiness or recovery. Warmth wins.
+- Coach **cold plunge**, ice baths, or ice biohacks for puffiness or recovery. Cold stresses thyroid / raises stress hormones. Aim for energy and warmth, not spa-lymph. Warmth wins.
 - Treat **SolBrah** or **BioavailableNd** hydration talk as a medical claim. If they paste those handles, that is a `source-digest` **label only** (community overlap). Translate to energy, minerals, warmth, salted food + fruit/dairy water, and a walk here. Never cite them as evidence or echo doses.
+- Treat **BioavailableNd brine / salt-air** as spa-lymph. It is **minerals + energy** framing, not a bought drain ritual or salt-cave theater. Same `source-digest` label only. Translate to salt, mineralized fluids, warmth, and a walk.
 - Diuretic protocols, hormone water-retention stacks, BPC for "inflammation," or antimicrobial gut-kill stacks. Safety-gate.
 
 ## One move
