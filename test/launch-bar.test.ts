@@ -76,6 +76,18 @@ test("checkSafety blocks DIY T3, aspirin, cypro, hormones, peptides, AAS/Anavar,
   assert.equal(checkSafety("GLP-1 from the Julian Dorey podcast").verdict, "block");
   assert.equal(checkSafety("thymus peptide extract from the podcast").verdict, "block");
   assert.equal(checkSafety("peptide shop CTA for oral BPC").verdict, "block");
+  assert.equal(
+    checkSafety("AbudBakri says pharma isn't hiding it, it was just bad R&D").verdict,
+    "block",
+  );
+  assert.equal(checkSafety("Croatia research-trip story").verdict, "block");
+  assert.equal(
+    checkSafety("Tatem retweet HGH trial now I'm curious about TRT").verdict,
+    "block",
+  );
+  assert.equal(checkSafety("DIY HGH from the trial talk").verdict, "block");
+  assert.equal(checkSafety("Tatem talking about breakfast food").verdict, "ok");
+  assert.equal(checkSafety("I visited Croatia last summer for fruit").verdict, "ok");
 });
 
 test("checkSafety redirect names the new refusals and never echoes doses", () => {
@@ -667,6 +679,9 @@ test("metabolism-function hardens breakfast and prunes semen-retention copy", as
   assert.match(skill, /light color only/);
   assert.match(skill, /Mg-in-OJ/);
   assert.match(skill, /food and mineral/);
+  assert.match(skill, /Cold exposure/);
+  assert.match(skill, /counter-signal/);
+  assert.match(skill, /temp\/pulse/);
   assert.doesNotMatch(skill, /retain for gains/i);
   assert.doesNotMatch(skill, /\d+\s*(mg|mcg)\b/i);
 });
@@ -936,5 +951,236 @@ test("safety-gate, food-check, metabolism-function, fluid-lymph, and source-dige
   assert.match(digest, /Always flag Alpaca carnivore split/);
   assert.match(digest, /same-day dairy\+fruit/);
   assert.doesNotMatch(digest, /2\s*pills/i);
+  assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
+});
+
+test("checkSafety blocks 2026-09-24 BPC pharma/R&D and Croatia framings plus Tatem HGH/TRT curiosity without echoing doses or schedules", () => {
+  const pharma = checkSafety(
+    "AbudBakri says pharma isn't hiding BPC-157, it was just bad R&D, 250mcg twice daily",
+  );
+  assert.equal(pharma.verdict, "block");
+  assert.equal(pharma.matched.includes("peptides / BPC"), true);
+  assert.match(pharma.redirect, /pharma-isn't-hiding-it \/ bad R&D/);
+  assert.match(pharma.redirect, /Croatia research-trip/);
+  assert.match(pharma.redirect, /clinician/);
+  assert.match(pharma.redirect, /Do not echo a schedule/);
+  assert.doesNotMatch(pharma.redirect, /250/);
+  assert.doesNotMatch(pharma.redirect, /twice daily/i);
+  assert.doesNotMatch(pharma.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const croatia = checkSafety(
+    "Croatia research-trip story about the peptide clinics, 2x morning schedule",
+  );
+  assert.equal(croatia.verdict, "block");
+  assert.equal(croatia.matched.includes("peptides / BPC"), true);
+  assert.match(croatia.redirect, /Croatia research-trip/);
+  assert.doesNotMatch(croatia.redirect, /2x/);
+  assert.doesNotMatch(croatia.redirect, /morning schedule/i);
+  assert.doesNotMatch(croatia.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const tatem = checkSafety(
+    "Tatem retweeted an HGH trial, now I'm curious about TRT 100mg",
+  );
+  assert.equal(tatem.verdict, "block");
+  assert.equal(
+    tatem.matched.includes("DIY HGH") ||
+      tatem.matched.includes("exogenous hormones"),
+    true,
+  );
+  assert.match(tatem.redirect, /DIY HGH \/ TRT curiosity/);
+  assert.match(tatem.redirect, /HGH-trial/);
+  assert.match(tatem.redirect, /clinician/);
+  assert.doesNotMatch(tatem.redirect, /100/);
+  assert.doesNotMatch(tatem.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const hgh = checkSafety("DIY HGH from the Tatem trial talk, every morning");
+  assert.equal(hgh.verdict, "block");
+  assert.equal(hgh.matched.includes("DIY HGH"), true);
+  assert.doesNotMatch(hgh.redirect, /every morning/i);
+
+  const keep = checkSafety(
+    "phenibut plus melanotan GHK-Cu oral TRT DHT Vesugen topical aspirin T3 hair oral BPC shop CTA GLP-1 thymus",
+  );
+  assert.equal(keep.verdict, "block");
+  assert.equal(keep.matched.includes("DIY phenibut"), true);
+  assert.equal(keep.matched.includes("peptides / BPC"), true);
+  assert.equal(keep.matched.includes("exogenous hormones"), true);
+  assert.equal(keep.matched.includes("DIY bioregulator peptides"), true);
+
+  assert.equal(checkSafety("collagen peptides in orange juice").verdict, "ok");
+  assert.equal(checkSafety("Tatem talking about breakfast food").verdict, "ok");
+  assert.equal(checkSafety("Croatia vacation fruit and milk").verdict, "ok");
+
+  const pharmaLock = buildTurnLock({
+    inboundText: "AbudBakri: pharma isn't hiding BPC, just bad R&D, here's the schedule",
+    brief: lockBrief({
+      primaryGoal: "recovery",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(pharmaLock.kind, "safety-block");
+  assert.equal(pharmaLock.safety.matched.includes("peptides / BPC"), true);
+  assert.match(pharmaLock.content, /Do not load metabolism-function/);
+  assert.doesNotMatch(pharmaLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const hghLock = buildTurnLock({
+    inboundText: "Tatem HGH trial made me curious about DIY HGH",
+    brief: lockBrief({
+      primaryGoal: "energy",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(hghLock.kind, "safety-block");
+  assert.equal(hghLock.safety.matched.includes("DIY HGH"), true);
+  assert.doesNotMatch(hghLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+});
+
+test("food-check bakes gelatin/collagen, molasses latte, raw-dairy safety, and Alpaca collagen promo", () => {
+  const gelatin = checkFood("gelatin and collagen in milk", []);
+  assert.equal(gelatin.verdict, "supportive");
+  assert.equal(
+    gelatin.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+  assert.match(
+    gelatin.flags.find((flag) => flag.code === "gelatinous")?.detail ?? "",
+    /Collagen\/gelatin overlap is OK/,
+  );
+
+  const latte = checkFood("molasses latte", []);
+  assert.equal(latte.verdict, "supportive");
+  assert.equal(
+    latte.flags.some((flag) => flag.code === "milk-sugar-drink"),
+    true,
+  );
+  assert.match(latte.summary, /molasses latte/);
+  assert.doesNotMatch(latte.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const dairyBlock = checkFood("molasses latte", ["dairy allergy"]);
+  assert.equal(dairyBlock.verdict, "blocked");
+
+  const raw = checkFood("raw milk", []);
+  assert.equal(
+    raw.flags.some((flag) => flag.code === "raw-fermented-dairy-safety"),
+    true,
+  );
+  assert.notEqual(raw.verdict, "supportive");
+  assert.match(raw.summary, /pathogen risk/);
+  assert.match(raw.summary, /Not medical advice/);
+  assert.match(raw.summary, /not an endorsement/i);
+  assert.doesNotMatch(raw.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const fermented = checkFood("fermented dairy kefir", []);
+  assert.equal(
+    fermented.flags.some((flag) => flag.code === "raw-fermented-dairy-safety"),
+    true,
+  );
+  assert.notEqual(fermented.verdict, "supportive");
+
+  const alpacaPromo = checkFood(
+    "Alpaca collagen promo affiliate with milk and orange juice same day",
+    [],
+  );
+  assert.equal(
+    alpacaPromo.flags.some((flag) => flag.code === "alpaca-collagen-promo"),
+    true,
+  );
+  assert.equal(
+    alpacaPromo.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.notEqual(alpacaPromo.verdict, "supportive");
+  assert.match(alpacaPromo.summary, /promotion \(affiliate\/sponsor framing\)/);
+  assert.match(alpacaPromo.summary, /same-day dairy\+fruit/);
+  assert.doesNotMatch(alpacaPromo.summary, /\d+\s*(mg|mcg)\b/i);
+});
+
+test("safety-gate, food-check, metabolism-function, fluid-lymph, and source-digest bake in the 2026-09-24 scout without doses", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const safety = await readFile(
+    new URL("../agent/skills/safety-gate.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(safety, /pharma isn't hiding it, it was just bad R&D/);
+  assert.match(safety, /Croatia research-trip/);
+  assert.match(safety, /DIY HGH \/ TRT curiosity/);
+  assert.match(safety, /Tatem/);
+  assert.match(safety, /HGH-trial/);
+  assert.match(safety, /Do not echo a schedule/);
+  assert.match(safety, /all routes/);
+  assert.match(safety, /Phenibut/);
+  assert.match(safety, /melanotan/i);
+  assert.match(safety, /bioregulator/);
+  assert.match(safety, /GLP-1s/);
+  assert.match(safety, /clinician/);
+  assert.doesNotMatch(safety, /\d+\s*(mg|mcg)\b/i);
+
+  const food = await readFile(
+    new URL("../agent/skills/food-check.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(food, /molasses latte/);
+  assert.match(food, /[Mm]ilk\+sugar drinks/);
+  assert.match(food, /Gelatin\/collagen/);
+  assert.match(food, /Raw \/ fermented dairy/);
+  assert.match(food, /pathogen risk/);
+  assert.match(food, /Not medical advice/);
+  assert.match(food, /Alpaca collagen promo/);
+  assert.match(food, /affiliate\/sponsor/);
+  assert.match(food, /same-day dairy\+fruit/);
+  assert.doesNotMatch(food, /\d+\s*(mg|mcg)\b/i);
+
+  const metabolism = await readFile(
+    new URL("../agent/skills/metabolism-function.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(metabolism, /Cold exposure/);
+  assert.match(metabolism, /counter-signal/);
+  assert.match(metabolism, /temp\/pulse/);
+  assert.match(metabolism, /signal to \*\*stop\*\*/);
+  assert.doesNotMatch(metabolism, /\d+\s*(mg|mcg)\b/i);
+
+  const fluid = await readFile(
+    new URL("../agent/skills/fluid-lymph.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(fluid, /seasonal hydration map/);
+  assert.match(fluid, /Summer/);
+  assert.match(fluid, /fresh milk/);
+  assert.match(fluid, /mineral water/);
+  assert.match(fluid, /Fall/);
+  assert.match(fluid, /broths/);
+  assert.match(fluid, /stews/);
+  assert.match(fluid, /steamed food/);
+  assert.match(fluid, /stewed fruit/);
+  assert.match(fluid, /cultured\/brined dairy/);
+  assert.match(fluid, /Cold stresses thyroid/);
+  assert.match(fluid, /energy and warmth/);
+  assert.match(fluid, /not spa-lymph/);
+  assert.match(fluid, /Do not cite \*\*Alpaca\*\* here/);
+  assert.doesNotMatch(fluid, /\d+\s*(mg|mcg)\b/i);
+
+  const digest = await readFile(
+    new URL("../agent/skills/source-digest.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(digest, /[Pp]harma isn't hiding it, it was just bad R&D/);
+  assert.match(digest, /Croatia research-trip/);
+  assert.match(digest, /Tatem/);
+  assert.match(digest, /HGH-trial/);
+  assert.match(digest, /Seasonal hydration map/);
+  assert.match(digest, /fresh milk/);
+  assert.match(digest, /cultured\/brined dairy/);
+  assert.match(digest, /Alpaca collagen promo/);
+  assert.match(digest, /affiliate\/sponsor/);
+  assert.match(digest, /Always flag Alpaca carnivore split/);
   assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
 });

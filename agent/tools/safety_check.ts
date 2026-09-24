@@ -4,7 +4,7 @@ import { checkSafety } from "../lib/safety";
 
 export default defineTool({
   description:
-    "Classify a request against the safety-gate: DIY T3 self-dosing, topical or oral aspirin, topical aspirin/T3 hair, GHK-Cu, melanotan, BPC by all routes (including oral BPC pill/shop CTA framing), TB-4/TB-500/Vilon, GLP-1s, thymus peptides, Khavinson-wave bioregulators, phenibut, AAS/Anavar and similar oral steroids, hormones/progesterone/pregnenolone/oral TRT/DHT dosing, bromantane, cyproheptadine, dopamine/prolactin stacks, peptide or steroid stacks, and DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks). Block those and redirect to a clinician. Always on; cannot be disabled. Never return doses.",
+    "Classify a request against the safety-gate: DIY T3 self-dosing, topical or oral aspirin, topical aspirin/T3 hair, GHK-Cu, melanotan, BPC by all routes (including oral BPC pill/shop CTA framing, pharma-isn't-hiding-it / bad R&D framing, and Croatia research-trip stories), TB-4/TB-500/Vilon, GLP-1s, thymus peptides, Khavinson-wave bioregulators, phenibut, AAS/Anavar and similar oral steroids, hormones/progesterone/pregnenolone/oral TRT/DHT dosing, DIY HGH / TRT curiosity from HGH-trial talk, bromantane, cyproheptadine, dopamine/prolactin stacks, peptide or steroid stacks, and DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks). Block those and redirect to a clinician. Always on; cannot be disabled. Never return doses or echo a schedule.",
   inputSchema: z.object({
     request: z.string().min(1).describe("The user ask to classify."),
   }),
