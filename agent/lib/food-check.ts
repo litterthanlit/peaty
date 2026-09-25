@@ -61,7 +61,7 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
     pattern:
       /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen(?:\s+(?:from\s+food|peptides?))?|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
     detail:
-      "Glycine via beef gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol. Collagen/gelatin overlap is OK.",
+      "Glycine via beef gelatin, collagen, stocks, and cartilage is Peat-aligned protein. Dairy + fruit stay the preferred base. Food first, not a capsule protocol. Community gram ranges are signal, not a prescription. Collagen/gelatin overlap is OK.",
   },
 ];
 
@@ -105,6 +105,12 @@ const MILK_SUGAR_DRINK =
   /\b(molasses\s+latte|(?:milk|latte|coffee)\s+(?:with|and|\+)\s+(?:molasses|sugar)|(?:molasses|sugar)\s+(?:milk|latte)|milk\s*\+\s*sugar)\b/i;
 const RAW_FERMENTED_DAIRY =
   /\b(raw\s+milk|unpasteurized(?:\s+(?:milk|dairy|cheese|cream|yogurt|kefir))?|raw\s+(?:cheese|dairy|cream|yogurt|kefir)|(?:raw|unpasteurized)\s+fermented\s+dairy|fermented\s+dairy)\b/i;
+const COLLAGEN_GRAMS =
+  /\b(collagen|gelatin)\b[^.!?\n]{0,80}\b\d+(?:\s*[-–to]+\s*\d+)?\s*g(?:rams?)?(?:\s*\/?\s*day)?|\b\d+(?:\s*[-–to]+\s*\d+)?\s*g(?:rams?)?(?:\s*\/?\s*day)?[^.!?\n]{0,80}\b(collagen|gelatin)\b/i;
+const HEAVY_COFFEE =
+  /\b(heavy\s+coffee|(?:five|5)\s+cups?(?:\s+of)?\s+coffee|coffee\b[^.!?\n]{0,40}\b(?:five|5)\s+cups|(?:five|5)\s+cups\b[^.!?\n]{0,40}\bcoffee)\b/i;
+const EMPTY_STOMACH_COFFEE =
+  /\bcoffee\b[^.!?\n]{0,60}\bempty\s+stomach|empty\s+stomach[^.!?\n]{0,60}\bcoffee\b/i;
 
 function namedAlpacaSaladinoCarnivore(food: string): boolean {
   if (SALADINO.test(food)) {
@@ -343,6 +349,20 @@ export function checkFood(
         "Alpaca collagen promo is a promotion (affiliate/sponsor framing), not Peat-primary. Still flag the usual Alpaca carnivore split vs same-day dairy+fruit.",
     });
   }
+  if (COLLAGEN_GRAMS.test(trimmed)) {
+    flags.push({
+      code: "collagen-community-range",
+      detail:
+        "Collagen/gelatin is Peat-aligned protein. Dairy + fruit stay the preferred base. Alpaca-cited ~15 g/day and a personal 20-40 g range are community signal, not a prescription.",
+    });
+  }
+  if (HEAVY_COFFEE.test(trimmed) || EMPTY_STOMACH_COFFEE.test(trimmed)) {
+    flags.push({
+      code: "community-heavy-coffee",
+      detail:
+        "Heavy coffee (5 cups/day) is community signal, not Peat-primary. Have coffee with food/milk/sugar, not on an empty stomach.",
+    });
+  }
 
   const hasSeedOil = flags.some((flag) => flag.code === "seed-oil");
   if (peatStyleIceCream(trimmed, hasSeedOil)) {
@@ -390,9 +410,12 @@ export function checkFood(
     ].includes(flag.code),
   );
   const communityNotPeat = flags.some((flag) =>
-    ["community-pcos", "community-ashwagandha", "low-carb-gut-fix"].includes(
-      flag.code,
-    ),
+    [
+      "community-pcos",
+      "community-ashwagandha",
+      "low-carb-gut-fix",
+      "community-heavy-coffee",
+    ].includes(flag.code),
   );
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
   const niacinamideNote = flags.some((flag) => flag.code === "niacinamide-note");
@@ -400,6 +423,8 @@ export function checkFood(
   const naturalMg = flags.some((flag) => flag.code === "natural-mg");
   const rawFermented = flags.some((flag) => flag.code === "raw-fermented-dairy-safety");
   const alpacaPromo = flags.some((flag) => flag.code === "alpaca-collagen-promo");
+  const collagenRange = flags.some((flag) => flag.code === "collagen-community-range");
+  const heavyCoffee = flags.some((flag) => flag.code === "community-heavy-coffee");
   const alpacaNamed =
     alpacaHerbsOrSteak(trimmed) ||
     namedAlpacaSaladinoCarnivore(trimmed) ||
@@ -431,6 +456,8 @@ export function checkFood(
           ? "BioavailableNd-style fall stack fits when ingredients do: wake pomegranate juice/tea, midday meat stock / gelatinous broth, bed warm milk + honey + glycine. Food first, not a capsule protocol."
         : flags.some((flag) => flag.code === "milk-sugar-drink")
           ? "Milk+sugar drinks (including molasses latte) are Peat-aligned. Gelatin/collagen overlap stays OK. Dairy sugar is a default fuel unless constrained."
+          : collagenRange
+            ? "Collagen/gelatin is Peat-aligned protein. Dairy + fruit stay the preferred base. Alpaca-cited ~15 g/day and a personal 20-40 g range are community signal, not a prescription."
           : flags.some((flag) => flag.code === "raw-carrot") &&
             !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
           ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
@@ -444,6 +471,8 @@ export function checkFood(
         : communityNotPeat
           ? ashwagandhaOrLowCarb
             ? "Community, not Peat-primary. Ashwagandha and low-carb-as-gut-fix are not the move. Keep fruit/dairy sugars unless constrained; clinician if they are already supplementing. No doses."
+            : heavyCoffee
+              ? "Community signal, not Peat-primary. Heavy coffee is not the fuel. Have coffee with food/milk/sugar, not on an empty stomach. Dairy + fruit stay the preferred base unless constrained."
             : "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
             ? alpacaPromo
