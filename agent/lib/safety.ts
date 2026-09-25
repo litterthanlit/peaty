@@ -70,6 +70,34 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
     pattern: /\b(bromantane|ladasten)\b/i,
   },
   {
+    label: "DIY bromantane",
+    pattern: /\b(soviet[-\s]?adaptogens?)\b/i,
+  },
+  {
+    label: "DIY bromantane",
+    pattern:
+      /\bfarvingco\b[^.!?\n]{0,160}\b(empty[-\s]?stomach|research[-\s]?use[-\s]?only|soviet|adaptogen|sourcing)/i,
+  },
+  {
+    label: "DIY borax / boron for free testosterone",
+    pattern: /\b(borax|20[-\s]?mule(?:\s+team)?)\b/i,
+  },
+  {
+    label: "DIY borax / boron for free testosterone",
+    pattern:
+      /\bboron\b[^.!?\n]{0,100}\b(free\s+(?:testosterone|t)\b|testosterone|dosing|dose|protocol|diy|self[-\s]?dos)|(?:free\s+(?:testosterone|t)\b|testosterone|dosing|protocol|diy)[^.!?\n]{0,100}\bboron\b/i,
+  },
+  {
+    label: "gray-market / research-use-only peptide sourcing",
+    pattern:
+      /\b(shenzhen|grey?[-\s]?market|gray[-\s]?market|research[-\s]?use[-\s]?only|ruo)\b[^.!?\n]{0,140}\b(peptide|glp[-\s]?1s?|semaglutide|tirzepatide|retatrutide|liraglutide|ozempic|wegovy|mounjaro|bpc|incretins?|bromantane|ladasten)|(peptide|glp[-\s]?1s?|semaglutide|tirzepatide|bpc|bromantane|ladasten)[^.!?\n]{0,140}\b(shenzhen|grey?[-\s]?market|gray[-\s]?market|research[-\s]?use[-\s]?only|ruo|cheap\s+peptides?|sourcing)\b/i,
+  },
+  {
+    label: "gray-market / research-use-only peptide sourcing",
+    pattern:
+      /\b(compounded)\s+(glp[-\s]?1s?|semaglutide|tirzepatide|retatrutide|peptides?)\b|\b(cheap\s+peptides?|peptide\s+sourcing|peptide\s+vendors?)\b/i,
+  },
+  {
     label: "dopamine / prolactin stack",
     pattern:
       /\b((dopamine|prolactin)\b[^.!?\n]{0,80}\b(stack|protocol|agonists?)|(stack|protocol)\b[^.!?\n]{0,80}\b(dopamine|prolactin)|cabergoline|bromocriptine|dostinex)\b/i,
@@ -99,7 +127,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing and topical T3 hair protocols), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, oral TRT / DHT DIY, and DIY HGH / TRT curiosity from HGH-trial talk), peptides (including oral or injected BPC-157 by all routes, oral BPC pill/shop CTA framing, BPC hair/angiogenesis framing, pharma-isn't-hiding-it / bad R&D framing, Croatia research-trip stories, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan topical stacks, oral Vilon, GLP-1s, thymus peptides, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, and Cardiogen–Bronchogen), phenibut, AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). No DIY peptide or hormone coaching. No peptide-stack coaching. No stack coaching. Do not echo a schedule. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing and topical T3 hair protocols), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, oral TRT / DHT DIY, and DIY HGH / TRT curiosity from HGH-trial talk), peptides (including oral or injected BPC-157 by all routes, oral BPC pill/shop CTA framing, BPC hair/angiogenesis framing, pharma-isn't-hiding-it / bad R&D framing, Croatia research-trip stories, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan topical stacks, oral Vilon, GLP-1s, thymus peptides, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, and Cardiogen–Bronchogen), phenibut, AAS/Anavar or similar oral steroids, bromantane / Soviet-adaptogen dosing (including FarvingCo morning empty-stomach / research-use-only sourcing), DIY borax / boron dosing for free testosterone, gray-market / research-use-only / compounded GLP-1 or peptide sourcing, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). No DIY peptide or hormone coaching. No peptide-stack coaching. No stack coaching. Do not echo a schedule. Do not echo prices or vendors. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";

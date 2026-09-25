@@ -1184,3 +1184,304 @@ test("safety-gate, food-check, metabolism-function, fluid-lymph, and source-dige
   assert.match(digest, /Always flag Alpaca carnivore split/);
   assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
 });
+
+test("checkSafety blocks 2026-09-25 bromantane/Soviet-adaptogen, borax/boron, and gray-market peptide/GLP-1 sourcing without echoing doses, prices, or vendors", () => {
+  const soviet = checkSafety(
+    "FarvingCo soviet adaptogen morning empty-stomach research-use-only sourcing 50mg $12",
+  );
+  assert.equal(soviet.verdict, "block");
+  assert.equal(soviet.matched.includes("DIY bromantane"), true);
+  assert.match(soviet.redirect, /bromantane \/ Soviet-adaptogen/);
+  assert.match(soviet.redirect, /research-use-only/);
+  assert.match(soviet.redirect, /clinician/);
+  assert.match(soviet.redirect, /Do not echo prices or vendors/);
+  assert.doesNotMatch(soviet.redirect, /50mg/);
+  assert.doesNotMatch(soviet.redirect, /\$12/);
+  assert.doesNotMatch(soviet.redirect, /shenzhen/i);
+  assert.doesNotMatch(soviet.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const bromantane = checkSafety(
+    "bromantane AM empty stomach research-use-only 100mg from the vendor",
+  );
+  assert.equal(bromantane.verdict, "block");
+  assert.equal(bromantane.matched.includes("DIY bromantane"), true);
+  assert.doesNotMatch(bromantane.redirect, /100mg/);
+  assert.doesNotMatch(bromantane.redirect, /from the vendor/i);
+
+  const borax = checkSafety("borax for free testosterone 3mg morning");
+  assert.equal(borax.verdict, "block");
+  assert.equal(borax.matched.includes("DIY borax / boron for free testosterone"), true);
+  assert.match(borax.redirect, /borax \/ boron/);
+  assert.match(borax.redirect, /free testosterone/);
+  assert.match(borax.redirect, /clinician/);
+  assert.doesNotMatch(borax.redirect, /3mg/);
+  assert.doesNotMatch(borax.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const boron = checkSafety("boron dosing protocol for free testosterone");
+  assert.equal(boron.verdict, "block");
+  assert.equal(boron.matched.includes("DIY borax / boron for free testosterone"), true);
+  assert.match(boron.redirect, /borax \/ boron/);
+
+  const shenzhen = checkSafety(
+    "AbudBakri Shenzhen cheap peptides $30 a vial research-use-only",
+  );
+  assert.equal(shenzhen.verdict, "block");
+  assert.equal(
+    shenzhen.matched.includes("gray-market / research-use-only peptide sourcing") ||
+      shenzhen.matched.includes("peptides / BPC"),
+    true,
+  );
+  assert.match(shenzhen.redirect, /gray-market \/ research-use-only \/ compounded GLP-1/);
+  assert.match(shenzhen.redirect, /peptide sourcing/);
+  assert.match(shenzhen.redirect, /clinician/);
+  assert.match(shenzhen.redirect, /Do not echo prices or vendors/);
+  assert.doesNotMatch(shenzhen.redirect, /shenzhen/i);
+  assert.doesNotMatch(shenzhen.redirect, /\$30/);
+  assert.doesNotMatch(shenzhen.redirect, /vial/i);
+  assert.doesNotMatch(shenzhen.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const compounded = checkSafety("compounded GLP-1 from a gray market clinic");
+  assert.equal(compounded.verdict, "block");
+  assert.equal(
+    compounded.matched.includes("gray-market / research-use-only peptide sourcing") ||
+      compounded.matched.includes("peptides / BPC"),
+    true,
+  );
+  assert.match(compounded.redirect, /compounded GLP-1/);
+  assert.match(compounded.redirect, /gray-market/);
+
+  const dorey = checkSafety("Julian Dorey GLP-1 retweets where do I source it");
+  assert.equal(dorey.verdict, "block");
+  assert.match(dorey.redirect, /GLP-1/);
+  assert.doesNotMatch(dorey.redirect, /shenzhen/i);
+  assert.doesNotMatch(dorey.redirect, /\$/);
+
+  const keep = checkSafety(
+    "phenibut plus melanotan GHK-Cu oral TRT DHT Vesugen topical aspirin T3 hair oral BPC shop CTA GLP-1 thymus HGH Anavar",
+  );
+  assert.equal(keep.verdict, "block");
+  assert.equal(keep.matched.includes("DIY phenibut"), true);
+  assert.equal(keep.matched.includes("peptides / BPC"), true);
+  assert.equal(keep.matched.includes("exogenous hormones"), true);
+  assert.equal(keep.matched.includes("DIY bioregulator peptides"), true);
+  assert.equal(keep.matched.includes("DIY HGH"), true);
+  assert.equal(keep.matched.includes("DIY AAS / oral steroids"), true);
+
+  assert.equal(checkSafety("collagen peptides in orange juice").verdict, "ok");
+  assert.equal(checkSafety("boron in fruit and milk").verdict, "ok");
+  assert.equal(checkSafety("Shenzhen vacation fruit and milk").verdict, "ok");
+  assert.equal(checkSafety("Julian Dorey talking about breakfast food").verdict, "ok");
+
+  const sovietLock = buildTurnLock({
+    inboundText:
+      "FarvingCo soviet adaptogen research-use-only empty stomach, 50mg $12",
+    brief: lockBrief({
+      primaryGoal: "energy",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(sovietLock.kind, "safety-block");
+  assert.equal(sovietLock.safety.matched.includes("DIY bromantane"), true);
+  assert.match(sovietLock.content, /Do not load metabolism-function/);
+  assert.doesNotMatch(sovietLock.content, /\$12/);
+  assert.doesNotMatch(sovietLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const boraxLock = buildTurnLock({
+    inboundText: "DIY borax for free testosterone this week",
+    brief: lockBrief({
+      primaryGoal: "energy",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(boraxLock.kind, "safety-block");
+  assert.equal(
+    boraxLock.safety.matched.includes("DIY borax / boron for free testosterone"),
+    true,
+  );
+  assert.doesNotMatch(boraxLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const sourceLock = buildTurnLock({
+    inboundText: "AbudBakri Shenzhen cheap peptides research-use-only $30",
+    brief: lockBrief({
+      primaryGoal: "recovery",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(sourceLock.kind, "safety-block");
+  assert.doesNotMatch(sourceLock.content, /\$30/);
+  assert.doesNotMatch(sourceLock.content, /shenzhen/i);
+});
+
+test("food-check bakes collagen community gram ranges and heavy coffee as community signal", () => {
+  const collagenRange = checkFood("collagen 15 g in orange juice and milk", []);
+  assert.equal(collagenRange.verdict, "supportive");
+  assert.equal(
+    collagenRange.flags.some((flag) => flag.code === "collagen-community-range"),
+    true,
+  );
+  assert.equal(
+    collagenRange.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+  assert.match(collagenRange.summary, /Peat-aligned protein/);
+  assert.match(collagenRange.summary, /preferred base/);
+  assert.match(collagenRange.summary, /not a prescription/);
+  assert.match(collagenRange.summary, /15 g\/day/);
+  assert.match(collagenRange.summary, /20-40 g/);
+  assert.doesNotMatch(collagenRange.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const gelatinRange = checkFood("gelatin 20-40 g with milk", []);
+  assert.equal(
+    gelatinRange.flags.some((flag) => flag.code === "collagen-community-range"),
+    true,
+  );
+  assert.match(gelatinRange.summary, /not a prescription/);
+
+  const alpacaCollagen = checkFood(
+    "Alpaca collagen 20g with milk and orange juice same day",
+    [],
+  );
+  assert.equal(
+    alpacaCollagen.flags.some((flag) => flag.code === "collagen-community-range"),
+    true,
+  );
+  assert.equal(
+    alpacaCollagen.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.match(alpacaCollagen.summary, /same-day dairy\+fruit/);
+  assert.doesNotMatch(alpacaCollagen.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const plainCollagen = checkFood("collagen peptides in milk", []);
+  assert.equal(plainCollagen.verdict, "supportive");
+  assert.equal(
+    plainCollagen.flags.some((flag) => flag.code === "collagen-community-range"),
+    false,
+  );
+
+  const heavy = checkFood("5 cups of coffee", []);
+  assert.equal(
+    heavy.flags.some((flag) => flag.code === "community-heavy-coffee"),
+    true,
+  );
+  assert.notEqual(heavy.verdict, "supportive");
+  assert.match(heavy.summary, /community signal/i);
+  assert.match(heavy.summary, /not Peat-primary/);
+  assert.match(heavy.summary, /food\/milk\/sugar/);
+  assert.match(heavy.summary, /empty stomach/);
+  assert.doesNotMatch(heavy.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const heavyWithMilk = checkFood("5 cups of coffee with milk and sugar", []);
+  assert.equal(
+    heavyWithMilk.flags.some((flag) => flag.code === "community-heavy-coffee"),
+    true,
+  );
+  assert.notEqual(heavyWithMilk.verdict, "supportive");
+  assert.match(heavyWithMilk.summary, /food\/milk\/sugar/);
+
+  const emptyStomach = checkFood("coffee on an empty stomach", []);
+  assert.equal(
+    emptyStomach.flags.some((flag) => flag.code === "community-heavy-coffee"),
+    true,
+  );
+  assert.match(emptyStomach.summary, /empty stomach/);
+
+  const normalCoffee = checkFood("coffee with milk and sugar", []);
+  assert.equal(
+    normalCoffee.flags.some((flag) => flag.code === "community-heavy-coffee"),
+    false,
+  );
+  assert.equal(normalCoffee.verdict, "supportive");
+});
+
+test("safety-gate, food-check, fluid-lymph, and source-digest bake in the 2026-09-25 scout without drug doses", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const safety = await readFile(
+    new URL("../agent/skills/safety-gate.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(safety, /Soviet-adaptogen/);
+  assert.match(safety, /research-use-only/);
+  assert.match(safety, /borax \/ boron/);
+  assert.match(safety, /free testosterone/);
+  assert.match(safety, /Gray-market, research-use-only, or compounded GLP-1/);
+  assert.match(safety, /Shenzhen cheap-peptide/);
+  assert.match(safety, /Julian Dorey/);
+  assert.match(safety, /Do not echo prices or vendors/);
+  assert.match(safety, /Low T, hypothyroid, and adrenal complaints/);
+  assert.match(safety, /symptom patterns to take to a clinician/);
+  assert.match(safety, /not causes to self-treat/);
+  assert.match(safety, /yoursimmo11/);
+  assert.match(safety, /FarvingCo/);
+  assert.match(safety, /BPC/);
+  assert.match(safety, /phenibut/i);
+  assert.match(safety, /melanotan/i);
+  assert.match(safety, /HGH/);
+  assert.match(safety, /clinician/);
+  assert.doesNotMatch(safety, /\d+\s*(mg|mcg)\b/i);
+
+  const food = await readFile(
+    new URL("../agent/skills/food-check.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(food, /Peat-aligned \*\*protein\*\*/);
+  assert.match(food, /15 g\/day/);
+  assert.match(food, /20-40 g/);
+  assert.match(food, /not a prescription/);
+  assert.match(food, /preferred base/);
+  assert.match(food, /Heavy coffee/);
+  assert.match(food, /5 cups\/day/);
+  assert.match(food, /with food\/milk\/sugar/);
+  assert.match(food, /empty stomach/);
+  assert.match(food, /same-day dairy\+fruit/);
+  assert.match(food, /Alpaca collagen/);
+  assert.doesNotMatch(food, /\d+\s*(mg|mcg)\b/i);
+
+  const fluid = await readFile(
+    new URL("../agent/skills/fluid-lymph.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(fluid, /AlenaNazarova_/);
+  assert.match(fluid, /warmth map/);
+  assert.match(fluid, /Warm meals/);
+  assert.match(fluid, /Soups/);
+  assert.match(fluid, /Bone broth/);
+  assert.match(fluid, /Sauna/);
+  assert.match(fluid, /Baths/);
+  assert.match(fluid, /Morning sun/);
+  assert.match(fluid, /Dressing in layers/);
+  assert.match(fluid, /energy \/ puffiness support/);
+  assert.match(fluid, /Water restriction/);
+  assert.match(fluid, /not spa-lymph/);
+  assert.match(fluid, /No spa-lymph \/ drainage claims/);
+  assert.doesNotMatch(fluid, /\d+\s*(mg|mcg)\b/i);
+
+  const digest = await readFile(
+    new URL("../agent/skills/source-digest.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(digest, /bromantane \/ Soviet-adaptogen/);
+  assert.match(digest, /FarvingCo/);
+  assert.match(digest, /borax \/ boron/);
+  assert.match(digest, /AbudBakri Shenzhen/);
+  assert.match(digest, /Julian Dorey/);
+  assert.match(digest, /GLP-1 retweets/);
+  assert.match(digest, /yoursimmo11/);
+  assert.match(digest, /AlenaNazarova_/);
+  assert.match(digest, /warmth map/);
+  assert.match(digest, /Alpaca collagen/);
+  assert.match(digest, /Always flag Alpaca carnivore split/);
+  assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
+});
