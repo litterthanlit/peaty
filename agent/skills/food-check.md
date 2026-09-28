@@ -1,5 +1,5 @@
 ---
-description: Check a food or meal against pro-metabolic defaults and the user's hard constraints. Dairy and fruit are allowed unless constrained. Warm fluids, glycine from gelatin/collagen/stocks/cartilage. Milk+sugar drinks (molasses latte) are Peat-aligned. Raw/fermented dairy gets a food-safety note, not an endorsement. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut) plus daily OJ / OJ+collagen / honey / maple / A2-milk cocoa, fruit sugars, pomegranate / pom juice, and raw carrot when the rest of the meal is solid. BioavailableNd-style fall stack (wake pom juice/tea, midday meat stock, bed warm milk+honey+glycine) is Peat-aligned when ingredients fit. Push back fructose fear (including Sinclair) — community conflict, not Peat. Collagen/gelatin overlap OK. Fish-oil megadoses, ashwagandha, processed junk, and Saladino/Alpaca carnivore are not Peat-primary — always flag Alpaca/Saladino carnivore fruit/dairy split (including herbs-only / steak-centric, carbs-are-back, collagen promo/affiliate/sponsor framing, and same-day dairy+fruit) even when carrots/carbs/fruit overlap, and always when OJ/honey mixes with beef-rice kibble. AbudBakri OJ and Alpaca carbs-are-back are community/source-digest labels only.
+description: Check a food or meal against pro-metabolic defaults and the user's hard constraints. Dairy and fruit are allowed unless constrained. Warm fluids, glycine from gelatin/collagen/stocks/cartilage. Collagen/gelatin is Peat-aligned protein (Alpaca-cited ~15 g/day and personal 20-40 g ranges are community signal, not a prescription); dairy + fruit stay the preferred base. Milk+sugar drinks (molasses latte) are Peat-aligned. Heavy coffee (5 cups/day) is community signal, not Peat-primary — coffee with food/milk/sugar, not empty-stomach. Raw/fermented dairy gets a food-safety note, not an endorsement. Whitelist Peat-style ice cream (milk/eggs/sugar/coconut) plus daily OJ / OJ+collagen / honey / maple / A2-milk cocoa, fruit sugars, pomegranate / pom juice, and raw carrot when the rest of the meal is solid. BioavailableNd-style fall stack (wake pom juice/tea, midday meat stock, bed warm milk+honey+glycine) is Peat-aligned when ingredients fit. Push back fructose fear (including Sinclair) — community conflict, not Peat. Collagen/gelatin overlap OK. Fish-oil megadoses, ashwagandha, processed junk, and Saladino/Alpaca carnivore are not Peat-primary — always flag Alpaca/Saladino carnivore fruit/dairy split (including herbs-only / steak-centric, carbs-are-back, collagen promo/affiliate/sponsor framing, and same-day dairy+fruit) even when carrots/carbs/fruit overlap, and always when OJ/honey mixes with beef-rice kibble. AbudBakri OJ and Alpaca carbs-are-back are community/source-digest labels only.
 ---
 
 # Food check
@@ -14,7 +14,7 @@ Supportive staples: ripe fruit and juices (including **OJ**, **pomegranate / pom
 
 Prefer **warm or room-temp fluids** over iced drinks (Peat-aligned coaching note, not a medical rule).
 
-**Glycine** via beef gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first — not a capsule gram-count. **Collagen/gelatin overlap is OK.** **Gelatin/collagen** on the plate is Peat-aligned. OJ+collagen is still food.
+**Glycine** via beef gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first — not a capsule gram-count. **Collagen/gelatin overlap is OK.** **Gelatin/collagen** on the plate is Peat-aligned **protein**. Dairy + fruit stay the preferred base. OJ+collagen is still food. Community signal (Alpaca cites ~15 g/day; some personal 20-40 g ranges) is **not a prescription** — do not turn it into a gram protocol.
 
 **Peat-style ice cream** is a whitelist when the ingredients are milk, eggs, sugar, and/or coconut — not seed-oil junk. Collagen or gelatin in the mix is still OK.
 
@@ -43,6 +43,8 @@ These are **community** talk, not a Peat-primary move. Label them that way. Do n
 - **SolBrah natural / liquid Mg** — optional community food/mineral note. Pair with mineralized fluids / Mg-in-OJ. Not a drug protocol. No doses.
 - **Raw / fermented dairy** — community signal, not a Peaty endorsement. Add a plain **food-safety note**: raw milk carries pathogen risk. **Not medical advice.** Pasteurized dairy stays a default unless they listed dairy as a hard constraint.
 - **Alpaca collagen promo** — a **promotion** (affiliate/sponsor framing), not Peat-primary. Still **flag the usual Alpaca carnivore split** vs same-day dairy+fruit. Do not cite the handle as evidence.
+- **Alpaca collagen amounts** (~15 g/day cited; some personal 20-40 g ranges) — **community signal, not a prescription.** Collagen/gelatin stays Peat-aligned protein; dairy + fruit stay the preferred base.
+- **Heavy coffee** (5 cups/day) — community signal, not Peat-primary. Have coffee **with food/milk/sugar**, not on an empty stomach.
 
 ## Hard constraints win
 
@@ -54,7 +56,7 @@ Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK her
 
 1. Call `food_check` with the food and how it was cooked/fatted.
 2. Read `verdict`, `flags`, and `constraintHits`.
-3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3 self-dosing, topical or oral aspirin, topical aspirin/T3 hair, cyproheptadine, hormones/pregnenolone, oral TRT/DHT DIY, DIY HGH, oral or injected BPC, BPC-157 hair/angiogenesis, GHK-Cu, GHK-Cu + melanotan-1 topical, melanotan, TB-4/TB-500/Vilon, GLP-1s, thymus peptides, Khavinson-wave bioregulators, phenibut, AAS/Anavar, peptide or steroid stacks, bromantane, dopamine/prolactin stacks, or FarvingCo BPC+lactoferrin+mastic / antimicrobial gut-kill stacks), stop — safety-gate already locked the turn.
+3. Offer one swap that respects constraints. Call `commit_next_action` with that swap. No 12-item grocery list. No cart. If the food ask is a protocol (T3 self-dosing, topical or oral aspirin, topical aspirin/T3 hair, cyproheptadine, hormones/pregnenolone, oral TRT/DHT DIY, DIY HGH, oral or injected BPC, BPC-157 hair/angiogenesis, GHK-Cu, GHK-Cu + melanotan-1 topical, melanotan, TB-4/TB-500/Vilon, GLP-1s, thymus peptides, Khavinson-wave bioregulators, phenibut, AAS/Anavar, peptide or steroid stacks, bromantane / Soviet-adaptogen dosing, borax/boron for free testosterone, gray-market peptide/GLP-1 sourcing, dopamine/prolactin stacks, or FarvingCo BPC+lactoferrin+mastic / antimicrobial gut-kill stacks), stop — safety-gate already locked the turn.
 
 ## Do not
 
@@ -68,6 +70,8 @@ Carnivore fruit/dairy refusal **diverges** from Peat: fruit and dairy are OK her
 - Treat Alpaca/Saladino carnivore as compatible with Peat because carrots, starch, or fruit showed up, because dairy+fruit showed up the same day, or while fruit and dairy are refused.
 - Treat OJ/honey on beef-rice kibble as a Peat plate. Flag the Alpaca split.
 - Treat Alpaca collagen promo as Peat-primary — it is a promotion (affiliate/sponsor framing) plus the carnivore flag.
+- Turn Alpaca-cited collagen gram ranges into a Peaty prescription. Community signal only; dairy + fruit stay the base.
+- Treat heavy coffee (5 cups/day) as Peat-primary. Community signal: coffee with food/milk/sugar, not empty-stomach.
 - Endorse raw or unpasteurized dairy. Food-safety note only; not medical advice.
 - Treat fructose fear, including Sinclair fructose-fear, as a Peat rule. Community fear ≠ Peat. Community conflict ≠ Peat.
 - Cite **AbudBakri** OJ talk or **Alpaca carbs-are-back** as Peat-primary. Those are source-digest labels only.
