@@ -1897,3 +1897,286 @@ test("safety-gate, food-check, fluid-lymph, and source-digest bake in the 2026-0
   assert.match(digest, /Always flag Alpaca carnivore split/);
   assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
 });
+
+test("checkSafety blocks 2026-09-28 BPC knee/rat/Arkansas/ladder/T3-comparison/n=1 Anavar without echoing claim numbers", () => {
+  const knee = checkSafety(
+    "FarvingCo BPC-157 one dose, 11 of 12, for the knee",
+  );
+  assert.equal(knee.verdict, "block");
+  assert.equal(knee.matched.includes("peptides / BPC"), true);
+  assert.match(knee.redirect, /FarvingCo BPC knee/);
+  assert.match(knee.redirect, /clinician/);
+  assert.match(knee.redirect, /Do not echo claim numbers/);
+  assert.doesNotMatch(knee.redirect, /11 of 12/);
+  assert.doesNotMatch(knee.redirect, /one dose/i);
+  assert.doesNotMatch(knee.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const rat = checkSafety("alcohol rat brain-bleed BPC-157 framing");
+  assert.equal(rat.verdict, "block");
+  assert.equal(rat.matched.includes("peptides / BPC"), true);
+  assert.match(rat.redirect, /alcohol\/rat brain-bleed/);
+  assert.doesNotMatch(rat.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const affiliate = checkSafety("oral BPC affiliate reply from the peptide shop");
+  assert.equal(affiliate.verdict, "block");
+  assert.equal(affiliate.matched.includes("peptides / BPC"), true);
+  assert.match(affiliate.redirect, /affiliate replies/);
+
+  const ladder = checkSafety(
+    "oxidativestate ladder from beef gelatin up to BPC GHK selank SS-31",
+  );
+  assert.equal(ladder.verdict, "block");
+  assert.equal(ladder.matched.includes("peptides / BPC"), true);
+  assert.match(ladder.redirect, /peptide-ladder/);
+  assert.match(ladder.redirect, /selank/);
+  assert.match(ladder.redirect, /SS-31/);
+  assert.match(ladder.redirect, /Gelatin stays allowed food/);
+  assert.doesNotMatch(ladder.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  assert.equal(checkSafety("selank peptide this week").verdict, "block");
+  assert.equal(checkSafety("SS-31 elamipretide protocol").verdict, "block");
+  assert.equal(checkSafety("beef gelatin in orange juice").verdict, "ok");
+  assert.equal(checkSafety("collagen peptides in milk").verdict, "ok");
+
+  const potatoesT3 = checkSafety("hot potatoes warmer than T3 so I'll self-dose T3");
+  assert.equal(potatoesT3.verdict, "block");
+  assert.equal(potatoesT3.matched.includes("DIY T3 / thyroid hormone"), true);
+  assert.match(potatoesT3.redirect, /hot potatoes warmer than T3/);
+  assert.match(potatoesT3.redirect, /warm starchy food is fine/);
+  assert.equal(checkSafety("hot potatoes with butter and salt").verdict, "ok");
+
+  const arkansas = checkSafety(
+    "AbudBakri RT of the Arkansas injectable BPC-157 RCT, time to DIY",
+  );
+  assert.equal(arkansas.verdict, "block");
+  assert.equal(arkansas.matched.includes("peptides / BPC"), true);
+  assert.match(arkansas.redirect, /Arkansas injectable BPC-157 RCT/);
+  assert.match(arkansas.redirect, /trial existing is not a green light for DIY/);
+
+  const thymusPod = checkSafety(
+    "femalelongevity thymus peptides podcast with AbudBakri",
+  );
+  assert.equal(thymusPod.verdict, "block");
+  assert.equal(thymusPod.matched.includes("peptides / BPC"), true);
+  assert.match(thymusPod.redirect, /femalelongevity/);
+
+  const anavarN1 = checkSafety("n=1 Anavar anecdote from my cut");
+  assert.equal(anavarN1.verdict, "block");
+  assert.equal(anavarN1.matched.includes("DIY AAS / oral steroids"), true);
+  assert.match(anavarN1.redirect, /n=1 Anavar/);
+  assert.doesNotMatch(anavarN1.redirect, /\d+\s*(mg|mcg|µg|ug)\b/i);
+
+  const kneeLock = buildTurnLock({
+    inboundText: "FarvingCo BPC-157 one dose, 11 of 12, knee claim",
+    brief: lockBrief({
+      primaryGoal: "recovery",
+      markers: [],
+      hardConstraints: [],
+      doNotDo: [],
+    }),
+    lastNextAction: null,
+    metricCount: 0,
+  });
+  assert.equal(kneeLock.kind, "safety-block");
+  assert.doesNotMatch(kneeLock.content, /11 of 12/);
+  assert.doesNotMatch(kneeLock.content, /\d+\s*(mg|mcg|µg|ug)\b/i);
+});
+
+test("food-check bakes 2026-09-28 milk-acne dairy-positive, pineapple sugar overlaps, and anti-fasting", () => {
+  const acne = checkFood(
+    "FarvingCo milk protein acne 12-week study, I'll drink more milk",
+    [],
+  );
+  assert.equal(acne.verdict, "supportive");
+  assert.equal(
+    acne.flags.some((flag) => flag.code === "community-dairy-positive"),
+    true,
+  );
+  assert.equal(
+    acne.flags.some((flag) => flag.code === "dairy"),
+    true,
+  );
+  assert.match(acne.summary, /community dairy positive/);
+  assert.match(acne.summary, /not a medical claim/);
+  assert.doesNotMatch(acne.summary, /12-week/);
+  assert.doesNotMatch(acne.summary, /\d+\s*(mg|mcg)\b/i);
+
+  const pineapple = checkFood("pineapple juice with salt", []);
+  assert.equal(pineapple.verdict, "supportive");
+  assert.equal(
+    pineapple.flags.some((flag) => flag.code === "ripe-fruit"),
+    true,
+  );
+
+  const alpacaPine = checkFood("Alpaca collagen + pineapple juice", []);
+  assert.equal(
+    alpacaPine.flags.some((flag) => flag.code === "sugar-overlap"),
+    true,
+  );
+  assert.equal(
+    alpacaPine.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.notEqual(alpacaPine.verdict, "supportive");
+  assert.match(alpacaPine.summary, /Sugar overlap/);
+  assert.match(alpacaPine.summary, /pineapple juice/);
+  assert.match(alpacaPine.summary, /carnivore split/);
+
+  const saladinoBed = checkFood(
+    "Saladino honey + pinch of salt before bed",
+    [],
+  );
+  assert.equal(
+    saladinoBed.flags.some((flag) => flag.code === "sugar-overlap"),
+    true,
+  );
+  assert.equal(
+    saladinoBed.flags.some((flag) => flag.code === "carnivore-divergence"),
+    true,
+  );
+  assert.notEqual(saladinoBed.verdict, "supportive");
+  assert.match(saladinoBed.summary, /honey \+ pinch of salt before bed/);
+  assert.match(saladinoBed.summary, /carnivore split/);
+
+  const bedtime = checkFood("bedtime milk and honey", []);
+  assert.equal(bedtime.verdict, "supportive");
+  assert.equal(
+    bedtime.flags.some((flag) => flag.code === "dairy"),
+    true,
+  );
+  assert.equal(
+    bedtime.flags.some((flag) => flag.code === "ripe-fruit"),
+    true,
+  );
+
+  const rawBed = checkFood("raw milk and honey before bed", []);
+  assert.equal(
+    rawBed.flags.some((flag) => flag.code === "raw-fermented-dairy-safety"),
+    true,
+  );
+  assert.notEqual(rawBed.verdict, "supportive");
+  assert.match(rawBed.summary, /pathogen risk/);
+
+  const gelatin = checkFood("beef gelatin in orange juice", []);
+  assert.equal(gelatin.verdict, "supportive");
+  assert.equal(
+    gelatin.flags.some((flag) => flag.code === "gelatinous"),
+    true,
+  );
+
+  const minerals = checkFood(
+    "BioavailableNd milk and OJ minerals, heavy-metals framing",
+    [],
+  );
+  assert.equal(
+    minerals.flags.some((flag) => flag.code === "community-minerals-framing"),
+    true,
+  );
+  assert.match(minerals.summary, /community framing/);
+  assert.match(minerals.summary, /not a detox claim/);
+  assert.notEqual(minerals.verdict, "poor-fit");
+
+  const fasting = checkFood("fasting for testosterone", []);
+  assert.equal(
+    fasting.flags.some((flag) => flag.code === "underfuel"),
+    true,
+  );
+  assert.match(
+    fasting.flags.find((flag) => flag.code === "underfuel")?.detail ?? "",
+    /testosterone, thymus, and brain/,
+  );
+  assert.match(
+    fasting.flags.find((flag) => flag.code === "underfuel")?.detail ?? "",
+    /Warm carbs beat fasting/,
+  );
+});
+
+test("safety-gate, food-check, metabolism-function, fluid-lymph, and source-digest bake in the 2026-09-28 scout without doses or claim numbers", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const safety = await readFile(
+    new URL("../agent/skills/safety-gate.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(safety, /FarvingCo BPC knee/);
+  assert.match(safety, /alcohol\/rat brain-bleed/);
+  assert.match(safety, /affiliate replies/);
+  assert.match(safety, /Peptide ladder/);
+  assert.match(safety, /Gelatin stays allowed food/);
+  assert.match(safety, /Selank/);
+  assert.match(safety, /SS-31/);
+  assert.match(safety, /Hot potatoes warmer than T3/);
+  assert.match(safety, /Arkansas injectable BPC-157 RCT/);
+  assert.match(safety, /trial existing is \*\*not\*\* a green light for DIY/);
+  assert.match(safety, /femalelongevity/);
+  assert.match(safety, /n=1 Anavar anecdotes/);
+  assert.match(safety, /Replacement isn't restoration; retest low T with a clinician/);
+  assert.match(safety, /Do not echo claim numbers/);
+  assert.match(safety, /clinician/);
+  assert.doesNotMatch(safety, /11 of 12/);
+  assert.doesNotMatch(safety, /\d+\s*(mg|mcg)\b/i);
+
+  const food = await readFile(
+    new URL("../agent/skills/food-check.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(food, /community dairy positive, not a medical claim/);
+  assert.match(food, /pineapple juice/);
+  assert.match(food, /Alpaca collagen \+ pineapple juice/);
+  assert.match(food, /Saladino honey \+ pinch of salt before bed/);
+  assert.match(food, /Sugar overlaps/);
+  assert.match(food, /count as aligned/);
+  assert.match(food, /Heavy-metals/);
+  assert.match(food, /not a detox claim/);
+  assert.doesNotMatch(food, /\d+\s*(mg|mcg)\b/i);
+
+  const metabolism = await readFile(
+    new URL("../agent/skills/metabolism-function.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(metabolism, /Anti-fasting is Peat-primary/);
+  assert.match(metabolism, /testosterone, thymus, and brain/);
+  assert.match(metabolism, /oxidativestate/);
+  assert.match(metabolism, /Bedtime milk \+ honey/);
+  assert.match(metabolism, /3am wakes/);
+  assert.match(metabolism, /liver glycogen/);
+  assert.match(metabolism, /pasteurized works/);
+  assert.match(metabolism, /Peat milk \+ OJ/);
+  assert.match(metabolism, /BioavailableNd/);
+  assert.match(metabolism, /heavy-metals/);
+  assert.match(metabolism, /community framing, not a detox claim/);
+  assert.match(metabolism, /Warm carbs beat fasting/);
+  assert.match(metabolism, /morning pulse\/temp scoreboard/);
+  assert.doesNotMatch(metabolism, /\d+\s*(mg|mcg)\b/i);
+
+  const fluid = await readFile(
+    new URL("../agent/skills/fluid-lymph.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(fluid, /TheRawSol/);
+  assert.match(fluid, /face cupping/);
+  assert.match(fluid, /gua sha/);
+  assert.match(fluid, /lymph balm/);
+  assert.match(fluid, /Not this/);
+  assert.match(fluid, /spa-lymph/);
+  assert.match(fluid, /Do not add them as advice/);
+  assert.doesNotMatch(fluid, /\d+\s*(mg|mcg)\b/i);
+
+  const digest = await readFile(
+    new URL("../agent/skills/source-digest.md", import.meta.url),
+    "utf8",
+  );
+  assert.match(digest, /FarvingCo/);
+  assert.match(digest, /oxidativestate/);
+  assert.match(digest, /SolBrah/);
+  assert.match(digest, /BioavailableNd/);
+  assert.match(digest, /AbudBakri/);
+  assert.match(digest, /femalelongevity/);
+  assert.match(digest, /TheRawSol/);
+  assert.match(digest, /yoursimmo11/);
+  assert.match(digest, /Replacement isn't restoration; retest low T with a clinician/);
+  assert.match(digest, /Saladino/);
+  assert.match(digest, /Alpaca collagen \+ pineapple juice/);
+  assert.match(digest, /Arkansas injectable BPC-157 RCT/);
+  assert.doesNotMatch(digest, /\d+\s*(mg|mcg)\b/i);
+});
+

@@ -29,7 +29,7 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "peptides / BPC",
     pattern:
-      /\b((?:oral|inject(?:ed|ing)?|diy|topical|sublingual)\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?(?:\s+(?:oral|inject(?:ed|ing)?|diy|hair|angiogenesis|pills?|capsules?|affiliate))?|bpc(?:[-\s]?157)?[^.!?\n]{0,80}\b(hair|angiogenesis|pills?|capsules?|affiliate|shop|gut[-\s]?barrier|breath|croatia|pharma|r\s*&\s*d)|(hair|angiogenesis)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|(?:pills?|capsules?|affiliate|peptide[-\s]?shop)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|tb[-\s]?(?:500|4)\b|thymosin(?:\s+(?:beta[-\s]?4|alpha(?:[-\s]?1)?))?|thymalin|thymic\s+peptides?|thymus\s+(?:peptide|extract|hormone)|ghk[-\s]?cu|copper\s+peptide|melanotan(?:[-\s]?[12])?|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|liraglutide|ozempic|wegovy|mounjaro|glp[-\s]?1s?|incretins?|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching|shop)|peptide[-\s]?shop|(?:ghk[-\s]?cu|copper\s+peptide)[^.!?\n]{0,80}\bmelanotan|melanotan[^.!?\n]{0,80}\b(?:ghk[-\s]?cu|copper\s+peptide)|stack(?:ing)?\s+peptides?)\b/i,
+      /\b((?:oral|inject(?:ed|ing)?|diy|topical|sublingual)\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?(?:\s+(?:oral|inject(?:ed|ing)?|diy|hair|angiogenesis|pills?|capsules?|affiliate))?|bpc(?:[-\s]?157)?[^.!?\n]{0,80}\b(hair|angiogenesis|pills?|capsules?|affiliate|shop|gut[-\s]?barrier|breath|croatia|pharma|r\s*&\s*d|knee|rct|trial)|(hair|angiogenesis)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|(?:pills?|capsules?|affiliate|peptide[-\s]?shop)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|tb[-\s]?(?:500|4)\b|thymosin(?:\s+(?:beta[-\s]?4|alpha(?:[-\s]?1)?))?|thymalin|thymic\s+peptides?|thymus\s+(?:peptide|extract|hormone)|ghk(?:[-\s]?cu)?|copper\s+peptide|selank|ss[-\s]?31|elamipretide|melanotan(?:[-\s]?[12])?|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|liraglutide|ozempic|wegovy|mounjaro|glp[-\s]?1s?|incretins?|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching|shop|ladder)|peptide[-\s]?shop|peptide\s+ladder|(?:ghk(?:[-\s]?cu)?|copper\s+peptide)[^.!?\n]{0,80}\bmelanotan|melanotan[^.!?\n]{0,80}\b(?:ghk(?:[-\s]?cu)?|copper\s+peptide)|stack(?:ing)?\s+peptides?)\b/i,
   },
   {
     label: "peptides / BPC",
@@ -40,6 +40,26 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
     label: "peptides / BPC",
     pattern:
       /\b((?:pharma(?:ceuticals?)?|they)[^.!?\n]{0,80}(?:isn'?t|is\s+not|not)\s+hid(?:e|ing|den)|(?:just\s+)?bad\s+r\s*(?:&|and)\s*d)[^.!?\n]{0,140}\b(bpc|peptide|abudbakri)|(bpc|peptide|abudbakri)[^.!?\n]{0,160}\b((?:pharma(?:ceuticals?)?|they)[^.!?\n]{0,80}(?:isn'?t|is\s+not|not)\s+hid(?:e|ing|den)|(?:just\s+)?bad\s+r\s*(?:&|and)\s*d)\b/i,
+  },
+  {
+    label: "peptides / BPC",
+    pattern:
+      /\b((?:alcohol|rat|brain[-\s]?bleed|hemorrhag)[^.!?\n]{0,120}\bbpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?[^.!?\n]{0,120}\b(alcohol|rat|brain[-\s]?bleed|hemorrhag)|farvingco\b[^.!?\n]{0,160}\bbpc(?:[-\s]?157)?[^.!?\n]{0,80}\bknee|bpc(?:[-\s]?157)?[^.!?\n]{0,80}\bknee|arkansas[^.!?\n]{0,140}\b(bpc|injectable)|injectable\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?\s+(?:injectable\s+)?rct)\b/i,
+  },
+  {
+    label: "peptides / BPC",
+    pattern:
+      /\b(ladder)[^.!?\n]{0,100}\b(bpc|ghk|selank|ss[-\s]?31)|(bpc|ghk|selank|ss[-\s]?31)[^.!?\n]{0,100}\bladder|oxidativestate[^.!?\n]{0,160}\b(bpc|ghk|selank|ss[-\s]?31|peptide\s+ladder)\b/i,
+  },
+  {
+    label: "peptides / BPC",
+    pattern:
+      /\bfemalelongevity\b[^.!?\n]{0,160}\b(thymus|peptide)|(?:thymus|peptide)[^.!?\n]{0,160}\bfemalelongevity\b/i,
+  },
+  {
+    label: "DIY AAS / oral steroids",
+    pattern:
+      /\b(n\s*=\s*1|n=1|anecdote)[^.!?\n]{0,80}\b(anavar|oxandrolone|aas|oral\s+steroids?)|(anavar|oxandrolone)[^.!?\n]{0,80}\b(n\s*=\s*1|n=1|anecdote)/i,
   },
   {
     label: "DIY HGH",
@@ -127,7 +147,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing and topical T3 hair protocols), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, oral TRT / DHT DIY, and DIY HGH / TRT curiosity from HGH-trial talk), peptides (including oral or injected BPC-157 by all routes, oral BPC pill/shop CTA framing, BPC-157 hair/angiogenesis framing, pharma-isn't-hiding-it / bad R&D framing, Croatia research-trip stories, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, oral Vilon, GLP-1s, thymus peptides, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, and Cardiogen–Bronchogen), phenibut, AAS/Anavar or similar oral steroids, bromantane / Soviet-adaptogen dosing (including FarvingCo morning empty-stomach / research-use-only sourcing), DIY borax / boron dosing for free testosterone, gray-market / research-use-only / compounded GLP-1 or peptide sourcing, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). No DIY peptide or hormone coaching. No peptide-stack coaching. No stack coaching. Do not echo a schedule. Do not echo prices or vendors. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing, topical T3 hair protocols, and 'hot potatoes warmer than T3' as DIY-T3 comparison fuel — warm starchy food is fine), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, oral TRT / DHT DIY, and DIY HGH / TRT curiosity from HGH-trial talk), peptides (including oral or injected BPC-157 by all routes, oral BPC pill/shop CTA / affiliate replies, BPC-157 hair/angiogenesis framing, FarvingCo BPC knee claims, alcohol/rat brain-bleed BPC framing, Arkansas injectable BPC-157 RCT talk, pharma-isn't-hiding-it / bad R&D framing, Croatia research-trip stories, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, selank, SS-31, oral Vilon, GLP-1s, thymus peptides, femalelongevity thymus/peptides podcast talk, peptide-ladder steps from gelatin up to BPC / GHK / selank / SS-31, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, and Cardiogen–Bronchogen), phenibut, AAS/Anavar or similar oral steroids including n=1 Anavar anecdotes, bromantane / Soviet-adaptogen dosing (including FarvingCo morning empty-stomach / research-use-only sourcing), DIY borax / boron dosing for free testosterone, gray-market / research-use-only / compounded GLP-1 or peptide sourcing, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). A trial existing is not a green light for DIY. Gelatin stays allowed food; every peptide step is refused. No DIY peptide or hormone coaching. No peptide-stack coaching. No stack coaching. Do not echo a schedule. Do not echo prices or vendors. Do not echo claim numbers. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";
