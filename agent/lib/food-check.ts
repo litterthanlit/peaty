@@ -36,14 +36,22 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   {
     code: "ripe-fruit",
     pattern:
-      /\b(orange|oj|orange\s+juice|ripe\s+fruit|mango|papaya|watermelon|grapes?|apple\s+juice|honey|pomegranate|pom(?:egranate)?\s*juice)\b/i,
-    detail: "Fruit sugar is a default fuel here, unless you listed fruit as a hard constraint. Pomegranate / pom juice is Peat-aligned.",
+      /\b(orange|oj|orange\s+juice|ripe\s+fruit|fruit\s+sugars?|mango|papaya|watermelon|grapes?|apple\s+juice|honey|maple(?:\s+syrup)?|pomegranate|pom(?:egranate)?\s*juice|pineapple(?:\s+juice)?)\b/i,
+    detail:
+      "OJ / fruit sugars / honey / maple / pineapple juice are Peat-aligned when the rest of the meal is solid, unless you listed fruit as a hard constraint. Pomegranate / pom juice counts. Fructose fear in an iso-caloric context is community fear, not Peat.",
+  },
+  {
+    code: "peat-sugars",
+    pattern:
+      /\b((?:daily\s+)?(?:oj|orange\s+juice)(?:\s*\+?\s*collagen)?|honey|maple(?:\s+syrup)?|a2[-\s]?milk(?:\s+cocoa)?|cocoa\s+(?:with\s+)?a2(?:[-\s]?milk)?)\b/i,
+    detail:
+      "Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa are Peat-aligned fruit–dairy sugars when the rest of the meal is solid, unless constrained.",
   },
   {
     code: "dairy",
     pattern:
-      /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir)\b/i,
-    detail: "Dairy is a default calcium/sugar vehicle, unless you listed dairy as a hard constraint.",
+      /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|a2[-\s]?milk|latte)\b/i,
+    detail: "Dairy is a default calcium/sugar vehicle, unless you listed dairy as a hard constraint. A2-milk cocoa is a fruit–dairy sugar staple when the rest of the meal is solid.",
   },
   {
     code: "cooked-starch",
@@ -61,7 +69,7 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
     pattern:
       /\b(broth|bone\s+broth|oxtail|shank|skin|gelatin|jello|collagen(?:\s+(?:from\s+food|peptides?))?|glycine|cartilage|tendon|(?:bone\s+)?stocks?)\b/i,
     detail:
-      "Glycine via beef gelatin, collagen, stocks, and cartilage is Peat-aligned. Food first, not a capsule protocol. Collagen/gelatin overlap is OK.",
+      "Glycine via beef gelatin, collagen, stocks, and cartilage is Peat-aligned protein. Dairy + fruit stay the preferred base. Food first, not a capsule protocol. Community gram ranges are signal, not a prescription. Collagen/gelatin overlap is OK.",
   },
 ];
 
@@ -80,14 +88,53 @@ const FRUIT_DAIRY_REFUSAL =
   /\b(?:(?:no|without|refuse[sd]?|avoid(?:ing)?)\s+(?:fruit|dairy)|(?:fruit|dairy)[^\n]{0,24}refus)/i;
 
 const DAIRY_FOOD =
-  /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose)\b/i;
+  /\b(milk|cheese|yogurt|ice\s+cream|cream|butter|cottage\s+cheese|kefir|dairy|lactose|a2[-\s]?milk|latte)\b/i;
 const FRUIT_FOOD =
-  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice|pomegranate|pom(?:egranate)?\s*juice)\b/i;
+  /\b(fruit|orange|oj|orange\s+juice|mango|papaya|watermelon|grapes?|apple|banana|melon|juice|pomegranate|pom(?:egranate)?\s*juice|honey|maple(?:\s+syrup)?|pineapple(?:\s+juice)?)\b/i;
+const PEAT_SUGARS =
+  /\b((?:daily\s+)?(?:oj|orange\s+juice)(?:\s*\+?\s*collagen)?|honey|maple(?:\s+syrup)?|a2[-\s]?milk(?:\s+cocoa)?|fruit\s+sugars?|ripe\s+fruit)\b/i;
+const SINCLAIR_FRUCTOSE_FEAR =
+  /\b((?:david\s+)?sinclair\b[^.!?\n]{0,80}\bfructose|fructose[^.!?\n]{0,80}\bsinclair|sinclair\s+fructose[-\s]?fear|fructose[-\s]?fear(?:\s*monger(?:ing)?)?|fear(?:[-\s]of|[-\s]monger(?:ing)?)?\s+fructose|fructose\s+(?:is\s+)?(?:toxic|poison(?:ous)?|dangerous)|anti[-\s]?fructose)\b/i;
+const FRUCTOSE_FEAR =
+  /\b(fructose\s+fear(?:\s*monger(?:ing)?)?|fear(?:[-\s]of|[-\s]monger(?:ing)?)?\s+fructose|fructose\s+(?:is\s+)?(?:toxic|poison(?:ous)?|dangerous)|anti[-\s]?fructose|avoid(?:ing)?\s+fructose|fructose\s+monger(?:ing)?)\b/i;
+const OJ_HONEY = /\b(oj|orange\s+juice|honey)\b/i;
+const BEEF_RICE_KIBBLE =
+  /\b(kibble|(?:beef[-\s]*(?:and[-\s]+|\/)?rice|rice[-\s]*(?:and[-\s]+|\/)?beef)[-\s]*kibble|kibble[-\s]*(?:with\s+)?(?:beef|rice))\b/i;
 
 const SALADINO =
   /\b(saladino|paul\s+saladino|carnivoremd)\b/i;
+const ALPACA_SPLIT =
+  /\b(herbs?[- ]only|steak[- ]centric|carnivore|animal[- ]based|carbs?[-\s]are[-\s]back)\b/i;
 const ALPACA_STYLE =
-  /\balpaca(?:'s)?\s*(?:herbs?[- ]only|steak[- ]centric|carnivore|diet|protocol|animal[- ]based)\b/i;
+  /\balpaca(?:'s)?\s*(?:herbs?[- ]only|steak[- ]centric|carnivore|diet|protocol|animal[- ]based|carbs?[-\s]are[-\s]back)\b/i;
+const ABUD_BAKRI = /\babudbakri\b/i;
+const POM_WAKE =
+  /\b(pomegranate|pom(?:egranate)?\s*(?:juice|tea)|pom\s+juice)\b/i;
+const MIDDAY_STOCK =
+  /\b(meat\s+stock|gelatinous\s+broth|bone\s+broth|beef\s+stock|oxtail|(?:bone\s+)?stocks?)\b/i;
+const BED_MILK =
+  /\b(warm\s+milk|milk[^\n]{0,40}honey|honey[^\n]{0,40}glycine|milk[^\n]{0,40}glycine)\b/i;
+const NAMED_FALL_STACK = /\bfall\s+stack\b/i;
+const OJ_INTOLERANCE =
+  /\b((?:oj|orange\s+juice|fruit\s+juice|juice)\b[^.!?\n]{0,80}\b(intoleran(?:ce|t)|poison|can'?t\s+tolerate|cannot\s+tolerate|doesn'?t\s+sit)|juice\s+is\s+poison|oj\s+intoleran(?:ce|t))\b/i;
+const SOLBRAH_MERINGUE =
+  /\b(salted\s+egg[-\s]?white(?:s)?(?:\s+sugar)?\s+meringue|egg[-\s]?white(?:s)?\s+sugar\s+meringue|sugar\s+meringue)\b/i;
+const NATURAL_MG =
+  /\b((?:natural|liquid)\s+(?:mg|magnesium)|mg[-\s]?in[-\s]?oj|magnesium\s+in\s+(?:oj|orange\s+juice))\b/i;
+const MILK_SUGAR_DRINK =
+  /\b(molasses\s+latte|(?:milk|latte|coffee)\s+(?:with|and|\+)\s+(?:molasses|sugar)|(?:molasses|sugar)\s+(?:milk|latte)|milk\s*\+\s*sugar)\b/i;
+const RAW_FERMENTED_DAIRY =
+  /\b(raw\s+milk|unpasteurized(?:\s+(?:milk|dairy|cheese|cream|yogurt|kefir))?|raw\s+(?:cheese|dairy|cream|yogurt|kefir)|(?:raw|unpasteurized)\s+fermented\s+dairy|fermented\s+dairy)\b/i;
+const COLLAGEN_GRAMS =
+  /\b(collagen|gelatin)\b[^.!?\n]{0,80}\b\d+(?:\s*[-–to]+\s*\d+)?\s*g(?:rams?)?(?:\s*\/?\s*day)?|\b\d+(?:\s*[-–to]+\s*\d+)?\s*g(?:rams?)?(?:\s*\/?\s*day)?[^.!?\n]{0,80}\b(collagen|gelatin)\b/i;
+const HEAVY_COFFEE =
+  /\b(heavy\s+coffee|(?:five|5)\s+cups?(?:\s+of)?\s+coffee|coffee\b[^.!?\n]{0,40}\b(?:five|5)\s+cups|(?:five|5)\s+cups\b[^.!?\n]{0,40}\bcoffee)\b/i;
+const EMPTY_STOMACH_COFFEE =
+  /\bcoffee\b[^.!?\n]{0,60}\bempty\s+stomach|empty\s+stomach[^.!?\n]{0,60}\bcoffee\b/i;
+const MILK_ACNE =
+  /\b((?:milk(?:\s+protein)?|dairy)\b[^.!?\n]{0,100}\bacne|acne[^.!?\n]{0,100}\b(?:milk(?:\s+protein)?|dairy)|farvingco\b[^.!?\n]{0,160}\b(?:acne|milk\s+protein))\b/i;
+const PINEAPPLE = /\bpineapple(?:\s+juice)?\b/i;
+const HEAVY_METALS = /\bheavy[-\s]?metals?\b/i;
 
 function namedAlpacaSaladinoCarnivore(food: string): boolean {
   if (SALADINO.test(food)) {
@@ -96,16 +143,91 @@ function namedAlpacaSaladinoCarnivore(food: string): boolean {
   if (ALPACA_STYLE.test(food)) {
     return true;
   }
-  return (
-    /\balpaca\b/i.test(food) &&
-    /\b(herbs?[- ]only|steak[- ]centric|carnivore|animal[- ]based)\b/i.test(food)
-  );
+  return /\balpaca\b/i.test(food) && ALPACA_SPLIT.test(food);
+}
+
+function abudBakriOjTalk(food: string): boolean {
+  return ABUD_BAKRI.test(food) && (PEAT_SUGARS.test(food) || FRUIT_FOOD.test(food) || /\bfructose\b/i.test(food));
+}
+
+function alpacaCarbsAreBack(food: string): boolean {
+  return /\balpaca\b/i.test(food) && /\bcarbs?[-\s]are[-\s]back\b/i.test(food);
+}
+
+function fructoseFearTalk(food: string): boolean {
+  if (FRUCTOSE_FEAR.test(food)) {
+    return true;
+  }
+  return /\biso[-\s]?caloric\b/i.test(food) && /\bfructose\b/i.test(food);
 }
 
 function alpacaHerbsOrSteak(food: string): boolean {
   return (
     /\balpaca\b/i.test(food) &&
     /\b(herbs?[- ]only|steak[- ]centric)\b/i.test(food)
+  );
+}
+
+function sinclairFructoseFear(food: string): boolean {
+  return SINCLAIR_FRUCTOSE_FEAR.test(food);
+}
+
+function alpacaOjHoneyKibble(food: string): boolean {
+  if (!OJ_HONEY.test(food)) {
+    return false;
+  }
+  const kibble = BEEF_RICE_KIBBLE.test(food) || /\bkibble\b/i.test(food);
+  const beefRice = /\bbeef\b/i.test(food) && /\brice\b/i.test(food);
+  if (kibble && beefRice) {
+    return true;
+  }
+  return /\balpaca\b/i.test(food) && kibble;
+}
+
+function alpacaCollagenPromo(food: string): boolean {
+  return (
+    /\balpaca\b/i.test(food) &&
+    /\b(collagen|promo(?:tion)?|affiliate|sponsor(?:ed|ship)?)\b/i.test(food)
+  );
+}
+
+function alpacaCollagenPineapple(food: string): boolean {
+  return /\balpaca\b/i.test(food) && /\bcollagen\b/i.test(food) && PINEAPPLE.test(food);
+}
+
+function saladinoHoneySaltBed(food: string): boolean {
+  return SALADINO.test(food) && /\bhoney\b/i.test(food) && /\bsalt\b/i.test(food);
+}
+
+function sugarOverlap(food: string): boolean {
+  return alpacaCollagenPineapple(food) || saladinoHoneySaltBed(food);
+}
+
+function milkAcneTalk(food: string): boolean {
+  return MILK_ACNE.test(food);
+}
+
+function milkOjMineralsFraming(food: string): boolean {
+  const milkOj =
+    /\bmilk\b/i.test(food) && /\b(oj|orange\s+juice)\b/i.test(food);
+  if (HEAVY_METALS.test(food) && /\b(milk|oj|orange\s+juice)\b/i.test(food)) {
+    return true;
+  }
+  return /\bbioavailablend\b/i.test(food) && milkOj && /\bminerals?\b/i.test(food);
+}
+
+function peatFallStack(food: string): boolean {
+  const threeBeats =
+    POM_WAKE.test(food) && MIDDAY_STOCK.test(food) && BED_MILK.test(food);
+  if (threeBeats) {
+    return true;
+  }
+  return (
+    NAMED_FALL_STACK.test(food) &&
+    (POM_WAKE.test(food) ||
+      MIDDAY_STOCK.test(food) ||
+      BED_MILK.test(food) ||
+      /\b(bioavailablend|pomegranate|gelatin|glycine|stock)\b/i.test(food))
   );
 }
 
@@ -122,9 +244,17 @@ function peatStyleIceCream(food: string, hasSeedOil: boolean): boolean {
 }
 
 function carnivoreDiverges(food: string): boolean {
-  // Named Alpaca/Saladino carnivore always flags the fruit/dairy split.
-  // Herbs-only / steak-centric and carrots/carbs overlapping do not cancel it.
-  if (alpacaHerbsOrSteak(food) || namedAlpacaSaladinoCarnivore(food)) {
+  // Named Alpaca/Saladino carnivore always flags the fruit/dairy split,
+  // even when carbs/fruit overlap or the plate is "carbs-are-back."
+  // Herbs-only / steak-centric, OJ/honey mixed with beef-rice "kibble",
+  // and Alpaca collagen promo do not cancel it.
+  if (
+    alpacaHerbsOrSteak(food) ||
+    namedAlpacaSaladinoCarnivore(food) ||
+    alpacaCarbsAreBack(food) ||
+    alpacaOjHoneyKibble(food) ||
+    alpacaCollagenPromo(food)
+  ) {
     return true;
   }
   if (!/\bcarnivore\b/i.test(food)) {
@@ -199,11 +329,11 @@ export function checkFood(
     }
   }
 
-  if (/\b(fast|omad|keto|low[-\s]?carb|calorie\s*deficit|crash|skip(?:ping)?\s+breakfast)\b/i.test(trimmed)) {
+  if (/\b(fast(?:ing)?|omad|keto|low[-\s]?carb|calorie\s*deficit|crash|skip(?:ping)?\s+breakfast)\b/i.test(trimmed)) {
     flags.push({
       code: "underfuel",
       detail:
-        "Peaty does not coach crash diets or skipped breakfast. Raise the burn with morning digestible carbs (milk, OJ, fruit, honey if allowed); do not starve it.",
+        "Peaty does not coach crash diets or skipped breakfast. Fasting stresses testosterone, thymus, and brain. Raise the burn with morning digestible carbs (milk, OJ, fruit, honey if allowed); do not starve it. Warm carbs beat fasting on the morning pulse/temp scoreboard.",
     });
   }
 
@@ -255,6 +385,90 @@ export function checkFood(
         "Niacinamide is sometimes discussed as a gut-adjacent food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing.",
     });
   }
+  if (peatFallStack(trimmed)) {
+    flags.push({
+      code: "fall-stack",
+      detail:
+        "BioavailableNd-style fall stack is Peat-aligned when ingredients fit: wake pomegranate juice/tea, midday meat stock / gelatinous broth, bed warm milk + honey + glycine. Food and rhythm, not a capsule protocol. Community origin — do not cite the handle as evidence.",
+    });
+  }
+  if (OJ_INTOLERANCE.test(trimmed)) {
+    flags.push({
+      code: "oj-intolerance-context",
+      detail:
+        "Abud-style OJ-intolerance framing: often the person/context, not \"juice is poison.\" Label carefully. Not a medical diagnosis. Fruit constraint still wins if they listed it.",
+    });
+  }
+  if (SOLBRAH_MERINGUE.test(trimmed)) {
+    flags.push({
+      code: "solbrah-meringue",
+      detail:
+        "SolBrah salted egg-white sugar meringue is an optional community food note: low-PUFA sugar+protein snack. Not a protocol. Do not cite the handle as evidence.",
+    });
+  }
+  if (NATURAL_MG.test(trimmed)) {
+    flags.push({
+      code: "natural-mg",
+      detail:
+        "Natural/liquid Mg pairs with mineralized fluids / Mg-in-OJ: food and mineral, not a drug protocol. No doses. Clinician if they want a number.",
+    });
+  }
+  if (MILK_SUGAR_DRINK.test(trimmed)) {
+    flags.push({
+      code: "milk-sugar-drink",
+      detail:
+        "Milk+sugar drinks (including molasses latte) are Peat-aligned unless you listed dairy as a hard constraint.",
+    });
+  }
+  if (RAW_FERMENTED_DAIRY.test(trimmed)) {
+    flags.push({
+      code: "raw-fermented-dairy-safety",
+      detail:
+        "Raw/fermented dairy is a community signal, not a Peaty endorsement. Plain food-safety note: raw milk carries pathogen risk. Not medical advice.",
+    });
+  }
+  if (alpacaCollagenPromo(trimmed)) {
+    flags.push({
+      code: "alpaca-collagen-promo",
+      detail:
+        "Alpaca collagen promo is a promotion (affiliate/sponsor framing), not Peat-primary. Still flag the usual Alpaca carnivore split vs same-day dairy+fruit.",
+    });
+  }
+  if (COLLAGEN_GRAMS.test(trimmed)) {
+    flags.push({
+      code: "collagen-community-range",
+      detail:
+        "Collagen/gelatin is Peat-aligned protein. Dairy + fruit stay the preferred base. Alpaca-cited ~15 g/day and a personal 20-40 g range are community signal, not a prescription.",
+    });
+  }
+  if (HEAVY_COFFEE.test(trimmed) || EMPTY_STOMACH_COFFEE.test(trimmed)) {
+    flags.push({
+      code: "community-heavy-coffee",
+      detail:
+        "Heavy coffee (5 cups/day) is community signal, not Peat-primary. Have coffee with food/milk/sugar, not on an empty stomach.",
+    });
+  }
+  if (milkAcneTalk(trimmed)) {
+    flags.push({
+      code: "community-dairy-positive",
+      detail:
+        "FarvingCo-style milk-protein / acne talk is a community dairy positive, not a medical claim. Dairy stays a default fuel unless constrained.",
+    });
+  }
+  if (sugarOverlap(trimmed)) {
+    flags.push({
+      code: "sugar-overlap",
+      detail:
+        "Sugar overlap is Peat-aligned: Alpaca collagen + pineapple juice, or Saladino honey + pinch of salt before bed. Still flag the Alpaca/Saladino carnivore fruit/dairy split.",
+    });
+  }
+  if (milkOjMineralsFraming(trimmed)) {
+    flags.push({
+      code: "community-minerals-framing",
+      detail:
+        "BioavailableNd-style milk + OJ minerals is Peat-aligned food. Heavy-metals talk is community framing, not a detox claim.",
+    });
+  }
 
   const hasSeedOil = flags.some((flag) => flag.code === "seed-oil");
   if (peatStyleIceCream(trimmed, hasSeedOil)) {
@@ -265,11 +479,37 @@ export function checkFood(
     });
   }
 
+  if (fructoseFearTalk(trimmed)) {
+    flags.push({
+      code: "fructose-fear",
+      detail:
+        "Fructose fear in an iso-caloric context is community fear, not Peat. OJ / fruit sugars / honey / maple stay Peat-aligned when the rest of the meal is solid. Do not drop fruit sugars over that lore.",
+    });
+  }
+  if (sinclairFructoseFear(trimmed)) {
+    flags.push({
+      code: "sinclair-fructose-fear",
+      detail:
+        "Sinclair fructose-fear is community conflict, not Peat. Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa stay Peat-aligned when the rest of the meal is solid. Do not drop fruit–dairy sugars over that lore.",
+    });
+  }
+  if (abudBakriOjTalk(trimmed) || alpacaCarbsAreBack(trimmed)) {
+    flags.push({
+      code: "community-source-label",
+      detail:
+        "AbudBakri OJ talk and Alpaca carbs-are-back are community/source-digest labels only — not Peat-primary citations. The food (OJ / fruit sugars) can still be Peat-aligned. Do not cite the handle as evidence.",
+    });
+  }
+
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
-      detail: namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed)
-        ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split (including Alpaca herbs-only / steak-centric) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots or other carbs overlapping do not cancel that split."
+      detail: alpacaOjHoneyKibble(trimmed)
+        ? "Alpaca carnivore fruit/dairy split still diverges from Peat when OJ/honey mixes with beef-rice kibble. Fruit and dairy are OK here unless you listed them as hard constraints. Kibble plus juice does not make it Peat."
+        : alpacaCollagenPromo(trimmed)
+        ? "Alpaca collagen promo is a promotion (affiliate/sponsor framing). Alpaca/Saladino carnivore fruit/dairy split still diverges from Peat even with same-day dairy+fruit."
+        : namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed) || alpacaCarbsAreBack(trimmed)
+        ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split (including Alpaca herbs-only / steak-centric and carbs-are-back) diverges from Peat even with same-day dairy+fruit. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots, other carbs, or fruit overlapping do not cancel that split. Label Alpaca carbs-are-back as community/source-digest only."
         : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not stand in for fruit and dairy.",
     });
   }
@@ -294,17 +534,44 @@ export function checkFood(
       "gelatinous",
       "warm-fluid",
       "peat-ice-cream",
+      "peat-sugars",
+      "fall-stack",
+      "solbrah-meringue",
+      "milk-sugar-drink",
     ].includes(flag.code),
   );
+  const peatSugars = flags.some((flag) => flag.code === "peat-sugars") || PEAT_SUGARS.test(trimmed);
+  const fructoseFear = flags.some(
+    (flag) => flag.code === "fructose-fear" || flag.code === "sinclair-fructose-fear",
+  );
   const communityNotPeat = flags.some((flag) =>
-    ["community-pcos", "community-ashwagandha", "low-carb-gut-fix"].includes(
-      flag.code,
-    ),
+    [
+      "community-pcos",
+      "community-ashwagandha",
+      "low-carb-gut-fix",
+      "community-heavy-coffee",
+    ].includes(flag.code),
   );
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
   const niacinamideNote = flags.some((flag) => flag.code === "niacinamide-note");
+  const ojIntolerance = flags.some((flag) => flag.code === "oj-intolerance-context");
+  const naturalMg = flags.some((flag) => flag.code === "natural-mg");
+  const rawFermented = flags.some((flag) => flag.code === "raw-fermented-dairy-safety");
+  const alpacaPromo = flags.some((flag) => flag.code === "alpaca-collagen-promo");
+  const collagenRange = flags.some((flag) => flag.code === "collagen-community-range");
+  const heavyCoffee = flags.some((flag) => flag.code === "community-heavy-coffee");
+  const dairyPositive = flags.some((flag) => flag.code === "community-dairy-positive");
+  const mineralsFraming = flags.some((flag) => flag.code === "community-minerals-framing");
+  const hasSugarOverlap = flags.some((flag) => flag.code === "sugar-overlap");
+  const sugarOverlapNote = hasSugarOverlap
+    ? " Sugar overlap (Alpaca collagen + pineapple juice, or Saladino honey + pinch of salt before bed) is Peat-aligned; still flag the carnivore split."
+    : "";
   const alpacaNamed =
-    alpacaHerbsOrSteak(trimmed) || namedAlpacaSaladinoCarnivore(trimmed);
+    alpacaHerbsOrSteak(trimmed) ||
+    namedAlpacaSaladinoCarnivore(trimmed) ||
+    alpacaCarbsAreBack(trimmed) ||
+    alpacaOjHoneyKibble(trimmed) ||
+    alpacaCollagenPromo(trimmed);
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if ((hasPufa || hasJunk) && !hasSupport) {
@@ -314,7 +581,8 @@ export function checkFood(
     !hasPufa &&
     !hasJunk &&
     !communityNotPeat &&
-    !divergesFromPeat
+    !divergesFromPeat &&
+    !rawFermented
   ) {
     verdict = "supportive";
   }
@@ -323,14 +591,31 @@ export function checkFood(
     ["community-ashwagandha", "low-carb-gut-fix"].includes(flag.code),
   );
 
+  const peatSugarSummary =
+    "Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa and OJ / fruit sugars / honey / maple are Peat-aligned fruit–dairy sugars when the rest of the meal is solid. Fructose fear in an iso-caloric context is community fear, not Peat. Sinclair fructose-fear is community conflict, not Peat. Pomegranate/pom juice counts.";
+
   const summary =
     verdict === "supportive"
       ? flags.some((flag) => flag.code === "peat-ice-cream")
         ? "Peat-style ice cream fits: milk, eggs, sugar, coconut — not seed-oil junk. Collagen/gelatin overlap is OK. Dairy sugar is a default fuel unless constrained."
-        : flags.some((flag) => flag.code === "raw-carrot") &&
+        : flags.some((flag) => flag.code === "fall-stack")
+          ? "BioavailableNd-style fall stack fits when ingredients do: wake pomegranate juice/tea, midday meat stock / gelatinous broth, bed warm milk + honey + glycine. Food first, not a capsule protocol."
+        : flags.some((flag) => flag.code === "milk-sugar-drink")
+          ? "Milk+sugar drinks (including molasses latte) are Peat-aligned. Gelatin/collagen overlap stays OK. Dairy sugar is a default fuel unless constrained."
+          : collagenRange
+            ? "Collagen/gelatin is Peat-aligned protein. Dairy + fruit stay the preferred base. Alpaca-cited ~15 g/day and a personal 20-40 g range are community signal, not a prescription."
+          : flags.some((flag) => flag.code === "raw-carrot") &&
             !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
           ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
-          : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
+          : ojIntolerance
+            ? "Fits the pro-metabolic plate. OJ intolerance is often the person/context, not \"juice is poison\" — label only, not a medical diagnosis. Prefer warm or room-temp fluids."
+          : mineralsFraming
+            ? "Milk + OJ minerals is Peat-aligned food. Heavy-metals talk is community framing, not a detox claim. Dairy and fruit stay defaults unless constrained."
+          : dairyPositive
+            ? "Dairy is a default fuel unless constrained. FarvingCo-style milk-protein / acne talk is a community dairy positive, not a medical claim."
+          : peatSugars || fructoseFear
+            ? peatSugarSummary
+            : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? hasJunk && !hasPufa
           ? "Poor metabolic fit as a staple. Processed junk is not the fuel. Swap toward fruit, dairy if allowed, salt, and cooked starch."
@@ -338,14 +623,28 @@ export function checkFood(
         : communityNotPeat
           ? ashwagandhaOrLowCarb
             ? "Community, not Peat-primary. Ashwagandha and low-carb-as-gut-fix are not the move. Keep fruit/dairy sugars unless constrained; clinician if they are already supplementing. No doses."
+            : heavyCoffee
+              ? "Community signal, not Peat-primary. Heavy coffee is not the fuel. Have coffee with food/milk/sugar, not on an empty stomach. Dairy + fruit stay the preferred base unless constrained."
             : "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
-            ? alpacaNamed
-              ? "Alpaca herbs-only / steak-centric (or Alpaca/Saladino (Saladino/Alpaca-style) carnivore without fruit/dairy) diverges from Peat even when carrots or carbs overlap. Fruit and dairy are OK here unless you listed them as hard constraints."
-              : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not replace that."
-            : niacinamideNote
+            ? alpacaOjHoneyKibble(trimmed)
+              ? `Alpaca carnivore split still diverges from Peat when OJ/honey mixes with beef-rice kibble. Fruit and dairy are OK here unless you listed them as hard constraints. Kibble plus juice is not the Peat plate.${sugarOverlapNote}`
+              : alpacaPromo
+              ? `Alpaca collagen promo is a promotion (affiliate/sponsor framing), not Peat-primary. Still flag the usual Alpaca carnivore split vs same-day dairy+fruit. Fruit and dairy are OK here unless you listed them as hard constraints.${sugarOverlapNote}`
+              : alpacaNamed
+              ? `Alpaca herbs-only / steak-centric (or Alpaca/Saladino (Saladino/Alpaca-style) carnivore, including carbs-are-back) diverges from Peat even when carrots or carbs overlap, including fruit, and even with same-day dairy+fruit. Fruit and dairy are OK here unless you listed them as hard constraints. Alpaca carbs-are-back is a community/source-digest label only.${sugarOverlapNote}`
+              : `Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not replace that.${sugarOverlapNote}`
+            : fructoseFear
+              ? "Fructose fear in an iso-caloric context is community fear, not Peat. Sinclair fructose-fear is community conflict, not Peat. Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa stay Peat-aligned when the rest of the meal is solid."
+            : rawFermented
+              ? "Raw/fermented dairy is a community signal, not an endorsement. Plain food-safety note: raw milk carries pathogen risk. Not medical advice. Pasteurized dairy and fruit stay defaults unless you listed them as hard constraints."
+            : ojIntolerance
+              ? "OJ intolerance is often the person/context, not \"juice is poison.\" Label carefully — not a medical diagnosis. Fruit and dairy stay defaults unless you listed them as hard constraints."
+              : niacinamideNote
               ? "Niacinamide is sometimes discussed here as a food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing. Keep the plate on fruit, dairy if allowed, and cooked food."
-              : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
+              : naturalMg
+                ? "Natural/liquid Mg is food/mineral (Mg-in-OJ / mineralized fluids), not a dosing protocol. No doses. Keep the plate on fruit, dairy if allowed, salt, and cooked food."
+                : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
   return {
     food: trimmed,

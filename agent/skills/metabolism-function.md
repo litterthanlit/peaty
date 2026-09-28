@@ -1,5 +1,5 @@
 ---
-description: Coach metabolic function — raise burn with food (dairy/fruit sugar oxidation), warmth, rest, and temp/pulse; do not skip breakfast; not crash diets or low-carb-plus-ashwagandha as a gut fix.
+description: Coach metabolic function — raise burn with food (dairy/fruit sugar oxidation), warmth, rest, and temp/pulse; do not skip breakfast; anti-fasting is Peat-primary (fasting stresses testosterone, thymus, brain); bedtime milk+honey for liver glycogen and fewer 3am wakes; Peat milk+OJ minerals (heavy-metals talk is community framing, not a detox); warm carbs beat fasting on the morning pulse/temp scoreboard; cold exposure lowering thyroid output is a counter-signal on the morning temp/pulse scoreboard; Abud ALAN/leptin–POMC is light color only; natural Mg is food/mineral with mineralized fluids, not a dose; not crash diets or low-carb-plus-ashwagandha as a gut fix.
 ---
 
 # Metabolism function
@@ -10,18 +10,36 @@ Load when they ask about energy, cold hands, slow mornings, thyroid-as-function,
 
 Metabolism is **function**, not a morality score. Signs of a better burn: easier warmth, steadier pulse, appetite that shows up, less panic-hunger, sleep that lands. Optional markers they chose (waking temp / pulse) are trend lights, not a diagnosis.
 
-**Raise the burn** by oxidizing sugar from ripe fruit and dairy (if allowed) — not by starving carbs. That is the Peat-usable plate.
+**Cold exposure** lowering thyroid output is a **counter-signal** on that morning temp/pulse scoreboard: if temps or pulse drop after cold habits (plunge, ice), that is the signal to **stop**. Warmth wins. Not a spa protocol.
+
+**Raise the burn** by oxidizing sugar from ripe fruit and dairy (if allowed) — OJ, fruit sugars, honey, maple included — not by starving carbs. That is the Peat-usable plate.
+
+**Fructose fear** in an iso-caloric context is community fear, not Peat. Do not drop fruit sugars over it.
 
 ## Do not skip breakfast
 
 Morning digestible carbs refill **liver glycogen** and take the edge off **cortisol**. Harden this: eat something easy soon after waking.
 
-Examples that are actually available: milk if allowed, orange juice, ripe fruit, honey. Not black coffee as the meal. Not fasted cardio.
+Examples that are actually available: milk if allowed, orange juice, ripe fruit, honey, maple. Not black coffee as the meal. Not fasted cardio.
+
+## Anti-fasting is Peat-primary
+
+**Fasting** (including skipped meals as identity) stresses **testosterone, thymus, and brain**. That is Peat-primary, not optional color. **oxidativestate** fasting talk is a `source-digest` label only — still refuse fasting as the plan.
+
+**Warm carbs beat fasting** on the morning pulse/temp scoreboard. If they are fasting and temps or pulse are low, feed — do not fast harder.
+
+## Bedtime milk + honey
+
+**Bedtime milk + honey** refills **liver glycogen** and can mean fewer **3am wakes** (SolBrah-style community note; translate, do not cite as evidence). **Raw milk** only with the existing food-safety note; **pasteurized works**. A dairy constraint still wins.
+
+## Milk + OJ minerals
+
+**Peat milk + OJ** as a minerals vehicle (**BioavailableNd**): food first. Any **heavy-metals** claim is **community framing, not a detox claim**. Do not turn it into a cleanse.
 
 ## Do
 
 - Feed the burn: ripe fruit / juice, dairy if allowed, cooked starch, salt, a protein that is not a dry pile of lean muscle.
-- Protect sleep and morning light. Cold plunges and fasted cardio are not the product.
+- Protect sleep and morning light. Cold plunges and fasted cardio are not the product. If morning temp/pulse drop after cold habits, that counter-signal means stop the cold.
 - If they log metrics, use `log_metrics` with their timestamp. Read weeks with `summarize_week` — trends, not treatment.
 
 ## Optional community note (not a protocol)
@@ -30,19 +48,31 @@ Examples that are actually available: milk if allowed, orange juice, ripe fruit,
 
 SolBrah-style **Energy Givers / Takers** is optional color only — not a medical claim, not a stack:
 
-- Givers: sun, salt, honey / fruit
+- Givers: sun, salt, honey / fruit / maple / OJ
 - Takers: slop, blue light, tap water as the whole hydration plan
 
 Translate it to food, light, salt, and rest. If a paste includes **semen-retention** copy, prune it. Do not coach that. Do not bake it into the plan.
 
+**AbudBakri OJ** and **Alpaca carbs-are-back** are `source-digest` labels only — not Peat-primary citations. The food move (OJ / fruit sugars) can still stand. Still flag Alpaca/Saladino carnivore fruit/dairy split even when carbs/fruit overlap.
+
+**AbudBakri ALAN / leptin–POMC** circadian talk is `source-digest` **light color only** — community overlap, not a medical claim. Do not cite the handle as evidence. Keep **don't-skip-breakfast** and morning digestible carbs. Artificial light at night is optional rhythm color; it does not replace the morning plate.
+
+**Natural / liquid Mg** pairs with mineralized fluids / **Mg-in-OJ**: food and mineral, not a dosing protocol. No milligram figures. If they want a number, that is clinician territory. Stay on salted food, fruit/dairy fluids if allowed, and mineralized fluids.
+
 ## Do not
 
 - Prescribe T3, NDT, or "start 1/4 grain." That is `safety-gate` → clinician.
-- Run a cut, OMAD, keto, skip-breakfast, or carnivore-without-sugar as the plan.
+- Run a cut, OMAD, keto, skip-breakfast, or carnivore-without-sugar as the plan. Alpaca/Saladino carnivore still diverges even when carbs/fruit overlap. Fasting is not the move — it stresses testosterone, thymus, and brain.
+- Treat **fasting** as a scoreboard win. Warm carbs beat fasting for morning pulse/temp.
 - Treat **low-carb + ashwagandha** as a gut fix. It is not Peaty. Raise the burn; do not starve it or herb-stack the intestine.
-- Treat a low temp as permission to stack hormones, peptides, or AAS.
+- Treat **fructose fear** as a reason to drop OJ / fruit sugars / honey / maple. Community fear ≠ Peat.
+- Treat a low temp as permission to stack hormones, peptides, GLP-1s, thymus peptides, HGH, or AAS.
+- Ignore a temp/pulse drop after cold exposure — that counter-signal means stop the cold, not add a hormone.
+- Turn ALAN / leptin–POMC talk into a light-therapy protocol, or skip breakfast because of it.
+- Turn natural/liquid Mg into a milligram protocol.
+- Turn milk + OJ minerals into a heavy-metals detox. Community framing only; not a cleanse.
 - Coach semen retention, sexual restriction, or "retain for energy" as metabolism.
 
 ## One move
 
-Name one meal that is actually available (example: orange juice, milk if allowed, honey or fruit, salt) and when they will eat it — preferably this morning, not "later if hungry." Call `commit_next_action`. Then stop. If the ask is T3/NDT/hormones/aspirin/cyproheptadine/peptides/AAS, that is safety-gate — you cannot waive it.
+Name one meal that is actually available (example: orange juice, milk if allowed, honey or maple or fruit, salt) and when they will eat it — preferably this morning, not "later if hungry." Call `commit_next_action`. Then stop. If the ask is T3/NDT/hormones/oral-TRT/HGH/aspirin/cyproheptadine/peptides/GLP-1s/thymus/AAS/melanotan-1/BPC hair/selank/SS-31/FarvingCo gut stacks, that is safety-gate — you cannot waive it.
