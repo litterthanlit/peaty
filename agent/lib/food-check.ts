@@ -36,8 +36,9 @@ const SUPPORTIVE_PATTERNS: Array<{ code: string; pattern: RegExp; detail: string
   {
     code: "ripe-fruit",
     pattern:
-      /\b(orange|oj|orange\s+juice|ripe\s+fruit|mango|papaya|watermelon|grapes?|apple\s+juice|honey|pomegranate|pom(?:egranate)?\s*juice)\b/i,
-    detail: "Fruit sugar is a default fuel here, unless you listed fruit as a hard constraint. Pomegranate / pom juice is Peat-aligned.",
+      /\b(orange|oj|orange\s+juice|ripe\s+fruit|fruit\s+sugars?|mango|papaya|watermelon|grapes?|apple\s+juice|honey|maple(?:\s+syrup)?|pomegranate|pom(?:egranate)?\s*juice)\b/i,
+    detail:
+      "OJ / fruit sugars / honey / maple are Peat-aligned when the rest of the meal is solid, unless you listed fruit as a hard constraint. Pomegranate / pom juice counts. Fructose fear in an iso-caloric context is community fear, not Peat.",
   },
   {
     code: "dairy",
@@ -86,8 +87,15 @@ const FRUIT_FOOD =
 
 const SALADINO =
   /\b(saladino|paul\s+saladino|carnivoremd)\b/i;
+const ALPACA_SPLIT =
+  /\b(herbs?[- ]only|steak[- ]centric|carnivore|animal[- ]based|carbs?[-\s]are[-\s]back)\b/i;
 const ALPACA_STYLE =
-  /\balpaca(?:'s)?\s*(?:herbs?[- ]only|steak[- ]centric|carnivore|diet|protocol|animal[- ]based)\b/i;
+  /\balpaca(?:'s)?\s*(?:herbs?[- ]only|steak[- ]centric|carnivore|diet|protocol|animal[- ]based|carbs?[-\s]are[-\s]back)\b/i;
+const ABUD_BAKRI = /\babudbakri\b/i;
+const PEAT_SUGARS =
+  /\b(oj|orange\s+juice|honey|maple(?:\s+syrup)?|fruit\s+sugars?|ripe\s+fruit)\b/i;
+const FRUCTOSE_FEAR =
+  /\b(fructose\s+fear(?:\s*monger(?:ing)?)?|fear(?:[-\s]of|[-\s]monger(?:ing)?)?\s+fructose|fructose\s+(?:is\s+)?(?:toxic|poison(?:ous)?|dangerous)|anti[-\s]?fructose|avoid(?:ing)?\s+fructose|fructose\s+monger(?:ing)?)\b/i;
 
 function namedAlpacaSaladinoCarnivore(food: string): boolean {
   if (SALADINO.test(food)) {
@@ -96,10 +104,22 @@ function namedAlpacaSaladinoCarnivore(food: string): boolean {
   if (ALPACA_STYLE.test(food)) {
     return true;
   }
-  return (
-    /\balpaca\b/i.test(food) &&
-    /\b(herbs?[- ]only|steak[- ]centric|carnivore|animal[- ]based)\b/i.test(food)
-  );
+  return /\balpaca\b/i.test(food) && ALPACA_SPLIT.test(food);
+}
+
+function abudBakriOjTalk(food: string): boolean {
+  return ABUD_BAKRI.test(food) && (PEAT_SUGARS.test(food) || FRUIT_FOOD.test(food) || /\bfructose\b/i.test(food));
+}
+
+function alpacaCarbsAreBack(food: string): boolean {
+  return /\balpaca\b/i.test(food) && /\bcarbs?[-\s]are[-\s]back\b/i.test(food);
+}
+
+function fructoseFearTalk(food: string): boolean {
+  if (FRUCTOSE_FEAR.test(food)) {
+    return true;
+  }
+  return /\biso[-\s]?caloric\b/i.test(food) && /\bfructose\b/i.test(food);
 }
 
 function alpacaHerbsOrSteak(food: string): boolean {
@@ -122,9 +142,10 @@ function peatStyleIceCream(food: string, hasSeedOil: boolean): boolean {
 }
 
 function carnivoreDiverges(food: string): boolean {
-  // Named Alpaca/Saladino carnivore always flags the fruit/dairy split.
-  // Herbs-only / steak-centric and carrots/carbs overlapping do not cancel it.
-  if (alpacaHerbsOrSteak(food) || namedAlpacaSaladinoCarnivore(food)) {
+  // Named Alpaca/Saladino carnivore always flags the fruit/dairy split,
+  // even when carbs/fruit overlap or the plate is "carbs-are-back."
+  // Herbs-only / steak-centric does not cancel it.
+  if (alpacaHerbsOrSteak(food) || namedAlpacaSaladinoCarnivore(food) || alpacaCarbsAreBack(food)) {
     return true;
   }
   if (!/\bcarnivore\b/i.test(food)) {
@@ -265,11 +286,26 @@ export function checkFood(
     });
   }
 
+  if (fructoseFearTalk(trimmed)) {
+    flags.push({
+      code: "fructose-fear",
+      detail:
+        "Fructose fear in an iso-caloric context is community fear, not Peat. OJ / fruit sugars / honey / maple stay Peat-aligned when the rest of the meal is solid. Do not drop fruit sugars over that lore.",
+    });
+  }
+  if (abudBakriOjTalk(trimmed) || alpacaCarbsAreBack(trimmed)) {
+    flags.push({
+      code: "community-source-label",
+      detail:
+        "AbudBakri OJ talk and Alpaca carbs-are-back are community/source-digest labels only — not Peat-primary citations. The food (OJ / fruit sugars) can still be Peat-aligned. Do not cite the handle as evidence.",
+    });
+  }
+
   if (carnivoreDiverges(trimmed)) {
     flags.push({
       code: "carnivore-divergence",
-      detail: namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed)
-        ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split (including Alpaca herbs-only / steak-centric) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots or other carbs overlapping do not cancel that split."
+      detail: namedAlpacaSaladinoCarnivore(trimmed) || alpacaHerbsOrSteak(trimmed) || alpacaCarbsAreBack(trimmed)
+        ? "Alpaca/Saladino (Saladino/Alpaca-style) carnivore fruit/dairy split (including Alpaca herbs-only / steak-centric and carbs-are-back) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots, other carbs, or fruit overlapping do not cancel that split. Label Alpaca carbs-are-back as community/source-digest only."
         : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat: fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not stand in for fruit and dairy.",
     });
   }
@@ -296,6 +332,8 @@ export function checkFood(
       "peat-ice-cream",
     ].includes(flag.code),
   );
+  const peatSugars = PEAT_SUGARS.test(trimmed) && flags.some((flag) => flag.code === "ripe-fruit");
+  const fructoseFear = flags.some((flag) => flag.code === "fructose-fear");
   const communityNotPeat = flags.some((flag) =>
     ["community-pcos", "community-ashwagandha", "low-carb-gut-fix"].includes(
       flag.code,
@@ -304,7 +342,9 @@ export function checkFood(
   const divergesFromPeat = flags.some((flag) => flag.code === "carnivore-divergence");
   const niacinamideNote = flags.some((flag) => flag.code === "niacinamide-note");
   const alpacaNamed =
-    alpacaHerbsOrSteak(trimmed) || namedAlpacaSaladinoCarnivore(trimmed);
+    alpacaHerbsOrSteak(trimmed) ||
+    namedAlpacaSaladinoCarnivore(trimmed) ||
+    alpacaCarbsAreBack(trimmed);
 
   let verdict: FoodCheckResult["verdict"] = "mixed";
   if ((hasPufa || hasJunk) && !hasSupport) {
@@ -330,7 +370,9 @@ export function checkFood(
         : flags.some((flag) => flag.code === "raw-carrot") &&
             !flags.some((flag) => flag.code === "ripe-fruit" || flag.code === "dairy")
           ? "Raw carrot is Peat-aligned. Keep fruit and dairy in the day unless you listed them as hard constraints."
-          : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
+          : peatSugars || fructoseFear
+            ? "OJ / fruit sugars / honey / maple are Peat-aligned when the rest of the meal is solid. Fructose fear in an iso-caloric context is community fear, not Peat. Pomegranate/pom juice counts."
+            : "Fits the pro-metabolic plate: sugar from fruit/dairy (pomegranate/pom juice counts), cooked food, raw carrot if you want it, glycine from gelatinous cuts, low PUFA. Prefer warm or room-temp fluids."
       : verdict === "poor-fit"
         ? hasJunk && !hasPufa
           ? "Poor metabolic fit as a staple. Processed junk is not the fuel. Swap toward fruit, dairy if allowed, salt, and cooked starch."
@@ -341,9 +383,11 @@ export function checkFood(
             : "Community stack, not Peat-primary. Keep food and rhythm; do not turn berberine/PCOS max talk into a Peaty protocol or dose list."
           : divergesFromPeat
             ? alpacaNamed
-              ? "Alpaca herbs-only / steak-centric (or Alpaca/Saladino (Saladino/Alpaca-style) carnivore without fruit/dairy) diverges from Peat even when carrots or carbs overlap. Fruit and dairy are OK here unless you listed them as hard constraints."
+              ? "Alpaca herbs-only / steak-centric (or Alpaca/Saladino (Saladino/Alpaca-style) carnivore, including carbs-are-back) diverges from Peat even when carrots or carbs overlap, including fruit. Fruit and dairy are OK here unless you listed them as hard constraints. Alpaca carbs-are-back is a community/source-digest label only."
               : "Carnivore fruit/dairy refusal (including Saladino/Alpaca-style animal-based) diverges from Peat. Fruit and dairy are OK here unless you listed them as hard constraints. Carrots/starch do not replace that."
-            : niacinamideNote
+            : fructoseFear
+              ? "Fructose fear in an iso-caloric context is community fear, not Peat. OJ / fruit sugars / honey / maple stay Peat-aligned when the rest of the meal is solid."
+              : niacinamideNote
               ? "Niacinamide is sometimes discussed here as a food/B3 note, not a drug protocol. No dosing regimens. Clinician if supplementing. Keep the plate on fruit, dairy if allowed, and cooked food."
               : "Mixed. Keep the supportive pieces, drop seed oils, prefer warm/room-temp fluids, and do not treat dairy or fruit as forbidden unless you listed them as constraints.";
 
