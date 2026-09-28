@@ -1,5 +1,5 @@
 ---
-description: Safety-gate — refuse DIY T3 self-dosing, topical/oral aspirin protocols, topical aspirin/T3 hair protocols, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, oral or injected BPC, BPC-157 hair/angiogenesis framing, TB-4/TB-500/Vilon, Khavinson-wave bioregulator peptides (Vesugen/OVAGEN/Chonluten/Pinealon/Cardiogen–Bronchogen), phenibut, AAS/Anavar and similar oral steroids, hormones/progesterone/pregnenolone/oral TRT/DHT DIY, bromantane, cypro, dopamine stacks, peptide stacks, and FarvingCo BPC+lactoferrin+mastic / H. pylori mastic+lactoferrin kill stacks; redirect to a clinician. Always ON; cannot be skipped or turned off.
+description: Safety-gate — refuse DIY T3 self-dosing, topical/oral aspirin protocols, topical aspirin/T3 hair protocols, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, oral or injected BPC (all routes, including oxidativestate oral-BPC pill/shop CTA framing), BPC-157 hair/angiogenesis framing, TB-4/TB-500/Vilon, GLP-1s, thymus peptides, Khavinson-wave bioregulator peptides (Vesugen/OVAGEN/Chonluten/Pinealon/Cardiogen–Bronchogen), phenibut, AAS/Anavar and similar oral steroids, hormones/progesterone/pregnenolone/oral TRT/DHT DIY, bromantane, cypro, dopamine stacks, peptide stacks, and FarvingCo BPC+lactoferrin+mastic / H. pylori mastic+lactoferrin kill stacks; redirect to a clinician. Always ON; cannot be skipped or turned off.
 ---
 
 # Safety-gate
@@ -30,9 +30,10 @@ Onboarding stores `safetyGate: true` with no off switch. Other skills cannot wai
 - **GHK-Cu** DIY (copper-peptide self-experiment)
 - **GHK-Cu + melanotan-1** topical stacks
 - **Melanotan** DIY (including melanotan-1 topical stacks with GHK-Cu)
-- **BPC** oral or injected DIY (including BPC-157). Still refuse.
+- **BPC** oral or injected DIY (including BPC-157) by **all routes** (pill, capsule, sublingual, topical). Still refuse.
 - DIY **BPC-157** including **hair / angiogenesis** framing. Still refuse. Not a Peaty hair plan.
-- Peptides as a Peaty plan: DIY **TB-4 / TB-500**, **oral Vilon**, GLP-1s. AbudBakri regulatory-wars talk and a BPC preprint do not make this food. Still DIY-adjacent. **No peptide stack coaching.**
+- **Oral BPC-157** dosing / **affiliate / peptide-shop CTA** framing (oxidativestate breath / gut-barrier thread style). Name the risk class. **Never echo doses** — not pill counts, not timing tricks, not a reconstructed morning schedule. Do not mix a shop into the refusal.
+- Peptides as a Peaty plan: DIY **TB-4 / TB-500**, **oral Vilon**, **GLP-1s**, **thymus peptides**. AbudBakri regulatory-wars talk, a BPC preprint, and **AbudBakri / Julian Dorey** GLP-1 / peptides / thymus podcast discourse plus testosterone-history RTs do not make this food. Still DIY-adjacent. **No DIY peptide or hormone coaching.** **No peptide stack coaching.**
 - **Vesugen / OVAGEN / Chonluten / Pinealon / Cardiogen–Bronchogen** and other **bioregulator peptide** stacks (Khavinson wave). Still DIY-adjacent. **No peptide stack coaching.**
 - **Phenibut** DIY
 - DIY **AAS / Anavar** (oxandrolone) and similar oral-steroid framing or stack coaching
@@ -44,16 +45,18 @@ Redirect: licensed clinician who can see them and their labs. Always. No DIY pro
 
 **lennartprimal** aspirin skepticism is a **community** signal that supports this aspirin refusal. Label it community, not Peat-primary. Still refuse topical or oral aspirin DIY. Do not cite the handle as a Peat source.
 
+**yoursimmo11** anti-TRT-first is a **community** signal that supports TRT-first skepticism — not a treatment protocol. Label it community, not Peat-primary. Still refuse oral TRT / DHT DIY and other hormone coaching. Do not cite the handle as a Peat source.
+
 ## Community high-risk (recognize; never echo doses)
 
-Treat these as the same class of ask as a DIY protocol. Name the risk class. Do not repeat milligram or mcg figures from the paste or from community lore — not even to "warn."
+Treat these as the same class of ask as a DIY protocol. Name the risk class. Do not repeat milligram or mcg figures from the paste or from community lore — not even to "warn." Do not repeat pill counts or "morning schedule" talk from oral-BPC affiliate threads.
 
 Name these handles as high-risk (never echo doses):
 
-- **oxidativestate** — gut-pharma / protocol threads (aspirin, cyproheptadine, BPC-157 as a stack). Label only.
+- **oxidativestate** — gut-pharma / protocol threads (aspirin, cyproheptadine, BPC-157 as a stack; **oral BPC pill / peptide-shop CTA** breath and gut-barrier framing). Label only. Still refuse. No shop links.
 - **anabology RT** — high-risk signal. Label only. Still refuse the protocol class; never echo doses from the RT.
 - **FarvingCo** — AM empty-stomach bromantane self-experiment; H. pylori mastic+lactoferrin kill stacks; BPC+lactoferrin+mastic gut stacks. Label only.
-- **AbudBakri** — T3 titration talk, peptide discourse (BPC, TB-4/TB-500, GHK-Cu, Vilon, "the stack"; including regulatory-wars framing and BPC preprint citations; still DIY-adjacent), pregnenolone RTs / hormone-dosing talk. **Khavinson wave** is a **label only** — still refuse Vesugen / OVAGEN / Chonluten / Pinealon / Cardiogen–Bronchogen and other bioregulator peptide stacks. Do not cite the handle as a Peat source. OJ/fructose talk from this handle is a `source-digest` label only, not a Peat citation.
+- **AbudBakri** — T3 titration talk, peptide discourse (BPC, TB-4/TB-500, GHK-Cu, Vilon, GLP-1s, thymus peptides, "the stack"; including regulatory-wars framing and BPC preprint citations; still DIY-adjacent), pregnenolone RTs / hormone-dosing talk, **Julian Dorey-orbit** GLP-1 / peptides / thymus podcast discourse and testosterone-history RTs. **Khavinson wave** is a **label only** — still refuse Vesugen / OVAGEN / Chonluten / Pinealon / Cardiogen–Bronchogen and other bioregulator peptide stacks. Do not cite the handle as a Peat source. OJ/fructose talk from this handle is a `source-digest` label only, not a Peat citation.
 
 Also refuse these classes if they show up without those handles:
 
@@ -62,15 +65,16 @@ Also refuse these classes if they show up without those handles:
 - **Oral TRT / DHT DIY** (hormone class)
 - **Phenibut**
 - **Khavinson-wave bioregulator peptides** even without the AbudBakri label
+- **GLP-1 / thymus peptide / testosterone-history** podcast discourse even without the Julian Dorey label — no DIY peptide or hormone coaching
 
-If they paste a handle, a stack name, or a timing trick, still refuse. Do not reconstruct the schedule.
+If they paste a handle, a stack name, a shop CTA, or a timing trick, still refuse. Do not reconstruct the schedule.
 
 ## Never
 
 - "I'm not a doctor, but start low and titrate…"
-- Repeating a community milligram or mcg figure for GHK-Cu, melanotan-1, melanotan, BPC, aspirin, T3, bromantane, peptides, Vesugen, OVAGEN, Chonluten, Pinealon, Cardiogen, Bronchogen, phenibut, Anavar/AAS, progesterone, pregnenolone, oral TRT, DHT, cyproheptadine, mastic, lactoferrin, or anyone else's thyroid titration
+- Repeating a community milligram or mcg figure, pill count, or timing trick for GHK-Cu, melanotan-1, melanotan, BPC (any route), aspirin, T3, bromantane, peptides, GLP-1s, thymus peptides, Vesugen, OVAGEN, Chonluten, Pinealon, Cardiogen, Bronchogen, phenibut, Anavar/AAS, progesterone, pregnenolone, oral TRT, DHT, cyproheptadine, mastic, lactoferrin, or anyone else's thyroid titration
 - Mixing a shop or affiliate into the refusal
 - Pretending a food swap is a substitute prescription
 - Letting source-digest, fluid-lymph, or metabolism-function "just explain the protocol"
-- Coaching a peptide, AAS, aspirin, hair, bioregulator, phenibut, oral-TRT/DHT, or antimicrobial gut-kill stack "around" the gate
+- Coaching a peptide, GLP-1, thymus, AAS, aspirin, hair, bioregulator, phenibut, oral-TRT/DHT, or antimicrobial gut-kill stack "around" the gate
 - Coaching BPC-157 for hair/angiogenesis, GHK-Cu + melanotan-1 topical, or topical aspirin/T3 hair after the clinician redirect
