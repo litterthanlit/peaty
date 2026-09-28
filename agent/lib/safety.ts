@@ -24,12 +24,21 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "exogenous hormones",
     pattern:
-      /\b(progesterone|pregnenolone|dhea|hrt|trtr?|testosterone|estradiol|anastrozole|clomid|hormone\s*(dosing|dose|protocol|stack|framing|cream|oil)|diy\s+hormones?)\b/i,
+      /\b(progesterone|pregnenolone|dhea|hrt|trtr?|oral\s+trt|dht|dihydrotestosterone|testosterone|estradiol|anastrozole|clomid|hormone\s*(dosing|dose|protocol|stack|framing|cream|oil)|diy\s+hormones?)\b/i,
   },
   {
     label: "peptides / BPC",
     pattern:
       /\b((?:oral|inject(?:ed|ing)?|diy)\s+bpc(?:[-\s]?157)?|bpc(?:[-\s]?157)?(?:\s+(?:oral|inject(?:ed|ing)?|diy|hair|angiogenesis))?|bpc(?:[-\s]?157)?[^.!?\n]{0,80}\b(hair|angiogenesis)|(hair|angiogenesis)[^.!?\n]{0,80}\bbpc(?:[-\s]?157)?|tb[-\s]?(?:500|4)\b|thymosin\s*beta[-\s]?4|ghk[-\s]?cu|copper\s+peptide|melanotan(?:[-\s]?[12])?|vilon|ipamorelin|cjc[-\s]?1295|semaglutide|tirzepatide|retatrutide|(?:diy\s+)?peptide\s+(?:stack|protocol|cycle|coaching)|(?:ghk[-\s]?cu|copper\s+peptide)[^.!?\n]{0,80}\bmelanotan|melanotan[^.!?\n]{0,80}\b(?:ghk[-\s]?cu|copper\s+peptide)|stack(?:ing)?\s+peptides?)\b/i,
+  },
+  {
+    label: "DIY bioregulator peptides",
+    pattern:
+      /\b(vesugen|ovagen|chonluten|pinealon|cardiogen|bronchogen|khavinson(?:\s+wave)?|bioregulator(?:\s+peptides?)?(?:\s+(?:stack|protocol|cycle|wave))?|cardiogen\s*[–\-]+\s*bronchogen)\b/i,
+  },
+  {
+    label: "DIY phenibut",
+    pattern: /\b(phenibut|fenibut)\b/i,
   },
   {
     label: "DIY AAS / oral steroids",
@@ -70,7 +79,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing and topical T3 hair protocols), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone and progesterone), peptides (including oral or injected BPC-157, BPC-157 hair/angiogenesis framing, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, and oral Vilon), AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). No peptide-stack coaching. No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing and topical T3 hair protocols), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, and oral TRT / DHT DIY), peptides (including oral or injected BPC-157, BPC-157 hair/angiogenesis framing, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, oral Vilon, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, and Cardiogen–Bronchogen), phenibut, AAS/Anavar or similar oral steroids, bromantane, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). No peptide-stack coaching. No stack coaching. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";
