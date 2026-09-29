@@ -131,6 +131,12 @@ const HEAVY_COFFEE =
   /\b(heavy\s+coffee|(?:five|5)\s+cups?(?:\s+of)?\s+coffee|coffee\b[^.!?\n]{0,40}\b(?:five|5)\s+cups|(?:five|5)\s+cups\b[^.!?\n]{0,40}\bcoffee)\b/i;
 const EMPTY_STOMACH_COFFEE =
   /\bcoffee\b[^.!?\n]{0,60}\bempty\s+stomach|empty\s+stomach[^.!?\n]{0,60}\bcoffee\b/i;
+const MEAL_BEFORE_COFFEE =
+  /\b((?:meal|food|breakfast|eat(?:ing)?)\s+(?:before|with|then)\s+coffee|coffee\s+(?:after|with)\s+(?:a\s+)?(?:meal|food|breakfast)|meal[-\s]?before[-\s]?coffee)\b/i;
+const COFFEE_COLLAGEN_SUGAR =
+  /\b((?:collagen|glycine)\b[^.!?\n]{0,80}\b(?:maple|sugar|honey)\b[^.!?\n]{0,80}\bcoffee|coffee\b[^.!?\n]{0,80}\b(?:collagen|glycine)\b[^.!?\n]{0,80}\b(?:maple|sugar|honey)|coffee\b[^.!?\n]{0,80}\b(?:maple|sugar|honey)\b[^.!?\n]{0,80}\b(?:collagen|glycine)|(?:collagen|glycine)\s+(?:and|&|\+)\s+(?:maple|sugar|honey)[^.!?\n]{0,40}\bcoffee|coffee[^.!?\n]{0,40}\b(?:collagen|glycine)\s+(?:and|&|\+)\s+(?:maple|sugar|honey))\b/i;
+const SOLBRAH_CREAM_ESPRESSO =
+  /\b((?:raw\s+)?cream\s+(?:and|&|\+|with)\s+espresso|espresso\s+(?:and|&|\+|with)\s+(?:raw\s+)?cream|solbrah\b[^.!?\n]{0,100}\b(?:raw\s+cream|espresso)|raw\s+cream[^.!?\n]{0,40}\bespresso|espresso[^.!?\n]{0,40}\braw\s+cream)\b/i;
 const MILK_ACNE =
   /\b((?:milk(?:\s+protein)?|dairy)\b[^.!?\n]{0,100}\bacne|acne[^.!?\n]{0,100}\b(?:milk(?:\s+protein)?|dairy)|farvingco\b[^.!?\n]{0,160}\b(?:acne|milk\s+protein))\b/i;
 const PINEAPPLE = /\bpineapple(?:\s+juice)?\b/i;
@@ -333,7 +339,7 @@ export function checkFood(
     flags.push({
       code: "underfuel",
       detail:
-        "Peaty does not coach crash diets or skipped breakfast. Fasting stresses testosterone, thymus, and brain. Raise the burn with morning digestible carbs (milk, OJ, fruit, honey if allowed); do not starve it. Warm carbs beat fasting on the morning pulse/temp scoreboard.",
+        "Peaty does not coach crash diets or skipped breakfast. Fasting stresses testosterone, thymus, and brain. Raise the burn with morning digestible carbs (milk, OJ, fruit, honey if allowed); sugar for the thymus, not a fast. Warm carbs beat fasting on the morning pulse/temp scoreboard.",
     });
   }
 
@@ -445,7 +451,28 @@ export function checkFood(
     flags.push({
       code: "community-heavy-coffee",
       detail:
-        "Heavy coffee (5 cups/day) is community signal, not Peat-primary. Have coffee with food/milk/sugar, not on an empty stomach.",
+        "Heavy coffee (5 cups/day) is community signal, not Peat-primary. Have coffee with food/milk/sugar, not on an empty stomach. Meal-before-coffee.",
+    });
+  }
+  if (MEAL_BEFORE_COFFEE.test(trimmed)) {
+    flags.push({
+      code: "meal-before-coffee",
+      detail:
+        "Meal-before-coffee is Peat-aligned: coffee with food, milk, or sugar — not empty-stomach.",
+    });
+  }
+  if (COFFEE_COLLAGEN_SUGAR.test(trimmed)) {
+    flags.push({
+      code: "coffee-collagen-sugar",
+      detail:
+        "Collagen/glycine + maple/sugar with coffee is Peat-aligned. Food first, not a gram protocol.",
+    });
+  }
+  if (SOLBRAH_CREAM_ESPRESSO.test(trimmed)) {
+    flags.push({
+      code: "solbrah-cream-espresso",
+      detail:
+        "SolBrah raw cream + espresso is dairy + caffeine aligned. Raw dairy keeps the existing food-safety note (pathogen risk; not an endorsement; not medical advice). Do not cite the handle as evidence.",
     });
   }
   if (milkAcneTalk(trimmed)) {
@@ -538,6 +565,9 @@ export function checkFood(
       "fall-stack",
       "solbrah-meringue",
       "milk-sugar-drink",
+      "meal-before-coffee",
+      "coffee-collagen-sugar",
+      "solbrah-cream-espresso",
     ].includes(flag.code),
   );
   const peatSugars = flags.some((flag) => flag.code === "peat-sugars") || PEAT_SUGARS.test(trimmed);
@@ -562,6 +592,9 @@ export function checkFood(
   const heavyCoffee = flags.some((flag) => flag.code === "community-heavy-coffee");
   const dairyPositive = flags.some((flag) => flag.code === "community-dairy-positive");
   const mineralsFraming = flags.some((flag) => flag.code === "community-minerals-framing");
+  const mealBeforeCoffee = flags.some((flag) => flag.code === "meal-before-coffee");
+  const coffeeCollagenSugar = flags.some((flag) => flag.code === "coffee-collagen-sugar");
+  const creamEspresso = flags.some((flag) => flag.code === "solbrah-cream-espresso");
   const hasSugarOverlap = flags.some((flag) => flag.code === "sugar-overlap");
   const sugarOverlapNote = hasSugarOverlap
     ? " Sugar overlap (Alpaca collagen + pineapple juice, or Saladino honey + pinch of salt before bed) is Peat-aligned; still flag the carnivore split."
@@ -602,6 +635,12 @@ export function checkFood(
           ? "BioavailableNd-style fall stack fits when ingredients do: wake pomegranate juice/tea, midday meat stock / gelatinous broth, bed warm milk + honey + glycine. Food first, not a capsule protocol."
         : flags.some((flag) => flag.code === "milk-sugar-drink")
           ? "Milk+sugar drinks (including molasses latte) are Peat-aligned. Gelatin/collagen overlap stays OK. Dairy sugar is a default fuel unless constrained."
+        : coffeeCollagenSugar
+          ? "Collagen/glycine + maple/sugar with coffee is Peat-aligned. Food first, not a gram protocol. Dairy + fruit stay the preferred base unless constrained."
+        : mealBeforeCoffee
+          ? "Meal-before-coffee is Peat-aligned. Have coffee with food, milk, or sugar — not on an empty stomach."
+        : creamEspresso
+          ? "Cream + espresso is dairy + caffeine aligned. Dairy stays a default fuel unless constrained."
           : collagenRange
             ? "Collagen/gelatin is Peat-aligned protein. Dairy + fruit stay the preferred base. Alpaca-cited ~15 g/day and a personal 20-40 g range are community signal, not a prescription."
           : flags.some((flag) => flag.code === "raw-carrot") &&
@@ -637,7 +676,9 @@ export function checkFood(
             : fructoseFear
               ? "Fructose fear in an iso-caloric context is community fear, not Peat. Sinclair fructose-fear is community conflict, not Peat. Daily OJ / OJ+collagen / honey / maple / A2-milk cocoa stay Peat-aligned when the rest of the meal is solid."
             : rawFermented
-              ? "Raw/fermented dairy is a community signal, not an endorsement. Plain food-safety note: raw milk carries pathogen risk. Not medical advice. Pasteurized dairy and fruit stay defaults unless you listed them as hard constraints."
+              ? creamEspresso
+                ? "SolBrah raw cream + espresso is dairy + caffeine aligned. Raw/fermented dairy is a community signal, not an endorsement. Plain food-safety note: raw milk carries pathogen risk. Not medical advice. Pasteurized dairy stays a default unless constrained."
+                : "Raw/fermented dairy is a community signal, not an endorsement. Plain food-safety note: raw milk carries pathogen risk. Not medical advice. Pasteurized dairy and fruit stay defaults unless you listed them as hard constraints."
             : ojIntolerance
               ? "OJ intolerance is often the person/context, not \"juice is poison.\" Label carefully — not a medical diagnosis. Fruit and dairy stay defaults unless you listed them as hard constraints."
               : niacinamideNote
