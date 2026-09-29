@@ -10,7 +10,7 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "DIY T3 / thyroid hormone",
     pattern:
-      /\b(t3|cytomel|liothyronine|levothyroxine|synthroid|t4|armour\s*thyroid|ndtj?|wp\s*thyroid|self[-\s]?dos(?:e|ing)\s+t3|t3\s+self[-\s]?dos(?:e|ing))\b/i,
+      /\b(t3|cytomel|liothyronine|levothyroxine|synthroid|t4|armour\s*thyroid|ndtj?|wp\s*thyroid|self[-\s]?dos(?:e|ing)\s+t[34]|t[34]\s+self[-\s]?dos(?:e|ing)|don'?t\s+forget\s+t4)\b/i,
   },
   {
     label: "aspirin protocol",
@@ -52,6 +52,30 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
       /\b(ladder)[^.!?\n]{0,100}\b(bpc|ghk|selank|ss[-\s]?31)|(bpc|ghk|selank|ss[-\s]?31)[^.!?\n]{0,100}\bladder|oxidativestate[^.!?\n]{0,160}\b(bpc|ghk|selank|ss[-\s]?31|peptide\s+ladder)\b/i,
   },
   {
+    label: "DIY hair formula / microneedling stack",
+    pattern:
+      /\b(microneedl(?:e|ing)|derma[-\s]?roll(?:er|ing)?)\b[^.!?\n]{0,220}\b(multi[-\s]?compound|stack|protocol|formula|finasteride|peptide|bpc|adenosine|niacinamide|chitosan|panthenol|hair\s+(?:formula|stack))|(multi[-\s]?compound|stack|protocol|formula|finasteride|peptide|bpc|hair\s+(?:formula|stack))[^.!?\n]{0,220}\b(microneedl(?:e|ing)|derma[-\s]?roll(?:er|ing)?)\b/i,
+  },
+  {
+    label: "DIY hair formula / microneedling stack",
+    pattern:
+      /\bfinasteride\b[^.!?\n]{0,180}\b(alt(?:ernative)?|adjunct|hair|diy|formula|stack)|(diy\s+hair|hair\s+(?:formula|stack|protocol)|multi[-\s]?compound)[^.!?\n]{0,180}\bfinasteride\b/i,
+  },
+  {
+    label: "DIY hair formula / microneedling stack",
+    pattern: /\b(methyl\s+vanillate|zinc\s+pca)\b/i,
+  },
+  {
+    label: "DIY hair formula / microneedling stack",
+    pattern:
+      /\boxidativestate\b[^.!?\n]{0,220}\b(hair\s+(?:formula|stack|protocol)|finasteride|microneedl|multi[-\s]?compound)|(hair\s+(?:formula|stack|protocol)|finasteride|microneedl)[^.!?\n]{0,220}\boxidativestate\b/i,
+  },
+  {
+    label: "DIY hair formula / microneedling stack",
+    pattern:
+      /\b(adenosine|chitosan|panthenol)\s*\+[^.!?\n]{0,240}\b(hair\s+(?:formula|stack|protocol)|microneedl|finasteride|multi[-\s]?compound)|(hair\s+(?:formula|stack|protocol)|microneedl|finasteride|multi[-\s]?compound)[^.!?\n]{0,240}\b(adenosine|chitosan|panthenol)\s*\+/i,
+  },
+  {
     label: "peptides / BPC",
     pattern:
       /\bfemalelongevity\b[^.!?\n]{0,160}\b(thymus|peptide)|(?:thymus|peptide)[^.!?\n]{0,160}\bfemalelongevity\b/i,
@@ -74,7 +98,12 @@ const BLOCK_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
   {
     label: "DIY bioregulator peptides",
     pattern:
-      /\b(vesugen|ovagen|chonluten|pinealon|cardiogen|bronchogen|khavinson(?:\s+wave)?|bioregulator(?:\s+peptides?)?(?:\s+(?:stack|protocol|cycle|wave))?|cardiogen\s*[–\-]+\s*bronchogen)\b/i,
+      /\b(vesugen|ovagen|chonluten|pinealon|cardiogen|bronchogen|epithalon|epitalon|epithalamin|khavinson(?:\s+wave)?|bioregulator(?:\s+peptides?)?(?:\s+(?:stack|protocol|cycle|wave))?|cardiogen\s*[–\-]+\s*bronchogen)\b/i,
+  },
+  {
+    label: "DIY bioregulator peptides",
+    pattern:
+      /\b(epithalon|epitalon|epithalamin)[^.!?\n]{0,140}\b(melanopsin|repair)|melanopsin[^.!?\n]{0,140}\b(epithalon|epitalon|epithalamin|khavinson|bioregulator)\b/i,
   },
   {
     label: "DIY phenibut",
@@ -147,7 +176,7 @@ const CAUTION_PATTERNS: Array<{ label: string; pattern: RegExp }> = [
 ];
 
 const BLOCK_REDIRECT =
-  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing, topical T3 hair protocols, and 'hot potatoes warmer than T3' as DIY-T3 comparison fuel — warm starchy food is fine), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, oral TRT / DHT DIY, and DIY HGH / TRT curiosity from HGH-trial talk), peptides (including oral or injected BPC-157 by all routes, oral BPC pill/shop CTA / affiliate replies, BPC-157 hair/angiogenesis framing, FarvingCo BPC knee claims, alcohol/rat brain-bleed BPC framing, Arkansas injectable BPC-157 RCT talk, pharma-isn't-hiding-it / bad R&D framing, Croatia research-trip stories, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, selank, SS-31, oral Vilon, GLP-1s, thymus peptides, femalelongevity thymus/peptides podcast talk, peptide-ladder steps from gelatin up to BPC / GHK / selank / SS-31, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, and Cardiogen–Bronchogen), phenibut, AAS/Anavar or similar oral steroids including n=1 Anavar anecdotes, bromantane / Soviet-adaptogen dosing (including FarvingCo morning empty-stomach / research-use-only sourcing), DIY borax / boron dosing for free testosterone, gray-market / research-use-only / compounded GLP-1 or peptide sourcing, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). A trial existing is not a green light for DIY. Gelatin stays allowed food; every peptide step is refused. No DIY peptide or hormone coaching. No peptide-stack coaching. No stack coaching. Do not echo a schedule. Do not echo prices or vendors. Do not echo claim numbers. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
+  "This is clinician territory. Peaty will not sketch doses, stacks, or DIY protocols for thyroid hormone (including T3 self-dosing, DIY T4 — a casual don't-forget-T4 aside is still refuse, not a coaching protocol — topical T3 hair protocols, and 'hot potatoes warmer than T3' as DIY-T3 comparison fuel — warm starchy food is fine), aspirin (topical or oral) including topical aspirin/T3 hair protocols, cyproheptadine, sex hormones (including pregnenolone, progesterone, oral TRT / DHT DIY, and DIY HGH / TRT curiosity from HGH-trial talk), peptides (including oral or injected BPC-157 by all routes, oral BPC pill/shop CTA / affiliate replies, BPC-157 hair/angiogenesis framing, microneedling + multi-compound hair stacks including finasteride-alternative DIY hair formulas, FarvingCo BPC knee claims, alcohol/rat brain-bleed BPC framing, Arkansas injectable BPC-157 RCT talk, pharma-isn't-hiding-it / bad R&D framing, Croatia research-trip stories, TB-4/TB-500, GHK-Cu, GHK-Cu + melanotan-1 topical stacks, melanotan, selank, SS-31, oral Vilon, GLP-1s, thymus peptides, femalelongevity thymus/peptides podcast talk, peptide-ladder steps from gelatin up to BPC / GHK / selank / SS-31, and Khavinson-wave bioregulator peptides such as Vesugen, OVAGEN, Chonluten, Pinealon, Cardiogen–Bronchogen, and Epithalon/Epitalon), phenibut, AAS/Anavar or similar oral steroids including n=1 Anavar anecdotes, bromantane / Soviet-adaptogen dosing (including FarvingCo morning empty-stomach / research-use-only sourcing), DIY borax / boron dosing for free testosterone, gray-market / research-use-only / compounded GLP-1 or peptide sourcing, dopamine/prolactin stacks, or DIY antimicrobial gut-kill protocols (including FarvingCo-style H. pylori mastic+lactoferrin kill stacks and FarvingCo BPC+lactoferrin+mastic gut stacks). A trial existing is not a green light for DIY. Gelatin stays allowed food; every peptide step is refused. No DIY peptide or hormone coaching. No peptide-stack coaching. No stack coaching. Do not echo a schedule. Do not echo prices or vendors. Do not echo claim numbers. Do not echo product URLs or compound laundry lists as recipes. Take it to a licensed clinician who can see labs and history. We can keep working on food, warmth, rest, salt/minerals, and the markers you chose.";
 
 const CAUTION_REDIRECT =
   "Stay on food, rhythm, and markers. Do not turn this into a medical protocol. If it needs a prescription, injection, or hormone, send it to a clinician.";
